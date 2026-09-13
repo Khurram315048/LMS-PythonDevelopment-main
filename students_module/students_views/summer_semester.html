@@ -1,0 +1,88 @@
+{% extends "layouts/student_base.html" %}
+
+{% block title %}Student Summer Registration{% endblock %}
+
+{% block content %}
+  
+  <div class="container">
+    {% if summer_closed %}
+      <div class="subject-card">
+          <div class="subject-list text-center" style="padding: 30px;">
+              <i class="fa-solid fa-ban fa-3x" style="color:red; margin-bottom:10px;"></i>
+              <h4 style="color:red;">Summer Semester Applications Closed</h4>
+              <p style="color:grey;">Summer semester registration is currently not available. Please check back later or contact the admin.</p>
+          </div>
+      </div>
+
+    {% else %}
+
+    <div class="profile-card">
+        {% if student %}
+        <h3>{{ student.first_name }} {{ student.last_name }}</h3>
+        <p>{{ student.student_id }} <span style="color:green;">Active</span></p>
+        {% endif %}
+    </div>
+
+    {% if latest_summer %}
+    <div class="subject-card">
+        <h4>Active Summer Semester</h4>
+        <div class="subject-list">
+            <p><strong>{{ latest_summer.name }} {{ latest_summer.year }}</strong></p>
+            <p>{{ latest_summer.start_date }} → {{ latest_summer.end_date }}</p>
+            <p>Status:
+                {% if latest_summer.status == 'Open' %}
+                    <span style="color:green;">{{ latest_summer.status }}</span>
+                {% else %}
+                    <span style="color:red;">{{ latest_summer.status }}</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="actions-card">
+      <div class="button-row">
+        {% if can_register %}
+            <form action="/summer_subjects" method="GET">
+                <button class="btn-yellow">Add Subject (For Summer Intake)</button>
+            </form>
+        {% else %}
+            <button class="btn-yellow" style="background-color: grey; cursor: not-allowed;" disabled>
+                {% if failed_count == 0 %}
+                    No Eligible Failed Subjects Found
+                {% elif selected | length >= failed_count | default(0) %}
+                    All Failed Subjects Selected
+                {% else %}
+                    Registration Closed
+                {% endif %}
+            </button>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="subject-card">
+      <h4>Selected Subject(s)</h4>
+      <div class="subject-list">
+        {% if selected %}
+          {% for sel in selected %}
+            <p>
+              {{ sel.course_name }} ({{ sel.credit_hours }} Cr) - 
+              <span style="color:green;">{{ sel.status }}</span>
+              <form method="POST"
+                    action="{{ url_for('delete_summer_subject',subject_id=sel.course_id) }}"
+                    style="display:inline; margin-left: 10px;">
+                <button type="submit" class="delete-btn" title="Delete Subject" onclick="return confirm('Are you sure you want to remove this subject?');">🗑️</button>
+              </form>
+            </p>
+          {% endfor %}
+        {% else %}
+          <p>No Subject Selected Yet.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    {% endif %}
+
+  </div>
+
+{% endblock %}

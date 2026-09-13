@@ -1,0 +1,90 @@
+{% extends "layouts/student_base.html" %}
+
+{% block title %}My Submissions & Uploads{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="headings">Submissions & Grading</h1>
+
+    {% if flash_success %}
+        <div class="alert alert-success" style="padding: 10px; background-color: #d4edda; color: #155724; border-radius: 4px; margin-bottom: 15px;">
+            ✅ {{ flash_success }}
+        </div>
+    {% endif %}
+
+    {% if flash_error %}
+        <div class="alert alert-danger" style="padding: 10px; background-color: #f8d7da; color: #721c24; border-radius: 4px; margin-bottom: 15px;">
+            ⚠️ {{ flash_error }}
+        </div>
+    {% endif %}
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Subject Name</th>
+                <th>Assignment Upload</th>
+                <th>Quiz Upload</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in schedule %}
+            <tr>
+                <td><strong>{{ s.course_name }}</strong></td>
+                <td>
+                    {% if s.assignments_enabled == 1 %}
+                        {% if s.course_id|int in uploaded_assignments %}
+                            {% set mark = assignment_marks.get(s.course_id|int) %}
+                            {% set total = assignment_totals.get(s.course_id|int) %}
+                            <div style="color: #28a745; font-weight: bold;">
+                                ✅ Submitted 
+                                {% if mark is not none %} 
+                                    <br><span style="color: #10367D;">Grade: {{ mark }} / {{ total if total else 100 }}</span>
+                                {% else %}
+                                    <br><span style="color: #6c757d; font-size: 0.8em;">(Pending Grade)</span>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <form action="/upload_submission" method="POST" enctype="multipart/form-data">
+                                <input type="hidden" name="course_id" value="{{ s.course_id }}">
+                                <input type="hidden" name="section_id" value="{{ s.section_id }}">
+                                <input type="hidden" name="type" value="assignment">
+                                <input type="file" name="file" accept=".pdf" class="form-control form-control-sm" required />
+                                <button type="submit" class="btn-upload-small" style="margin-top:5px; width:100%; border-radius: 4px; background: #10367D; color: white; border: none; cursor: pointer;">Upload Assignment (PDF Only)</button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <span style="color:gray; font-style: italic;">🚫 Closed</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if s.quizzes_enabled == 1 %}
+                        {% if s.course_id|int in uploaded_quizzes %}
+                            {% set mark = quiz_marks.get(s.course_id|int) %}
+                            {% set total = quiz_totals.get(s.course_id|int) %}
+                            <div style="color: #28a745; font-weight: bold;">
+                                ✅ Submitted
+                                {% if mark is not none %} 
+                                    <br><span style="color: #10367D;">Grade: {{ mark }} / {{ total if total else 100 }}</span>
+                                {% else %}
+                                    <br><span style="color: #6c757d; font-size: 0.8em;">(Pending Grade)</span>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <form action="/upload_submission" method="POST" enctype="multipart/form-data">
+                                <input type="hidden" name="course_id" value="{{ s.course_id }}">
+                                <input type="hidden" name="section_id" value="{{ s.section_id }}">
+                                <input type="hidden" name="type" value="quiz">
+                                <input type="file" name="file" accept=".pdf" class="form-control form-control-sm" required />
+                                <button type="submit" class="btn-upload-small" style="margin-top:5px; width:100%; border-radius: 4px; background: #10367D; color: white; border: none; cursor: pointer;">Upload Quiz (PDF Only)</button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <span style="color:gray; font-style: italic;">🚫 Closed</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "layouts/admin_base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h2><i class="fa-solid fa-arrow-up"></i> Promote Students</h2>
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="d-flex gap-2 align-items-center">
+            <input type="text" id="searchInput" class="form-control w-auto" placeholder="Search...">
+        </div>
+    </div>
+<div class="card">
+    <div class="card-body">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Student Name</th>
+                    <th>Program</th>
+                    <th>Current Semester</th>
+                    <th>Last Result</th>
+                    <th>GPA</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="promoteTbl">
+                {% for student in students %}
+                <tr>
+                    <td>{{ student.student_id }}</td>
+                    <td>{{ student.first_name }} {{ student.last_name }}</td>
+                    <td>{{ student.program_name }}</td>
+                    <td>Semester {{ student.current_semester }}</td>
+                    <td>
+                        {% if student.result_status == 'Pass' %}
+                            <span class="badge bg-success">Pass</span>
+                        {% elif student.result_status == 'Fail' %}
+                            <span class="badge bg-danger">Fail</span>
+                        {% else %}
+                            <span class="badge bg-secondary">No Result</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ student.overall_gpa if student.overall_gpa else '---' }}</td>
+                    <td>
+                        {% if student.result_status == 'Pass' %}
+                            {% if student.current_semester > student.student_semester | int %}
+                                <button class="btn btn-success btn-sm" disabled>
+                                    <i class="fa-solid fa-check"></i> Already Promoted
+                                </button>
+                            {% else %}
+                                <form method="POST" action="{{ url_for('admin.promote_student', student_id=student.student_id) }}">
+                                    <button type="submit" class="btn btn-primary btn-sm"
+                                        onclick="return confirm('Promote {{ student.first_name }} to next semester?')">
+                                        <i class="fa-solid fa-circle-arrow-up"></i> Promote
+                                    </button>
+                                </form>
+                            {% endif %}
+                        {% else %}
+                            <button class="btn btn-secondary btn-sm" disabled>
+                                <i class="fa-solid fa-xmark"></i> Cannot Promote
+                            </button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% block scripts %}
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        const filter=this.value.toLowerCase();
+        document.querySelectorAll('#promoteTbl tr').forEach(row => {
+            row.style.display=row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+        });
+    });
+</script>
+{% endblock %}
+
+{% endblock %}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global_style.css') }}">
+    <link rel="icon" type="image/jpg" href="{{ url_for('static', filename='images/logo.jpg') }}">
+    <title>User Signup</title>
+</head>
+<body>
+    <div class="standalone-header">Student Management System</div>
+
+    <div class="container">
+        <h1 class="headings">User Signup</h1>
+        <form action="/user_signup" method="POST">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            {% if error %}
+            <p style="color:red;">{{ error }}</p>
+            {% endif %}
+            <br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Create a password" required>
+            
+            <div class="radio-group">
+                <label>User Type:</label>
+                <label><input type="radio" name="user_type" value="student" checked> Student</label>
+                <label><input type="radio" name="user_type" value="teacher"> Teacher</label>
+                <label><input type="radio" name="user_type" value="admin"> Admin</label>
+            </div>
+            
+            <button type="submit">Sign Up</button>
+        </form>
+        <div class="form-links">
+            <p>Already have an account? <a href="/main_view">Login</a></p>
+        </div>
+    </div>
+
+    <div class="standalone-footer">&copy; 2023 Student Management System. All rights reserved.</div>
+</body>
+</html>

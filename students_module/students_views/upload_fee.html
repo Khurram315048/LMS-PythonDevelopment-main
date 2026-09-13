@@ -1,0 +1,42 @@
+{% extends "layouts/student_base.html" %}
+
+{% block title %}Student Upload Fee{% endblock %}
+
+{% block content %}
+
+    <div class="details-section">
+        <h3>Upload Fee Voucher</h3>
+        <form class="details-grid" method="POST" enctype="multipart/form-data" action="/upload_fee">
+            <label >Select Month</label>
+            <options>
+                <select name="month" required>
+                    <option value="" disabled selected>Select Month</option>
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                </select>
+            </options>
+            <label>Enter Fee Amount</label>
+            <input type="number" name="fee_amount" placeholder="Enter Fee Amount" required>
+            <label>Upload Front Side Voucher</label>
+            <input type="file" name="front_voucher" accept="image/*" required>
+
+            <label>Upload Back Side Voucher</label>
+            <input type="file" name="back_voucher" accept="image/*" required>
+            <button type="submit">Upload</button>
+            
+        </form>
+        
+        
+    </div>
+</div>
+{% endblock %}

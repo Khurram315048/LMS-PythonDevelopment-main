@@ -1,0 +1,41 @@
+{% extends "layouts/student_base.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/suggesstion_style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="headings">Complaint/Suggestion Form</h1>
+        <form method="POST" action="{{ url_for('teacher.complaint_suggestion') }}" enctype="multipart/form-data">
+            <label for="title">Title:</label>
+            <select id="title" name="title" required>
+                <option value="" disabled selected>Select a title</option>
+                <option value="Finance_Department">Finance Department</option>
+                <option value="Exam_Department">Exam Department</option>
+                <option value="Library">Library</option>
+                <option value="Hostel">Hostel</option>
+                <option value="Result">Result</option>
+                <option value="Other">Other</option>
+            </select>
+            <br>
+            <label for="message">Message:</label>
+            <br>
+            <textarea id="message" name="description" rows="6" required></textarea>
+            <br>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+</body>
+</html>
+{% endblock %}

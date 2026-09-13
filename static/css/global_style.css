@@ -1,0 +1,96 @@
+body, h1, h2, h3, h4, h5, h6, p, ul, ol, li, form, input, button, select, textarea {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    /*background-image: url("{{ url_for('static', filename='images/main_view.jpg') }}");*/
+    background-image: url("../images/main_view.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* Center main container */
+.container {
+    max-width: 400px;
+    margin: auto;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(16, 54, 125, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+h1.headings {
+    text-align: center;
+    color: #10367D;
+    margin-bottom: 30px;
+    font-size: 2em;
+}
+
+/* Form and buttons */
+.form-buttons {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 20px; /* Space between buttons */
+    width: 100%;
+    margin-top: 20px;
+}
+
+.form-buttons button {
+    width: 100%;
+    padding: 12px 25px;
+    background-color: #10367D;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.form-buttons button:hover {
+    background-color: #0a2552;
+    transform: translateY(-2px);
+}
+
+.form-links {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 0.95em;
+}
+
+.form-links a {
+    color: #10367D;
+    text-decoration: none;
+}
+
+.form-links a:hover {
+    text-decoration: underline;
+}
+
+.standalone-header, .standalone-footer {
+    background-color: #10367D;
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.standalone-footer {
+    font-size: 0.9em;
+    margin-top: auto;
+}

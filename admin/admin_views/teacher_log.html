@@ -1,0 +1,140 @@
+{% extends "layouts/admin_base.html" %}
+{% block title %}Teacher Log Activity{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h2><i class="fa-solid fa-chart-line"></i>Teacher Log Activity</h2>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">All Teacher</h4>
+        <div class="search-box">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search Teacher...">
+            <i class="fa-solid fa-search search-icon"></i>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover" id="studentTable">
+            <thead class="table-dark">
+                <tr>
+                    <th>Teacher ID</th>
+                    <th>Name</th>
+                    <th>Total Visits</th>
+                    <th>Total Time Spent</th>
+                    <th>Last Seen</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="teacherTableBody">
+                {% for s in teachers %}
+                <tr>
+                    <td>{{ s['teacher_id'] }}</td>
+                    <td>{{ s['first_name'] }} {{ s['last_name'] }}</td>
+                    <td>{{ s['total_visits'] }}</td>
+                    <td>
+                        {% if s['total_time'] %}
+                            {% set t=s['total_time'] %}
+                            {% if t >= 60 %}{{ t // 60 }}m {{ t % 60 }}s
+                            {% else %}{{ t }}s{% endif %}
+                        {% else %}—{% endif %}
+                    </td>
+                    <td>{{ s['last_seen'] }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#logModal"
+                            data-id="{{ s['teacher_id'] }}"
+                            data-name="{{ s['first_name'] }} {{ s['last_name'] }}">
+                            <i class="fa-solid fa-eye"></i> See Log Activity
+                        </button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-center text-muted">No activity found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="modal fade" id="logModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Activity Log — <span id="modalTeacherName"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <table class="table table-bordered table-hover mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Log ID</th>
+                            <th>Page Title</th>
+                            <th>Page URL</th>
+                            <th>Entered At</th>
+                            <th>Exited At</th>
+                            <th>Time Spent</th>
+                            <th>IP Address</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalLogBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+const allLogs = {{ all_logs | tojson | default('[]') | safe }};
+
+document.querySelectorAll('[data-bs-target="#logModal"]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+        const tid=parseInt(this.dataset.id)
+        const name=this.dataset.name
+        document.getElementById('modalTeacherName').textContent=name
+        const filtered=allLogs.filter(l=>l.teacher_id===tid)
+        const tbody=document.getElementById('modalLogBody')
+        tbody.innerHTML=''
+        if(filtered.length===0){
+            tbody.innerHTML='<tr><td colspan="7" class="text-center text-muted">No logs found.</td></tr>'
+            return
+        }
+        filtered.forEach(function(l,i){
+            let time='—'
+            if(l.time_spent_seconds!==null){
+                const s=l.time_spent_seconds
+                time=s>=60 ? Math.floor(s/60)+'m '+(s%60)+'s' : s+'s'
+            } else {
+                time='<span class="badge bg-success">Active</span>'
+            }
+            tbody.innerHTML+=`<tr>
+                <td>${l.log_id}</td>
+                <td>${l.page_name}</td>
+                <td>${l.page_url}</td>
+                <td>${l.entered_at}</td>
+                <td>${l.exited_at||'—'}</td>
+                <td>${time}</td>
+                <td>${l.ip_address||'—'}</td>
+            </tr>`
+        })
+    })
+})
+
+document.getElementById('searchInput').addEventListener('keyup',function(){
+    const val=this.value.toLowerCase()
+    document.querySelectorAll('#teacherTableBody tr').forEach(function(row){
+        row.style.display=row.innerText.toLowerCase().includes(val)?'':'none'
+    })
+})
+</script>
+
+<style>
+.search-box{width:220px;position:relative;}
+.search-box .search-icon{position:absolute;top:50%;left:12px;transform:translateY(-50%);color:#276ce4;pointer-events:none;}
+.search-box input{padding-left:35px!important;border-radius:25px;}
+</style>
+
+{% endblock %}

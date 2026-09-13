@@ -1,0 +1,143 @@
+{% extends "layouts/admin_base.html" %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2><i class="fa-solid fa-bell"></i> Notifications</h2>
+</div>
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>Send Notification</h4>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{url_for('admin.send_notification')}}">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Receiver Role</label>
+                    <select class="form-select" name="receiver_role" required>
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Receiver</label>
+                    <select class="form-select" name="receiver_id">
+                        <option value="">All (Broadcast)</option>
+                        {% for user in users %}
+                        <option value="{{ user.user_id }}" data-role="{{ user.role_type }}">{{ user.email }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <script>
+                        document.getElementById('receiver_role').addEventListener('change', function() {
+                            const role=this.value;
+                            const options=document.querySelectorAll('#receiver_id option');
+                            options.forEach(opt => {
+                                if(opt.value==='' || opt.dataset.role===role){
+                                    opt.style.display = '';
+                                } 
+                                else{
+                                    opt.style.display='none';
+                                }
+                            });
+                            document.getElementById('receiver_id').value='';
+                        });
+                        </script>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Related Course (Optional)</label>
+                    <select class="form-select" name="related_course_id">
+                        <option value="">None</option>
+                        {% for course in courses %}
+                        <option value="{{ course.course_id }}">{{ course.course_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-control" name="title" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea class="form-control" name="description" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Send Notification</button>
+        </form>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        <h4>All Notifications</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for notif in notifications %}
+                <tr>
+                    <td>{{ notif.id }}</td>
+                    <td>
+                        <button class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#notifModal{{ notif.id }}">
+                            {{ notif.title }}
+                        </button>
+                    </td>
+                    <td><span class="badge bg-secondary">{{ notif.sender_role }}</span></td>
+                    <td><span class="badge bg-info text-dark">{{ notif.receiver_role }}</span></td>
+                    <td>
+                        {% if notif.status == 'Resolved' %}
+                            <span class="badge bg-success">Resolved</span>
+                        {% elif notif.status == 'Rejected' %}
+                            <span class="badge bg-danger">Rejected</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ notif.created_at }}</td>
+                    <td>
+                        <form method="POST" action="{{url_for('admin.delete_notification')}}" style="display:inline;">
+                            <input type="hidden" name="notif_id" value="{{ notif.id }}">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete?')">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+
+                <div class="modal fade" id="notifModal{{ notif.id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">{{ notif.title }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p><strong>From:</strong> {{ notif.sender_role }}</p>
+                                <p><strong>To:</strong> {{ notif.receiver_role }}</p>
+                                <p><strong>Date:</strong> {{ notif.created_at }}</p>
+                                <hr>
+                                <p>{{ notif.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% if not notifications %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted">No notifications found.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

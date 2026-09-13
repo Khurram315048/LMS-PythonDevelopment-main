@@ -1,0 +1,81 @@
+{% extends "layouts/student_base.html" %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<head>
+    <title>Student-Notifications</title>
+  </head>
+  {% if msg %}
+        <div class="alert alert-success" style="padding: 10px; background-color: #d4edda; color: #155724; border-radius: 4px; margin-bottom: 15px;">
+            ✅ {{ msg }}
+        </div>
+    {% endif %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0">Notifications</h3>
+        <div class="search-box">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search notifications...">
+        <i class="fa-solid fa-search search-icon"></i>
+        </div>
+    </div>
+
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="notificationTable">
+            {% for notification in complaint_status %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ notification.title }}</td>
+                <td>{{ notification.description }}</td>
+                <td>
+                    {% if notification.is_status == 'Solved' %}
+                        <span class="badge bg-success">Solved</span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+document.getElementById('searchInput').addEventListener('keyup',function(){
+    let filter=this.value.toLowerCase();
+    let rows=document.querySelectorAll('#notificationTable tr');
+    rows.forEach(row =>{
+        let text=row.textContent.toLowerCase();
+        row.style.display=text.includes(filter) ? '' : 'none';
+    });
+});
+</script>
+
+<style>
+.search-box {
+    width: 250px;
+    position: relative;
+}
+
+.search-box .search-icon {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    color: #276ce4;
+}
+
+.search-box input {
+    padding-left: 40px !important; 
+    border-radius: 25px;
+}
+</style>
+{% endblock %}

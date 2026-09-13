@@ -1,0 +1,145 @@
+{% extends "layouts/admin_base.html" %}
+{% block title %}Class Timetable{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2><i class="fa-solid fa-calendar-days"></i> Class Timetable</h2>
+</div>
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>Course Schedule</h4>
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addScheduleModal">
+            <i class="fa-solid fa-plus"></i> Add Schedule
+        </button>
+    </div>
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Course</th>
+                    <th>Section</th>
+                    <th>Day</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Location</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for schedule in schedules %}
+                <tr>
+                    <td>{{ schedule.course_schedule_id }}</td>
+                    <td>{{ schedule.course_name }}</td>
+                    <td>{{ schedule.section_name }}</td>
+                    <td>{{ schedule.day_of_week }}</td>
+                    <td>{{ schedule.start_time }}</td>
+                    <td>{{ schedule.end_time }}</td>
+                    <td>{{ schedule.location }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editScheduleModal{{ schedule.course_schedule_id }}">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <form method="POST" action="{{url_for('admin.delete_schedule')}}" style="display:inline;">
+                            <input type="hidden" name="course_schedule_id" value="{{ schedule.course_schedule_id }}">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this schedule?')">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+
+                <div class="modal fade" id="editScheduleModal{{ schedule.course_schedule_id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Edit Schedule</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="POST" action="{{url_for('admin.update_schedule')}}">
+                                    <input type="hidden" name="course_schedule_id" value="{{ schedule.course_schedule_id }}">
+                                    <div class="mb-3">
+                                        <label class="form-label">Day</label>
+                                        <select class="form-select" name="day_of_week" required>
+                                            {% for day in ['Monday','Tuesday','Wednesday','Thursday','Friday'] %}
+                                            <option value="{{ day }}" {% if schedule.day_of_week == day %}selected{% endif %}>{{ day }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Start Time</label>
+                                        <input type="time" class="form-control" name="start_time" value="{{ schedule.start_time }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">End Time</label>
+                                        <input type="time" class="form-control" name="end_time" value="{{ schedule.end_time }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Location</label>
+                                        <input type="text" class="form-control" name="location" value="{{ schedule.location }}">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="addScheduleModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Schedule</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{url_for('admin.add_schedule')}}">
+                    <div class="mb-3">
+                        <label class="form-label">Course</label>
+                        <select class="form-select" name="course_id" required>
+                            {% for course in courses %}
+                            <option value="{{ course.course_id }}">{{ course.course_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Section</label>
+                        <select class="form-select" name="section_id">
+                            {% for section in sections %}
+                            <option value="{{ section.section_id }}">{{ section.section_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Day</label>
+                        <select class="form-select" name="day_of_week" required>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Start Time</label>
+                        <input type="time" class="form-control" name="start_time" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">End Time</label>
+                        <input type="time" class="form-control" name="end_time" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Location</label>
+                        <input type="text" class="form-control" name="location" placeholder="e.g. Lab 01">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Portal{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="../../static/css/base_style.css">
+    <link rel="stylesheet" href="../../static/css/teachers_module.css">
+    <link rel="stylesheet" href="../../static/css/admin_css/dashboard.css">
+    <link rel="stylesheet" href="../../static/css/admin_css/sidebar.css">
+    <link rel="icon" type="image/jpg" href="../../static/images/logo.jpg">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../static/js/notifications.js"></script>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-left">
+            <img src="../../static/images/logo.jpg" alt="ISP Logo" class="logo">
+            <h1 class="tchr_text">Admin Management System</h1>
+        </div>
+        <div class="header-right" style="display: flex; align-items: center; gap: 20px;">
+            <a href="{{url_for('admin.admin_profile')}}" class="login-btn" style="text-decoration: none; color: white; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-circle-user" style="font-size: 1.3rem;"></i>
+                <span>Profile</span>
+            </a>
+            <a href="{{url_for('logout')}}" class="logout-btn" style="text-decoration: none; color: white; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </header>
+    <div class="main-wrapper">
+        <nav class="sidebar">
+            <ul>
+                <li><a href="{{url_for('admin.admin_profile')}}"><i class="fa-solid fa-user"></i> <span>Profile</span></a></li>
+                <li><a href="{{url_for('admin.admin_dashboard')}}"><i class="fa-solid fa-chart-line"></i> <span>Dashboard</span></a></li>
+                <li class="has-submenu">
+                    <a href="#"><i class="fa-solid fa-gear"></i> <span>System Management</span> </a>
+                    <ul class="submenu">
+                        <li><a href="{{url_for('admin.system_settings')}}"><i class="fa-solid fa-toggle-on"></i> Settings</a></li>
+                        <li><a href="{{url_for('admin.system_controls')}}"><i class="fa-solid fa-sliders"></i> Controls</a></li>
+                    </ul>
+                </li>
+                <li class="has-submenu">
+                    <a href="#"><i class="fas fa-network-wired"></i> <span>Activity Log</span></a>
+                    <ul class="submenu">
+                        <li><a href="{{url_for('admin.student_log')}}"><i class="fas fa-user-clock"></i>Student Log</a></li>
+                        <li><a href="{{url_for('admin.teacher_log')}}"><i class="fas fa-person-chalkboard"></i>Teacher Log</a></li>
+                        
+                    </ul>
+                </li>
+                <li class="has-submenu">
+                    <a href="#"><i class="fa-solid fa-user-graduate"></i> <span>Student Management</span></a>
+                    <ul class="submenu">
+                        <li><a href="{{url_for('admin.register_student')}}"><i class="fa-solid fa-user-plus"></i> Register Student</a></li>
+                        <li><a href="{{url_for('admin.manage_attendance')}}"><i class="fa-solid fa-calendar-check"></i> Maintain Attendance</a></li>
+                        <li><a href="{{url_for('admin.manage_grades')}}"><i class="fa-solid fa-graduation-cap"></i> Maintain Grades</a></li>
+                        <li><a href="{{url_for('admin.fee_management')}}"><i class="fa-solid fa-dollar-sign"></i> Fee Management</a></li>
+                        <li><a href="{{url_for('admin.course_registration')}}"><i class="fa-solid fa-book-open"></i> Course Registration</a></li>
+                        <li><a href="{{url_for('admin.stSemester_freeze')}}"><i class="fa-solid fa-snowflake"></i> Semester Freeze</a></li>
+                        <li><a href="{{ url_for('admin.promote_students') }}"><i class="fa-solid fa-circle-arrow-up"></i> Promote Students</a></li>
+                        <li><a href="{{url_for('admin.stSummer_semester')}}"><i class="fa-solid fa-sun"></i> Summer Semester</a></li>
+                    </ul>
+                </li>
+                <li class="has-submenu">
+                    <a href="#"><i class="fa-solid fa-chalkboard-user"></i> <span>Teacher Management</span></a>
+                    <ul class="submenu">
+                        <li><a href="{{url_for('admin.view_teachers')}}"><i class="fa-solid fa-users"></i> View Teachers</a></li>
+                        <li><a href="{{url_for('admin.assign_classes')}}"><i class="fa-solid fa-chalkboard"></i> Assign Classes</a></li>
+                        <li><a href="{{url_for('admin.course_attendance')}}"><i class="fa-solid fa-clipboard-user"></i> Course Attendance</a></li>
+                        <li><a href="{{url_for('admin.salary_record')}}"><i class="fa-solid fa-money-bill-wave"></i> Salary Records</a></li>
+                    </ul>
+                </li>
+                <li class="has-submenu">
+                    <a href="#"><i class="fa-solid fa-calendar-days"></i> <span>Schedule Management</span></a>
+                    <ul class="submenu">
+                        <li><a href="{{url_for('admin.class_timetable')}}"><i class="fa-solid fa-table-cells"></i> Class Timetable</a></li>
+                        <li><a href="{{url_for('admin.exam_dates')}}"><i class="fa-solid fa-file-pen"></i> Exam Dates</a></li>
+                    </ul>
+                </li>
+                <li class="has-submenu">
+                    <a href="#"><i class="fa-solid fa-diagram-project"></i> <span>FYP Management</span> </a>
+                    <ul class="submenu">
+                        <li><a href="{{url_for('admin.get_proposals')}}"><i class="fa-solid fa-file-circle-plus"></i> Assign Supervisor</a></li>
+                        <li><a href="{{url_for('admin.fyp_proposals')}}"><i class="fa-solid fa-file-circle-plus"></i> FYP Proposals</a></li>
+                    </ul>
+                </li>
+                <li><a href="{{url_for('admin.complaints')}}"><i class="fa-solid fa-comment-dots"></i> <span>Complaints</span></a></li>
+                <li><a href="{{url_for('admin.admin_notifications')}}"><i class="fa-solid fa-bell"></i> <span>Notifications</span></a></li>
+                <li><a href="{{url_for('logout')}}" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span></a></li>
+            </ul>
+        </nav>
+        <main class="content-area">
+            {% block content %}{% endblock %}
+            {% block scripts %}{% endblock %}
+        </main>
+    </div>
+    <footer>
+        <p>&copy; 2023 Admin Management System. All rights reserved.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,227 @@
+{% extends "layouts/teacher_base.html" %}
+
+{% block title %}FYP Management{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2><i class="fa-solid fa-user-tie"></i> FYP Supervision Dashboard</h2>
+    
+ <div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-info text-white shadow">
+            <div class="card-body">
+                <h5>Total Groups</h5>
+                <h3>{{ total }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white shadow">
+            <div class="card-body">
+                <h5>Completed/Approved</h5>
+                <h3>{{ completed }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-warning text-dark shadow">
+            <div class="card-body">
+                <h5>Pending Approvals</h5>
+                <h3>{{ pending }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="card shadow border-0">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Assigned FYP Groups</h5>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Group ID</th>
+                        <th>Project Title</th>
+                        <th>Student Name</th>
+                        <th>Status</th>
+                        <th>Proposal</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for group in fyp_data %}
+                    <tr>
+                        <td>#FYP-{{ group.fyp_id }}</td>
+                        <td><strong>{{ group.project_title }}</strong></td>
+                        <td>
+                            <a href="javascript:void(0)" 
+                               class="text-primary fw-bold view-profile" 
+                               data-name="{{ group.first_name }} {{ group.last_name }}"
+                               data-reg="{{ group.reg_num }}"
+                               data-contact="{{ group.contact }}"
+                               data-email="{{ group.email }}"
+                               data-program="{{ group.program_name }}"
+                               data-semester="{{ group.semester or 'N/A' }}"
+                               data-pic="{{ url_for('static', filename=group.profile_pic) if group.profile_pic else '' }}">
+                                {{ group.first_name }} {{ group.last_name }}
+                            </a>
+                        </td>
+                        <td>
+                            <span class="badge {% if group.status == 'Approved' %}bg-success{% elif group.status == 'Pending Approval' %}bg-warning{% else %}bg-danger{% endif %}">
+                                {{ group.status }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if group.last_submission %}
+                            <a href="{{ url_for('static', filename=group.last_submission) }}" target="_blank" class="btn btn-sm btn-link text-danger">
+                                <i class="fa-solid fa-file-pdf"></i> View PDF
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if group.status == 'Pending Approval' %}
+                            <a href="{{ url_for('teacher.approve_fyp', fyp_id=group.fyp_id, status='Approved') }}" class="btn btn-sm btn-success">
+                                <i class="fa-solid fa-check"></i> Accept
+                            </a>
+                            <a href="{{ url_for('teacher.approve_fyp', fyp_id=group.fyp_id, status='Rejected') }}" class="btn btn-sm btn-danger">
+                                <i class="fa-solid fa-xmark"></i> Reject
+                            </a>
+                            {% else %}
+                            <span class="text-muted small">Processed</span>
+                            {% endif %}
+                            <a href="#" class="btn btn-sm btn-primary position-relative ms-2" data-bs-toggle="modal" data-bs-target="#chatModal{{ group.fyp_id }}">
+                            <i class="fa-solid fa-comments"></i> Chat
+                            {% if group.has_unread %}
+                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                                <span class="visually-hidden">New alerts</span>
+                            </span>
+                            {% endif %}
+                        </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    {% for group in fyp_data %}
+<div class="modal fade" id="chatModal{{ group.fyp_id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header  text-white" style="background:#2C3E50">
+                <h5 class="modal-title">
+                    <i class="fa-solid fa-comment-dots me-2"></i>Chat: {{ group.first_name }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body p-0">
+                <div class="chat-container" id="chatContainer{{ group.fyp_id }}" style="height: 350px; overflow-y: auto; background-color: #e5ddd5; padding: 15px;">
+                    {% if group.messages %}
+                        {% for msg in group.messages %}
+                            <div class="d-flex mb-2 {% if msg.sender_role == 'teacher' %}justify-content-end{% else %}justify-content-start{% endif %}">
+                            <div class="chat-bubble {% if msg.sender_role == 'teacher' %}msg-teacher{% else %}msg-student{% endif %}">
+                                <p class="mb-0" style="font-size: 0.95rem;">{{ msg.message }}</p>
+                                <small class="text-muted d-block text-end" style="font-size: 0.7rem;">
+                                    {{ msg.created_at.strftime('%I:%M %p') }}
+                                </small>
+                            </div>
+                        </div>
+                        <script>
+                        document.getElementById('chatModal{{ group.fyp_id }}').addEventListener('shown.bs.modal', function () {
+                            var container = document.getElementById('chatContainer{{ group.fyp_id }}');
+                            container.scrollTop = container.scrollHeight;
+                        });
+                    </script>
+                    {% endfor %}
+                    {% else %}
+                        <div class="text-center text-muted mt-5">
+                            <p>No previous conversation.</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <form action="{{ url_for('teacher.send_message', fyp_id=group.fyp_id) }}" method="POST" class="p-3 bg-light border-top">
+                    <div class="input-group">
+                        <input type="text" name="message" class="form-control" placeholder="Type a message..." required autocomplete="off">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+    {% endfor %}
+</div>
+
+
+<div class="modal fade" id="studentProfileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="profileModalLabel"><i class="fa-solid fa-id-card me-2"></i>Student Profile</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <div id="profile-pic-container" class="mb-3">
+                    </div>
+                
+                <h4 id="modal-student-name" class="fw-bold mb-1"></h4>
+                <p id="modal-program" class="text-muted mb-3"></p>
+                
+                <div class="card bg-light border-0">
+                    <div class="card-body text-start">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-secondary">Registration No:</span>
+                            <span id="modal-reg" class="fw-bold"></span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-secondary">Contact Num</span>
+                            <span id="modal-contact" class="fw-bold"></span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-secondary">Email:</span>
+                            <span id="modal-email" class="fw-bold"></span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-secondary">Current Semester:</span>
+                            <span id="modal-semester" class="fw-bold"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+
+.chat-bubble {
+    max-width: 80%;
+    padding: 8px 15px;
+    margin-bottom: 10px;
+    position: relative;
+    box-shadow: 0 1px 0.5px #2C3E50;
+    border-radius: 15px;
+}
+
+.msg-teacher {
+    background-color: #dcf8c6 !important;
+    color: #2C3E50;
+    border-bottom-right-radius: 2px !important;
+}
+
+.msg-student {
+    background-color: #ffffff !important;
+    color: #2C3E50;
+    border-bottom-left-radius: 2px !important;
+}
+</style>
+<script src="{{ url_for('static', filename='js/fyp_management.js') }}"></script>
+{% endblock %}

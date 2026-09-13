@@ -1,0 +1,67 @@
+{% extends "layouts/student_base.html" %}
+
+{% block title %}Student Fee Dashboard{% endblock %}
+
+{% block content %}
+<head>
+    <title>Student-Fee-Dashboard</title>
+  </head>
+
+<marquee behavior="scroll" direction="left" scrollamount="7.5" onmouseover="this.stop();"
+    onmouseout="this.start();">
+    <a href="/upload_fee" class="upload-link">Click Here To Upload Fee Voucher</a>
+</marquee>
+<div class="container">
+    <div class="dashboard-content">
+        <h1 class="headings">Fee Dashboard</h1>
+
+        {% if fee_records %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Program</th>
+                    <th>Month</th>
+                    <th>Fee Amount</th>
+                    <th>Front Pic Voucher</th>
+                    <th>Back Pic Voucher</th>
+                    <th>Paid At</th>
+                    <th>Fee Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in fee_records %}
+                <tr>
+                    <td>{{ record.program }}</td>
+                    <td>{{ record.month }}</td>
+                    <td>{{ record.fee_amount }}</td>
+                    <td>
+                        {% if record.front_voucher %}
+                            <a href="{{ url_for('static',path=record.front_voucher) }}" target="_blank">
+                                <img src="{{ url_for('static',path=record.front_voucher) }}" alt="Front Pic Voucher" class="thumbnail" width="40px" height="40px">
+                            </a>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if record.back_voucher %}
+                            <a href="{{ url_for('static',path=record.back_voucher) }}" target="_blank">
+                                <img src="{{ url_for('static',path=record.back_voucher) }}" alt="Back Pic Voucher" class="thumbnail" width="40px" height="40px">
+                            </a>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>{{ record.paid_date }}</td>
+                    <td>{{ record.status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p>No fee records found.</p>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

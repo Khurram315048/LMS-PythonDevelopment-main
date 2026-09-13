@@ -1,0 +1,40 @@
+{% extends "layouts/student_base.html" %}
+{% block title %}Select Summer Subject{% endblock %}
+{% block content %}
+
+<div class="container">
+  <h2>Select Subject for Summer Intake</h2>
+  {% if subjects %}
+  <table border="1" width="100%" cellpadding="8" style="border-collapse: collapse;">
+    <tr style="background-color: #f2f2f2;">
+      <th>#</th>
+      <th>Course Name</th>
+      <th>Credit Hours</th>
+      <th>Teacher Name</th>
+      <th>Semester</th>
+      <th>Action</th>
+    </tr>
+    {% for course in subjects %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td>{{ course.course_name }}</td>
+      <td>{{ course.credit_hours }}</td>
+      <td>{{ course.teacher_name }}</td>
+      <td>{{ course.semester }}</td>
+      <td>
+        <form method="POST" action="{{ url_for('select_summer_subject',subject_id=course.course_id) }}" style="display:inline;">
+            <button type="submit" style="background:#3aaed7;border:none;padding:5px 10px;cursor:pointer;color:white;border-radius:4px;">Select</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+    <p style="color:red; text-align:center; padding:20px;">No more courses available to select.</p>
+    <div style="text-align:center;">
+        <a href="{{ url_for('summer_semester') }}" class="btn-yellow">Go Back</a>
+    </div>
+  {% endif %}
+</div>
+
+{% endblock %}

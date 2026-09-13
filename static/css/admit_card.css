@@ -1,0 +1,204 @@
+
+        .admit-marquee-bar {
+            background: linear-gradient(90deg, #1a3c6e 0%, #1e5096 50%, #1a3c6e 100%);
+            color: #fff;
+            padding: 0;
+            overflow: hidden;
+            border-bottom: 3px solid #f0a500;
+            cursor: pointer;
+        }
+
+        .admit-marquee-bar marquee {
+            padding: 9px 0;
+            font-size: 0.92rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+
+        .admit-marquee-bar marquee span {
+            margin: 0 60px;
+        }
+
+        .admit-marquee-bar .marquee-icon {
+            color: #f0a500;
+            margin-right: 8px;
+            animation: blink-icon 1.2s infinite;
+        }
+
+        @keyframes blink-icon {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.3; }
+        }
+
+        #admitCardModal .modal-dialog {
+            max-width: 720px;
+        }
+
+        .admit-card-wrapper {
+            border: 2px solid #1a3c6e;
+            border-radius: 10px;
+            overflow: hidden;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .admit-card-header-band {
+            background: linear-gradient(135deg, #1a3c6e, #1e5096);
+            color: #fff;
+            padding: 18px 24px 14px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .admit-card-header-band img {
+            width: 62px;
+            height: 62px;
+            border-radius: 50%;
+            border: 2px solid #f0a500;
+            object-fit: cover;
+        }
+
+        .admit-card-header-band .inst-name {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .admit-card-header-band .card-subtitle {
+            font-size: 0.8rem;
+            opacity: 0.85;
+            margin-top: 2px;
+        }
+
+        .admit-card-header-band .exam-badge {
+            margin-left: auto;
+            background: #f0a500;
+            color: #1a3c6e;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 5px 14px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+        .admit-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            background: #f8f9fc;
+            border-bottom: 1.5px solid #d0d9ec;
+        }
+
+        .admit-info-cell {
+            padding: 10px 20px;
+            border-right: 1px solid #d0d9ec;
+            border-bottom: 1px solid #d0d9ec;
+        }
+
+        .admit-info-cell:nth-child(even) {
+            border-right: none;
+        }
+
+        .admit-info-cell .info-label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #6b7280;
+            margin-bottom: 2px;
+        }
+
+        .admit-info-cell .info-value {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #1a3c6e;
+        }
+        .admit-course-section {
+            padding: 14px 20px 18px;
+            background: #fff;
+        }
+
+        .admit-course-section .section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: #1a3c6e;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #f0a500;
+            display: inline-block;
+        }
+
+        .admit-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+
+        .admit-table thead tr {
+            background: #1a3c6e;
+            color: #fff;
+        }
+
+        .admit-table thead th {
+            padding: 8px 12px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border: none;
+        }
+
+        .admit-table tbody tr {
+            border-bottom: 1px solid #e9ecf3;
+        }
+
+        .admit-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .admit-table tbody td {
+            padding: 8px 12px;
+            color: #374151;
+            vertical-align: middle;
+        }
+
+        .admit-table tbody tr:nth-child(even) {
+            background: #f4f6fb;
+        }
+
+        .status-allowed {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #ecfdf5;
+            color: #059669;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(5,150,105,0.25);
+        }
+        .admit-card-footer-strip {
+            background: #f0f2f8;
+            border-top: 1.5px solid #d0d9ec;
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.72rem;
+            color: #6b7280;
+        }
+
+        .admit-card-footer-strip strong {
+            color: #1a3c6e;
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            #admitCardModal,
+            #admitCardModal * { visibility: visible; }
+            #admitCardModal { position: absolute; left: 0; top: 0; width: 100%; }
+            .modal-footer { display: none !important; }
+        }

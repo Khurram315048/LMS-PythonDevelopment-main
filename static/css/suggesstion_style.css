@@ -1,0 +1,108 @@
+/* General Page Background (Light Blue/Grey to make the White form pop) */
+body {
+    background-color: #f4f7fa; /* Very light blue-grey */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Main Container - The "Card" Shape */
+.container {
+    background-color: #ffffff;
+    max-width: 700px;
+    width: 90%; /* Responsive width for mobile */
+    margin: 40px auto; /* Centers the card and gives space from Navbar */
+    padding: 40px;
+    border-radius: 12px; /* Smooth rounded corners */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    border-top: 5px solid #0056b3; /* Blue accent bar on top */
+}
+
+/* Headings Style */
+.headings {
+    color: #0056b3; /* Deep Blue */
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Form Label Styling */
+form label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    margin-top: 15px;
+}
+
+/* Select Dropdown and Textarea Styling */
+select, 
+textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e6ed;
+    border-radius: 8px;
+    background-color: #fcfcfc;
+    font-size: 1rem;
+    color: #444;
+    transition: all 0.3s ease; /* smooth transition for interactivity */
+    box-sizing: border-box; /* Ensures padding doesn't break width */
+    font-family: inherit;
+}
+
+/* Interactive Focus State (When user clicks input) */
+select:focus, 
+textarea:focus {
+    border-color: #3a8dde; /* Brighter Blue */
+    background-color: #fff;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(58, 141, 222, 0.15); /* Blue Glow */
+}
+
+/* Textarea specific resize */
+textarea {
+    resize: vertical; /* User can only resize height, keeping layout intact */
+    min-height: 120px;
+}
+
+/* Button Styling */
+.login-button {
+    display: block;
+    width: 100%;
+    margin-top: 25px;
+    padding: 14px;
+    background-color: #0056b3; /* Primary Blue */
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Button Interactive Hover Effects */
+.login-button:hover {
+    background-color: #004494; /* Darker Blue on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+    box-shadow: 0 4px 12px rgba(0, 86, 179, 0.3);
+}
+
+.login-button:active {
+    transform: translateY(0); /* Button presses down on click */
+}
+
+/* Responsive Adjustments for Mobile */
+@media screen and (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 20px;
+        margin-top: 20px; /* Less margin on mobile */
+    }
+
+    .headings {
+        font-size: 1.6rem;
+    }
+}

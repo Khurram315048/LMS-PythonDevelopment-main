@@ -1,0 +1,92 @@
+{% extends "layouts/student_base.html" %}
+{% block title %}Semester Freeze{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    {% if already_applied %}
+    <div class="card shadow border-0">
+        <div class="card-header text-white" style="background:#2C3E50;">
+            <h5 class="mb-0"><i class="fa-solid fa-snowflake me-2"></i>Semester Freeze Request</h5>
+        </div>
+        <div class="card-body p-4">
+
+            {% if existing_request.status == 'Approved' %}
+            <div class="text-center mb-4">
+                <i class="fa-solid fa-circle-check fa-4x text-success mb-3"></i>
+                <h4 class="text-success fw-bold">Request Approved</h4>
+                <p class="text-muted">Your semester freeze has been approved by the coordinator.</p>
+            </div>
+            {% elif existing_request.status == 'Rejected' %}
+            <div class="text-center mb-4">
+                <i class="fa-solid fa-circle-xmark fa-4x text-danger mb-3"></i>
+                <h4 class="text-danger fw-bold">Request Rejected</h4>
+                <p class="text-muted">Your semester freeze request was not approved. Please contact the coordinator.</p>
+            </div>
+            {% else %}
+            <div class="text-center mb-4">
+                <i class="fa-solid fa-clock fa-4x text-warning mb-3"></i>
+                <h4 class="text-warning fw-bold">Pending Approval</h4>
+                <p class="text-muted">Your request is under review by the coordinator.</p>
+            </div>
+            {% endif %}
+
+            <table class="table table-bordered mt-3">
+                <tr>
+                    <th style="width:35%">Semester</th>
+                    <td>{{ existing_request.semester }}</td>
+                </tr>
+                <tr>
+                    <th>Reason</th>
+                    <td>{{ existing_request.reason }}</td>
+                </tr>
+                <tr>
+                    <th>Applied Date</th>
+                    <td>{{ existing_request.applied_date }}</td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                    <td>
+                        {% if existing_request.status == 'Approved' %}
+                            <span class="badge bg-success fs-6">Approved</span>
+                        {% elif existing_request.status == 'Rejected' %}
+                            <span class="badge bg-danger fs-6">Rejected</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark fs-6">Pending</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    {% elif semester %}
+    <div class="card shadow border-0">
+        <div class="card-header text-white" style="background:#2C3E50;">
+            <h5 class="mb-0"><i class="fa-solid fa-snowflake me-2"></i>Semester Freeze Application</h5>
+        </div>
+        <div class="card-body p-4">
+            <form method="POST" onsubmit="return confirm('⚠️ Are you sure you want to freeze this semester?');">
+                <div class="mb-3">
+                    <label class="form-label"><strong>Current Semester:</strong></label>
+                    <input type="text" name="semester" class="form-control" value="{{ semester }}" readonly>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><strong>Reason for Freezing:</strong></label>
+                    <textarea name="reason" class="form-control" rows="4" placeholder="Enter your reason..." required></textarea>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-danger px-5">Submit Application</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="alert alert-warning text-center">
+        No semester record found. Please contact the admin.
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

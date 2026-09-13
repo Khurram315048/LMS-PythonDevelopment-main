@@ -1,0 +1,95 @@
+{% extends "layouts/admin_base.html" %}
+{% block title %}Complaints{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2><i class="fa-solid fa-comment-dots"></i> Complaints & Suggestions</h2>
+</div>
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">All Complaints</h4>
+        <input type="text" id="searchInput" class="form-control w-auto" placeholder="Search complaints...">
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover" id="complaintsTable">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Submitted By</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Attachment</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="complaintsBody">
+                {% for complaint in complaints %}
+                <tr>
+                    <td>{{ complaint.complt_sugst_id }}</td>
+                    <td>{{ complaint.email }}</td>
+                    <td>{{ complaint.title }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#descModal{{ complaint.complt_sugst_id }}">
+                            <i class="fa-solid fa-eye"></i> View
+                        </button>
+                    </td>
+                    <td>
+                        {% if complaint.image_name %}
+                            <a href="{{ complaint.image_name }}" target="_blank" class="btn btn-sm btn-info">
+                                <i class="fa-solid fa-paperclip"></i> Attachment
+                            </a>
+                        {% else %}
+                            <span class="text-muted">None</span>
+                        {% endif %}
+                    </td>
+                    <td style="white-space: nowrap;">
+                        <form method="POST" action="{{url_for('admin.solve_complaint')}}" style="display:inline;">
+                            <input type="hidden" name="complt_sugst_id" value="{{ complaint.complt_sugst_id }}">
+                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Mark as solved?')">
+                                <i class="fa-solid fa-circle-check"></i> Solved
+                            </button>
+                        </form>
+                        <form method="POST" action="#" style="display:inline;">
+                            <input type="hidden" name="complt_sugst_id" value="{{ complaint.complt_sugst_id }}">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this complaint?')">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <div class="modal fade" id="descModal{{ complaint.complt_sugst_id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">{{ complaint.title }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p><strong>Submitted by:</strong> {{ complaint.email }}</p>
+                                <p>{{ complaint.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% if not complaints %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted">No complaints found.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#complaintsBody tr');
+        rows.forEach(row => {
+            row.style.display = row.innerText.toLowerCase().includes(filter) ? '' : 'none';
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

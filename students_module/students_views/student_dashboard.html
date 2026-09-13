@@ -1,0 +1,36 @@
+{% extends "layouts/student_base.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="dashboard-content">
+        <h1 class="headings">My Dashboard</h1>
+        {% if schedule %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Subject Name</th>
+                    <th>Teacher Name</th>
+                    <th>Class Time</th>
+                    <th>Location</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in schedule %}
+                <tr>
+                    <td>{{ s.course_name }}</td>
+                    <td>{{ s.teacher_name }}</td>
+                    <td>{{ s.day_of_week }} {{ s.start_time }}</td>
+                    <td>{{ s.location }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="no-courses">You are not enrolled in any courses yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

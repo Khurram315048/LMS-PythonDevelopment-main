@@ -1,0 +1,195 @@
+{% extends "layouts/admin_base.html" %}
+{% block title %}FYP Proposals{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2><i class="fa-solid fa-diagram-project"></i> FYP Proposals</h2>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4>All FYP Groups</h4>
+        <input type="text" id="searchInput" class="form-control w-auto" placeholder="Search...">
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Project Title</th>
+                    <th>Student</th>
+                    <th>Supervisor</th>
+                    <th>Progress</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Last Submission</th>
+                    <th>Created At</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="fypTable">
+                {% for fyp in fyp_groups %}
+                <tr>
+                    <td>{{ fyp.fyp_id }}</td>
+                    <td>{{ fyp.project_title }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#stuModal{{ fyp.fyp_id }}">
+                            <i class="fa-solid fa-eye"></i> {{ fyp.student_name }}
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#tchrModal{{ fyp.fyp_id }}">
+                            <i class="fa-solid fa-eye"></i> {{ fyp.teacher_name }}
+                        </button>
+                    </td>
+                    <td style="min-width:120px;">
+                        <div class="progress" style="height:20px;">
+                            <div class="progress-bar" role="progressbar">{{ fyp.progress }}%</div>
+                        </div>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#dscrModal{{ fyp.fyp_id }}">
+                            <i class="fa-solid fa-eye"></i> View
+                        </button>
+                    </td>
+                    <td>
+                        {% if fyp.status == 'Approved' %}
+                            <span class="badge bg-success">Approved</span>
+                        {% elif fyp.status == 'Rejected' %}
+                            <span class="badge bg-danger">Rejected</span>
+                        {% elif fyp.status == 'Completed' %}
+                            <span class="badge bg-primary">Completed</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">In Progress</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if fyp.last_submission %}
+                            <a href="{{ url_for('static', filename=fyp.last_submission) }}" target="_blank" class="btn btn-sm btn-link text-danger">
+                                <i class="fa-solid fa-file-pdf"></i> View PDF
+                            </a>
+                        {% else %}
+                            <span class="text-muted">None</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ fyp.created_at }}</td>
+                    <td>
+                        <form method="POST" action="{{url_for('admin.updated_fyp')}}" style="display:inline;">
+                            <input type="hidden" name="fyp_id" value="{{ fyp.fyp_id }}">
+                            <select name="status" class="form-select form-select-sm d-inline w-auto">
+                                <option value="In Progress" {% if fyp.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                                <option value="Approved" {% if fyp.status == 'Approved' %}selected{% endif %}>Approved</option>
+                                <option value="Rejected" {% if fyp.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                                <option value="Completed" {% if fyp.status == 'Completed' %}selected{% endif %}>Completed</option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not fyp_groups %}
+                <tr>
+                    <td colspan="9" class="text-center text-muted">No FYP groups found.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% for fyp in fyp_groups %}
+
+
+
+<div class="modal fade" id="dscrModal{{ fyp.fyp_id }}" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Project — {{ fyp.project_title }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                               <p>{{ fyp.description }}</p>
+                                    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+<div class="modal fade" id="stuModal{{ fyp.fyp_id }}" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Student — {{ fyp.student_name }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table table-bordered">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>RegNo#</th>
+                                            <th>Name</th>
+                                            <th>Program</th>
+                                            <th>Current Semester</th>
+                                            <th>Email</th>
+                                            <th>Contact</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>{{ fyp.student_id }}</td>
+                                            <td>{{ fyp.student_name }}</td>
+                                            <td>{{ fyp.program }}</td>
+                                            <td>{{ fyp.semester }}</td>
+                                            <td>{{ fyp.student_email }}</td>
+                                            <td>{{ fyp.student_contact }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                 <div class="modal fade" id="tchrModal{{ fyp.fyp_id }}" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Supervisor — {{ fyp.teacher_name }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table table-bordered">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>ID#</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Contact</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>{{ fyp.teacher_id }}</td>
+                                            <td>{{ fyp.teacher_name }}</td>
+                                            <td>{{ fyp.teacher_email }}</td>
+                                            <td>{{ fyp.teacher_contact }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+{% endfor %}
+
+{% block scripts %}
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        const filter=this.value.toLowerCase();
+        document.querySelectorAll('#fypTable tr').forEach(row => {
+            row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

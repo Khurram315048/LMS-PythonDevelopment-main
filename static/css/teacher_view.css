@@ -1,0 +1,125 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Layout */
+.wrapper {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #003366;
+    color: white;
+    transition: width 0.3s ease;
+    overflow: hidden;
+}
+
+.sidebar.active {
+    width: 60px;
+}
+
+.sidebar-header {
+    padding: 20px;
+    font-size: 18px;
+    text-align: center;
+    background-color: #002244;
+}
+
+.list-items {
+    list-style: none;
+    padding: 0;
+}
+
+.list-items li {
+    padding: 15px 20px;
+}
+
+.list-items li a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.list-items li a:hover {
+    background-color: #001a33;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #f4f6f9;
+}
+
+.topbar {
+    background-color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.topbar h2 {
+    font-size: 20px;
+    color: #003366;
+}
+
+.logout-btn {
+    background-color: #003366;
+    color: white;
+    padding: 8px 15px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.logout-btn:hover {
+    background-color: #002244;
+}
+
+/* Content */
+.content {
+    flex: 1;
+    padding: 30px;
+}
+
+/* Footer */
+.footer {
+    background-color: #003366;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        position: absolute;
+        height: 100%;
+        z-index: 1000;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .sidebar.active {
+        width: 0;
+    }
+}

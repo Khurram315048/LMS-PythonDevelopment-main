@@ -1,0 +1,51 @@
+{% extends "layouts/admin_base.html" %}
+{% block title %}System Settings{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2><i class="fa-solid fa-gear"></i> System Settings</h2>
+</div>
+<div class="card">
+    <div class="card-header">
+        <h4>Portal Access Controls</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Setting</th>
+                    <th>Description</th>
+                    <th>Current Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for setting in settings %}
+                <tr>
+                    <td><strong>{{ setting.setting_key }}</strong></td>
+                    <td>{{ setting.description }}</td>
+                    <td>
+                        {% if setting.setting_value == '1' %}
+                            <span class="badge bg-success">Enabled</span>
+                        {% else %}
+                            <span class="badge bg-danger">Disabled</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="POST" action="{{url_for('admin.edit_settings')}}">
+                            <input type="hidden" name="setting_key" value="{{ setting.setting_key }}">
+                            {% if setting.setting_value == '1' %}
+                                <input type="hidden" name="setting_value" value="0">
+                                <button type="submit" class="btn btn-sm btn-danger" name="disable_button">Disable</button>
+                            {% else %}
+                                <input type="hidden" name="setting_value" value="1">
+                                <button type="submit" class="btn btn-sm btn-success" name="enable_button">Enable</button>
+                            {% endif %}
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends "layouts/admin_base.html" %}
+{% block title %}Fee Management{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2><i class="fa-solid fa-dollar-sign"></i> Fee Management</h2>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Fee Records</h4>
+        <div class="d-flex gap-2">
+            <input type="text" id="searchInput" class="form-control w-auto" placeholder="Search...">
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addFeeModal">
+                <i class="fa-solid fa-plus"></i> Add Fee Record
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Student</th>
+                    <th>Program</th>
+                    <th>Month</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Updated</th>
+                    <th>Voucher</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="feeBody">
+                {% for fee in fees %}
+                <tr>
+                    <td>{{ fee.student_fees_id }}</td>
+                    <td>{{ fee.first_name }} {{ fee.last_name }}</td>
+                    <td>{{ fee.program_name }}</td>
+                    <td>{{ fee.fee_month }}</td>
+                    <td>{{ fee.fee_amount }}</td>
+                    <td>
+                        {% if fee.fee_status == 'paid' %}
+                            <span class="badge bg-success">Paid</span>
+                        {% else %}
+                            <span class="badge bg-danger">Due</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ fee.update_date }}</td>
+                    <td>
+                        {% if fee.voucher_front_pic %}
+                            <a href="{{ url_for('static', filename=fee.voucher_front_pic) }}" target="_blank" class="btn btn-sm btn-info">Front</a>
+                        {% endif %}
+                        {% if fee.voucher_back_pic %}
+                            <a href="{{ url_for('static', filename=fee.voucher_back_pic) }}" target="_blank" class="btn btn-sm btn-secondary">Back</a>
+                        {% endif %}
+                        {% if not fee.voucher_front_pic and not fee.voucher_back_pic %}
+                            <span class="text-muted">None</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('admin.update_fee_status') }}" style="display:inline;">
+                            <input type="hidden" name="student_fees_id" value="{{ fee.student_fees_id }}">
+                            <select name="fee_status" class="form-select form-select-sm d-inline w-auto">
+                                <option value="paid" {% if fee.fee_status == 'paid' %}selected{% endif %}>Paid</option>
+                                <option value="due" {% if fee.fee_status == 'due' %}selected{% endif %}>Due</option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not fees %}
+                <tr><td colspan="9" class="text-center text-muted">No fee records found.</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="addFeeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Fee Record</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ url_for('admin.add_fee_record') }}">
+                    <div class="mb-3">
+                        <label class="form-label">Student</label>
+                        <select class="form-select" name="student_id" required>
+                            <option value="">Select Student</option>
+                            {% for student in students %}
+                            <option value="{{ student.student_id }}">{{ student.first_name }} {{ student.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Program</label>
+                        <select class="form-select" name="program_id" required>
+                            <option value="">Select Program</option>
+                            {% for program in programs %}
+                            <option value="{{ program.program_id }}">{{ program.program_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Fee Amount</label>
+                        <input type="number" step="0.01" class="form-control" name="fee_amount" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Fee Month</label>
+                        <input type="text" class="form-control" name="fee_month" placeholder="e.g. January" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" name="fee_status">
+                            <option value="due">Due</option>
+                            <option value="paid">Paid</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        const filter=this.value.toLowerCase();
+        document.querySelectorAll('#feeBody tr').forEach(row => {
+            row.style.display=row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

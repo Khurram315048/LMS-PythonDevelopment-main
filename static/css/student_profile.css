@@ -1,0 +1,18 @@
+/* student_profile.css - This file is now largely redundant as styles are merged into students_module.css and base.html */
+/* Kept for completeness but consider if all styles can be managed in one place for simplicity */
+
+/* Specific styles for the student profile layout, integrated for clarity */
+body {
+    display: flex; /* Base layout is managed by base.html now */
+    flex-direction: column; /* Allows header/footer to stack, and main-wrapper to flex */
+}
+
+/* No direct styling for .container here, it's covered by students_module.css */
+/* No direct styling for .profile-card here, it's covered by students_module.css */
+/* No direct styling for .details-section here, it's covered by students_module.css */
+/* No direct styling for .details-grid here, it's covered by students_module.css */
+/* No direct styling for .edit-btn here, it's covered by students_module.css */
+/* No direct styling for .notification here, it's covered by students_module.css */
+
+/* Sidebar styling - now extracted to base.html's <style> block for better integration with the overall layout */
+/* .sidebar is defined in base.html's internal style for structural reasons */

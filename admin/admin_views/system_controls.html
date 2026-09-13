@@ -1,0 +1,153 @@
+{% extends "layouts/admin_base.html" %}
+{% block title %}System Controls{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2><i class="fa-solid fa-sliders"></i> System Controls</h2>
+</div>
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Semester Management</h4>
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSemesterModal">
+            <i class="fa-solid fa-plus"></i> Add Semester
+        </button>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Year</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sem in semesters %}
+                <tr>
+                    <td>{{ sem.semester_id }}</td>
+                    <td>{{ sem.name }}</td>
+                    <td>{{ sem.year }}</td>
+                    <td>{{ sem.start_date }}</td>
+                    <td>{{ sem.end_date }}</td>
+                    <td>
+                        <button class="btn btn-warning edit-btn" style="padding: 4px 8px; font-size: 0.775rem;"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editSemesterModal"
+                            data-id="{{ sem.semester_id }}"
+                            data-name="{{ sem.name }}"
+                            data-year="{{ sem.year }}"
+                            data-start="{{ sem.start_date }}"
+                            data-end="{{ sem.end_date }}">
+                            <i class="fa-solid fa-pen"></i> Edit
+                        </button>
+                        <form method="POST" action="{{url_for('admin.delete_semester')}}" style="display:inline;">
+                            <input type="hidden" name="semester_id" value="{{ sem.semester_id }}">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this semester?')">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not semesters %}
+                <tr><td colspan="6" class="text-center text-muted">No semesters found.</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="modal fade" id="addSemesterModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Semester</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{url_for('admin.add_semester')}}">
+                    <div class="mb-3">
+                        <label class="form-label">Semester Name</label>
+                        <select class="form-select" name="name" required>
+                            <option value="">--Select Here--</option>
+                            <option value="Fall">Fall</option>
+                            <option value="Spring">Spring</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Year</label>
+                        <input type="number" class="form-control" name="year" min="2020" max="2100" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" class="form-control" name="start_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">End Date</label>
+                        <input type="date" class="form-control" name="end_date" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="editSemesterModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Semester</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{url_for('admin.edit_semester')}}">
+                    <input type="hidden" name="semester_id" id="edit_semester_id">
+                    <div class="mb-3">
+                        <label class="form-label">Semester Name</label>
+                        <select class="form-select" name="name" id="edit_name" required>
+                            <option value="Fall">Fall</option>
+                            <option value="Spring">Spring</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Year</label>
+                        <input type="number" class="form-control" name="year" id="edit_year" min="2020" max="2100" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" class="form-control" name="start_date" id="edit_start_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">End Date</label>
+                        <input type="date" class="form-control" name="end_date" id="edit_end_date" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.getElementById('edit_semester_id').value = this.dataset.id;
+            document.getElementById('edit_year').value        = this.dataset.year;
+            document.getElementById('edit_start_date').value  = this.dataset.start;
+            document.getElementById('edit_end_date').value    = this.dataset.end;
+
+            const nameSelect = document.getElementById('edit_name');
+            for (let option of nameSelect.options) {
+                option.selected = option.value === this.dataset.name;
+            }
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

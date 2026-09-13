@@ -1,0 +1,173 @@
+{% extends "layouts/admin_base.html" %}
+{% block title %}Teacher Salary Records{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2><i class="fa-solid fa-money-bill-wave"></i> Teacher Salary Records</h2>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Salary Records</h4>
+        <div class="d-flex gap-2">
+            <input type="text" id="searchInput" class="form-control w-auto" placeholder="Search...">
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSalaryModal">
+            <i class="fa-solid fa-plus"></i> Add Record
+        </button>
+        </div>
+    </div>
+
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Teacher</th>
+                    <th>Month</th>
+                    <th>Year</th>
+                    <th>Basic Salary</th>
+                    <th>Bonus</th>
+                    <th>Deductions</th>
+                    <th>Net Salary</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="salBody">
+                {% for record in salary_records %}
+                <tr>
+                    <td>{{ record.salary_id }}</td>
+                    <td>{{ record.first_name }} {{ record.last_name }}</td>
+                    <td>{{ record.month }}</td>
+                    <td>{{ record.year }}</td>
+                    <td>{{ record.basic_salary }}</td>
+                    <td>{{ record.bonus }}</td>
+                    <td>{{ record.deductions }}</td>
+                    <td><strong>{{ record.net_salary }}</strong></td>
+                    <td>
+                        {% if record.status == 'Paid' %}
+                        <span class="badge bg-success">Paid</span>
+                        {% else %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editSalaryModal{{ record.salary_id }}">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <form method="POST" action="{{url_for('admin.delete_salary')}}" style="display:inline;">
+                            <input type="hidden" name="salary_id" value="{{ record.salary_id }}">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this record?')">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+
+                
+                <div class="modal fade" id="editSalaryModal{{ record.salary_id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Edit Salary Record</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="POST" action="{{url_for('admin.update_salary')}}">
+                                    <input type="hidden" name="salary_id" value="{{ record.salary_id }}">
+                                    <div class="mb-3">
+                                        <label class="form-label">Basic Salary</label>
+                                        <input type="number" step="0.01" class="form-control" name="basic_salary" value="{{ record.basic_salary }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Bonus</label>
+                                        <input type="number" step="0.01" class="form-control" name="bonus" value="{{ record.bonus }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Deductions</label>
+                                        <input type="number" step="0.01" class="form-control" name="deductions" value="{{ record.deductions }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Status</label>
+                                        <select class="form-select" name="status">
+                                            <option value="Pending" {% if record.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                            <option value="Paid" {% if record.status == 'Paid' %}selected{% endif %}>Paid</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<div class="modal fade" id="addSalaryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Salary Record</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{url_for('admin.add_record')}}">
+                    <div class="mb-3">
+                        <label class="form-label">Teacher</label>
+                        <select class="form-select" name="teacher_id" required>
+                            <option value="">Select Teacher</option>
+                            {% for teacher in teachers %}
+                            <option value="{{ teacher.teacher_id }}">{{ teacher.first_name }} {{ teacher.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Month</label>
+                        <select class="form-select" name="month" required>
+                            {% for m in ['January','February','March','April','May','June','July','August','September','October','November','December'] %}
+                            <option value="{{ m }}">{{ m }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Year</label>
+                        <input type="number" class="form-control" name="year" value="2025" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Basic Salary</label>
+                        <input type="number" step="0.01" class="form-control" name="basic_salary" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Bonus</label>
+                        <input type="number" step="0.01" class="form-control" name="bonus" value="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Deductions</label>
+                        <input type="number" step="0.01" class="form-control" name="deductions" value="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" name="status">
+                            <option value="Pending">Pending</option>
+                            <option value="Paid">Paid</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% block scripts %}
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        const filter=this.value.toLowerCase();
+        document.querySelectorAll('#salBody tr').forEach(row => {
+            row.style.display=row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

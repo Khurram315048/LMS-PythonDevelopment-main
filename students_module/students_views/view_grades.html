@@ -1,0 +1,52 @@
+{% extends "layouts/student_base.html" %}
+
+{% block title %}Student Result Summary{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="profile-card">
+        {% if student_details %}
+        <h1>Result Summary</h1>
+        <h2>{{ student_details.first_name }} {{ student_details.last_name }} | {{ student_details.student_id }}</h2>
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="dashboard-content">
+            {% if all_marks %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sr#</th>
+                        <th>Semester</th>
+                        <th>Course Name</th>
+                        <th>Credit Hours</th>
+                        <th>Obtained Marks</th>
+                        <th>Grade</th>
+                        <th>Subject GPa</th>
+                        <th>Result Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mark in all_marks %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ mark.semester }}</td>
+                        <td>{{ mark.course_name }}</td>
+                        <td>{{ mark.credit_hours }}</td>
+                        <td>{{ mark.total_marks }}</td>
+                        <td>{{ mark.student_grade }}</td>
+                        <td>{{ mark.subject_gpa }}</td>
+                        <td>
+                            <span class="badge {{ 'bg-success' if mark.status == 'Pass' else 'bg-danger' }}">
+                                {{ mark.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

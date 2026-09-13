@@ -1,0 +1,31 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Update Your Information</h2>
+    
+    <div class="details-section">
+        <form action="{{ url_for('admin.admin_edit') }}" method="POST" class="details-grid">
+            <label>First Name</label>
+            <input type="text" name="first_name" value="{{ admin.first_name }}" required>
+            <label>Last Name</label>
+            <input type="text" name="last_name" value="{{ admin.last_name }}" required>
+            <label>Phone/Contact</label>
+            <input type="text" name="contact" value="{{ admin.contact }}" required>
+            <label>Email</label>
+            <input type="email" name="email" value="{{ admin.email }}" required>
+            <br>
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" class="save-btn" style="background-color: green; color: white; padding: 10px;">
+                    Save Changes
+                </button>
+                <a href="{{ url_for('admin.admin_profile') }}" class="cancel-btn" style="background-color: grey; color: white; padding: 10px; text-decoration: none;">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

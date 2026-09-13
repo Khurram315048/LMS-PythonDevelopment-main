@@ -1,0 +1,138 @@
+{% extends "layouts/admin_base.html" %}
+{% block title %}Teacher Attendance{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2><i class="fa-solid fa-calendar-check"></i> Teacher Attendance</h2>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Attendance Records</h4>
+        <div class="d-flex gap-2 align-items-center">
+            <input type="text" id="searchInput" class="form-control w-auto" placeholder="Search...">
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAttendanceModal">
+                <i class="fa-solid fa-plus"></i> Add Record
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover">
+            
+            <thead class="table-dark">
+            <tr>
+                <th>Teacher</th>
+                <th>Course</th>
+                <th>Scheduled Day</th>
+                <th>Date</th>
+                <th>Total Students</th>
+                <th>Present</th>
+                <th>Absent</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in attendance_records %}
+            <tr>
+                <td>{{ record.first_name }} {{ record.last_name }}</td>
+                <td>{{ record.course_name }}</td>
+                <td>{{ record.day_of_week }}</td>
+                <td>{{ record.attendance_date }}</td>
+                <td>{{ record.total_students }}</td>
+                <td><span class="badge bg-success">{{ record.total_present }}</span></td>
+                <td><span class="badge bg-danger">{{ record.total_absent }}</span></td>
+                    </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="addAttendanceModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Attendance Record</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ url_for('admin.mark_course_attendance') }}">
+
+                    <div class="mb-3">
+                        <label class="form-label">Teacher</label>
+                        <select class="form-select" name="teacher_id" required>
+                            <option value="" disabled selected>Select Teacher</option>
+                            {% for t in teachers %}
+                            <option value="{{ t.teacher_id }}">{{ t.first_name }} {{ t.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Course</label>
+                        <select class="form-select" name="course_id" required>
+                            <option value="" disabled selected>Select Course</option>
+                            {% for c in courses %}
+                            <option value="{{ c.course_id }}">{{ c.course_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Section</label>
+                        <select class="form-select" name="section_id" required>
+                            <option value="" disabled selected>Select Section</option>
+                            {% for sec in sections %}
+                            <option value="{{ sec.section_id }}">
+                                {{ sec.section_name }} — {{ sec.course_name }} (Semester {{ sec.semester }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-control" name="attendance_date" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Total Present</label>
+                            <input type="number" class="form-control" name="total_present" min="0" value="0" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Total Absent</label>
+                            <input type="number" class="form-control" name="total_absent" min="0" value="0" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Save Record</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+    const rows = Array.from(document.querySelectorAll('#attendanceBody tr'));
+
+    function updateSummary() {
+        const visible = rows.filter(r => r.style.display !== 'none');
+        const present = visible.filter(r => r.textContent.includes('Present')).length;
+        const absent  = visible.filter(r => r.textContent.includes('Absent')).length;
+        document.getElementById('presentCount').textContent = `Present: ${present}`;
+        document.getElementById('absentCount').textContent  = `Absent: ${absent}`;
+        document.getElementById('totalCount').textContent   = `Total: ${visible.length}`;
+    }
+
+    document.getElementById('searchInput').addEventListener('input', function () {
+        const filter = this.value.toLowerCase();
+        rows.forEach(row => {
+            row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+        });
+        updateSummary();
+    });
+
+    updateSummary();
+</script>
+{% endblock %}
+{% endblock %}

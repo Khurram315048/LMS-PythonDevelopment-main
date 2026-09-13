@@ -1,0 +1,130 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_css/dashboard.css') }}">
+
+<div class="dash-body">
+    <div class="dash-header">
+        <h2>Executive Overview</h2>
+    </div>
+
+    <div class="stats-container">
+        <div class="stat-card">
+            <h3>Total Students</h3>
+            <span class="number">{{ students_count }}</span>
+        </div>
+        <div class="stat-card" style="border-top-color: #9b59b6;">
+            <h3>Active Teachers</h3>
+            <span class="number">{{ teachers_count }}</span>
+        </div>
+        <div class="stat-card" style="border-top-color: #e67e22;">
+            <h3>Pending Fees</h3>
+            <span class="number">{{ pending_count }}</span>
+        </div>
+        <div class="stat-card" style="border-top-color: #27ae60;">
+            <h3>Total Courses</h3>
+            <span class="number">{{ courses_count }}</span>
+        </div>
+        <div class="stat-card" style="border-top-color: #e74c3c;">
+            <h3>Active FYP Groups</h3>
+            <span class="number">{{ fyp_count }}</span>
+        </div>
+        <div class="stat-card" style="border-top-color: #1abc9c;">
+            <h3>Open Complaints</h3>
+            <span class="number">{{ complaints_count }}</span>
+        </div>
+    </div>
+
+    <div class="dash-section-title">
+        <h4><i class="fa-solid fa-triangle-exclamation"></i> Pending Actions</h4>
+    </div>
+
+    <div class="pending-grid">
+        <div class="pending-card">
+            <div class="pending-card-left">
+                <i class="fa-solid fa-snowflake"></i>
+                <div>
+                    <span class="pending-label">Semester Freeze Requests</span>
+                    <span class="pending-sub">Awaiting approval</span>
+                </div>
+            </div>
+            <div class="pending-card-right">
+                <span class="pending-count">{{ freeze_count }}</span>
+                <a href="{{url_for('admin.stSemester_freeze')}}" class="pending-link">View All <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+        </div>
+
+        <div class="pending-card">
+            <div class="pending-card-left">
+                <i class="fa-solid fa-dollar-sign"></i>
+                <div>
+                    <span class="pending-label">Due Fee Records</span>
+                    <span class="pending-sub">Unpaid this month</span>
+                </div>
+            </div>
+            <div class="pending-card-right">
+                <span class="pending-count">{{ pending_fees_count }}</span>
+                <a href="{{url_for('admin.fee_management')}}" class="pending-link">View All <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+        </div>
+
+        <div class="pending-card">
+            <div class="pending-card-left">
+                <i class="fa-solid fa-file-pen"></i>
+                <div>
+                    <span class="pending-label">Exams Management</span>
+                    <span class="pending-sub">Exams Ongoing</span>
+                </div>
+            </div>
+            <div class="pending-card-right">
+                <span class="pending-count">{{ exam_count }}</span>
+                <a href="{{url_for('admin.exam_dates')}}" class="pending-link">View All <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+        </div>
+
+        <div class="pending-card">
+            <div class="pending-card-left">
+                <i class="fa-solid fa-comment-dots"></i>
+                <div>
+                    <span class="pending-label">Complaints</span>
+                    <span class="pending-sub">Unread submissions</span>
+                </div>
+            </div>
+            <div class="pending-card-right">
+                <span class="pending-count">{{ complaints_count }}</span>
+                <a href="{{url_for('admin.complaints')}}" class="pending-link">View All <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+        </div>
+
+        <div class="pending-card">
+            <div class="pending-card-left">
+                <i class="fa-solid fa-diagram-project"></i>
+                <div>
+                    <span class="pending-label">FYP In Progress</span>
+                    <span class="pending-sub">Awaiting completion</span>
+                </div>
+            </div>
+            <div class="pending-card-right">
+                <span class="pending-count">{{ fyp_count }}</span>
+                <a href="{{url_for('admin.fyp_proposals')}}" class="pending-link">View All <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+        </div>
+
+        <div class="pending-card">
+            <div class="pending-card-left">
+                <i class="fa-solid fa-bell"></i>
+                <div>
+                    <span class="pending-label">Pending Notifications</span>
+                    <span class="pending-sub">Not yet resolved</span>
+                </div>
+            </div>
+            <div class="pending-card-right">
+                <span class="pending-count">{{ notifications_count }}</span>
+                <a href="#" class="pending-link">View All <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

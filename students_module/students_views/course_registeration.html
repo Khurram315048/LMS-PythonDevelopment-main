@@ -1,0 +1,80 @@
+{% extends "layouts/student_base.html" %}
+
+{% block title %}Student Course Registeration{% endblock %}
+
+{% block content %}
+  <head>
+    <title>Student-Course-Registeration</title>
+  </head>
+  <div class="container">
+    {% if flash_success %}
+    <div class="alert alert-success" style="padding: 10px; background-color: #d4edda; color: #155724; border-radius: 4px; margin-bottom: 15px;">
+        ✅ {{ flash_success }}
+    </div>
+    {% endif %}
+    {% if flash_error %}
+    <div class="alert alert-danger" style="padding: 10px; background-color: #f8d7da; color: #721c24; border-radius: 4px; margin-bottom: 15px;">
+        ❌ {{ flash_error }}
+    </div>
+    {% endif %}
+    
+    {% if reg_closed %}
+      <div class="subject-card">
+          <div class="subject-list text-center" style="padding: 30px;">
+              <i class="fa-solid fa-ban fa-3x" style="color:red; margin-bottom:10px;"></i>
+              <h4 style="color:red;">Course Registration Applications Closed</h4>
+              <p style="color:grey;">Course registration is currently not available. Please check back later or contact the admin.</p>
+          </div>
+      </div>
+
+    {% else %}
+    <div class="profile-card">
+        {% if student %}
+      <h3>{{ student.first_name }} {{ student.last_name }}</h3>
+      <p>{{ student.student_id }} <span style="color:green;">Active</span></p>
+      {% endif %}
+    </div>
+
+    <div class="subject-card">
+      <h4>Application's Flow</h4>
+      <div class="subject-list">
+        <p>Pending submission.</p>
+      </div>
+    </div>
+    <div class="actions-card">
+      <div class="button-row">
+        <form action="/improvement_subject" method="GET">
+        <button class="btn-yellow">Add Subject (For Improvement)</button>
+        </form>
+        <form action="/fail_subjects" method="GET">
+        <button class="btn-yellow">Add Subject (After Fail)</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="subject-card">
+  <h4>Selected Subject(s)</h4>
+  <div class="subject-list">
+    {% if selected %}
+      {% for sel in selected %}
+        <p>
+          {{ sel.course_name }} ({{ sel.type|capitalize }}) - 
+          <span style="color:green;">{{ sel.status }}</span>
+          <form method="POST" 
+            action="{% if sel.type == 'improvement' %}{{ url_for('delete_improvement',improvement_id=sel.id) }}{% else %}{{ url_for('delete_fail',fail_id=sel.id) }}{% endif %}" 
+            style="display:inline;">
+          <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+      </form>
+        </p>
+      {% endfor %}
+    {% else %}
+      <p>No Subject Selected</p>
+    {% endif %}
+  </div>
+</div>
+  {% endif %}
+
+  </div>
+
+
+{% endblock %}

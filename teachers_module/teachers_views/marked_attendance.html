@@ -1,0 +1,65 @@
+{% extends "layouts/teacher_base.html" %}
+
+{% block title %}Mark Attendance{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/teachers_module.css') }}">
+
+<div class="container">
+    <h2 class="headings">Mark Attendance for {{ course_name }}</h2>
+    
+    {% if already_marked %}
+        <div class="alert alert-info" style="background-color: #d1ecf1; color: #0c5460; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+            <strong>Notice:</strong> Attendance has already been marked for this date.
+        </div>
+    {% endif %}
+
+    <form method="POST" action="#">
+        <div class="form-group">
+            <label for="attendance_date">Attendance Date: </label>
+            <input type="date" name="attendance_date" value="{{ attendance_date }}" 
+                   {% if already_marked %} disabled {% endif %} required>
+            <span><strong>Lecture No:</strong> {{ lecture_no }}</span>
+        </div>
+        
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Student Name</th>
+                    <th>Attendance Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>{{ student.student_id }}</td>
+                    <td>{{ student.student_name }}</td>
+                    <td>
+                        {% if already_marked %}
+                            
+                            <span style="color: green; font-weight: bold;">
+                                Attendance has been marked
+                            </span>
+                        {% else %}
+                            <select name="status_{{ student.student_course_id }}" class="form-control">
+                                <option value="Present">Present</option>
+                                <option value="Absent" selected>Absent</option>
+                            </select>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="actions">
+            {% if not already_marked %}
+                <button type="submit" class="btn-submit">Submit Attendance</button>
+            {% endif %}
+            <a href="{{ url_for('teacher.class_attendance') }}" class="btn-cancel">Cancel</a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

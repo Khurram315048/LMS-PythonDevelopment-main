@@ -1,0 +1,45 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}Admin Profile{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="profile-card">
+        {% if admin %}
+        <h2>{{ admin.first_name }} {{ admin.last_name }}</h2>
+        <p><strong>Reg. Number:</strong> {{ admin.admin_id }}</p>
+        <p><strong>E-Mail:</strong> {{ admin.email }}</p>
+        {% endif %}
+    </div>
+
+    <div class="details-section">
+        <h3>Personal Information</h3>
+        {% if admin %}
+        <form class="details-grid">
+            <label>Admin ID</label>
+            <input type="text" name="admin_id" value="{{ admin.admin_id }}" readonly>
+
+            <label>First Name</label>
+            <input type="text" name="first_name" value="{{ admin.first_name }}" readonly>
+
+            <label>Last Name</label>
+            <input type="text" name="last_name" value="{{ admin.last_name }}" readonly>
+
+            <label>Phone</label>
+            <input type="text" name="phone" value="{{ admin.contact }}" readonly>
+
+            <label>Email</label>
+            <input type="email" name="email" value="{{ admin.email }}" readonly>
+        </form>
+        <br>
+        <div class="edit-profile-section">
+            <form method="POST">
+                <button type="submit" name="edit_request" value="true" class="edit-btn">
+                    Click Here If Anything Is Wrong 😊
+                </button>
+            </form>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

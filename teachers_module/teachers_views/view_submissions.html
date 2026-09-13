@@ -1,0 +1,102 @@
+{% extends "layouts/teacher_base.html" %}
+
+{% block title %}View {{ sub_type|capitalize }}s{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="headings">{{ sub_type|capitalize }} Submissions for {{ course_name }}</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>Upload Date</th>
+                <th>Set Status</th>
+                <th>Action</th>
+                <th>Upload Marks</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for sub in submissions %}
+            <tr>
+                <td>{{ sub.student_id }}</td>
+                <td>{{ sub.first_name }} {{ sub.last_name }}</td>
+                <td>{{ sub.upload_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                 <td>
+                        
+                        {% if sub.submission_status=='Best' %}
+                            <span class="badge bg-success mb-1 d-block">Rated: Best</span>
+                        {% elif sub.submission_status=='Average' %}
+                            <span class="badge bg-warning text-dark mb-1 d-block"> Rated: Average</span>
+                        {% elif sub.submission_status=='Worst' %}
+                            <span class="badge bg-danger mb-1 d-block">Rated: Worst</span>
+                        {% else %}
+                            <span class="badge bg-secondary mb-1 d-block">Not Rated</span>
+                        {% endif %}
+
+                        <div style="display:flex; gap:4px; flex-wrap:wrap; margin-top:4px;">
+                            <form method="POST" action="{{ url_for('teacher.set_submission_status', submission_id=sub.submission_id, status='Best') }}">
+                                <input type="hidden" name="section_id" value="{{ section_id }}">
+                                <input type="hidden" name="sub_type" value="{{ sub_type }}">
+                                <button type="submit" style="font-size:10px; padding:2px 6px;" class="btn btn-success">Best</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('teacher.set_submission_status', submission_id=sub.submission_id, status='Average') }}">
+                                <input type="hidden" name="section_id" value="{{ section_id }}">
+                                <input type="hidden" name="sub_type" value="{{ sub_type }}">
+                                <button type="submit" style="font-size:10px; padding:2px 6px;" class="btn btn-warning">Avg</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('teacher.set_submission_status', submission_id=sub.submission_id, status='Worst') }}">
+                                <input type="hidden" name="section_id" value="{{ section_id }}">
+                                <input type="hidden" name="sub_type" value="{{ sub_type }}">
+                                <button type="submit" style="font-size:10px; padding:2px 6px;" class="btn btn-danger">Worst</button>
+                            </form>
+                        </div>
+                    </td>
+                <td>
+                    <a href="{{ url_for('static', filename=sub.file_path) }}" target="_blank" class="btn-submit"
+                        style="padding: 5px 10px; font-size: 12px; text-decoration: none; background-color: #10367D;">
+                        View File
+                    </a>
+                </td>
+                <td>
+                    {% if sub.marks is not none %}
+                    <div style="text-align: center;">
+                        <span style="color: #28a745; font-weight: bold; display: block;">
+                            ✅ Marks already uploaded
+                        </span>
+                        <span
+                            style="background: #e9ecef; padding: 2px 8px; border-radius: 4px; font-size: 0.9em; border: 1px solid #ccc;">
+                            Score: <strong>{{ sub.marks }} / {{ sub.total_marks }}</strong>
+                        </span>
+                        <br>
+                    </div>
+                    {% else %}
+                    <form action="{{ url_for('teacher.mark_submission', submission_id=sub.submission_id) }}"
+                        method="POST" style="display: flex; gap: 5px; align-items: center;">
+                        <input type="hidden" name="section_id" value="{{ section_id }}">
+                        <input type="hidden" name="sub_type" value="{{ sub_type }}">
+
+                        <input type="number" name="marks" placeholder="Obtained" style="width: 65px; padding: 4px;"
+                            required>
+                        <span style="font-weight: bold;">/</span>
+                        <input type="number" name="total_marks" value="5" style="width: 60px; padding: 4px;" required>
+
+                        <button type="submit" class="btn-submit"
+                            style="padding: 4px 8px; font-size: 11px; background-color: #28a745; border: none; color: white; border-radius: 4px; cursor: pointer;">
+                            Save
+                        </button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="actions" style="margin-top:20px;">
+        <a href="{{ url_for('teacher.class_structure', section_id=section_id) }}" class="btn-cancel">Back to Class</a>
+    </div>
+</div>
+{% endblock %}

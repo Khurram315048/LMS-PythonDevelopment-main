@@ -1,0 +1,97 @@
+{% extends "layouts/teacher_base.html" %}
+
+{% block title %}Generate Result{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="headings">Generate Result: {{ info.course_name }} ({{ info.section_name }})</h2>
+    <p><strong>Semester:</strong> {{ info.semester }}</p>
+
+    <form method="POST" id="resultForm">
+        <table class="table" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <thead>
+                <tr style="background-color: #10367D; color: white;">
+                    <th style="padding: 10px;">Student ID</th>
+                    <th>Student Name</th>
+                    <th>Course Name</th>
+                    <th>Sessional (20)</th>
+                    <th>Mids (30)</th>
+                    <th>Final (50)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in students %}
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <td style="padding: 10px;">{{ s.student_id }}</td>
+                    <td>{{ s.first_name }} {{ s.last_name }}</td>
+                    <td>{{ info.course_name }}</td>
+                    
+                    {% if s.has_result %}
+    
+                        <td colspan="3" style="text-align: center; color: #28a745; font-weight: bold; background-color: #f8fff9; vertical-align: middle;">
+                            <i class="fa-solid fa-circle-check"></i> Result Uploaded (Grade: {{ s.student_grade }})
+                        </td>
+                    {% else %}
+                        <td>
+                            <input type="number" name="sessional_{{ s.student_id }}" max="20" min="0" value="0" class="form-control" style="width: 80px;">
+                        </td>
+                        <td>
+                            <input type="number" name="mids_{{ s.student_id }}" max="30" min="0" value="0" class="form-control" style="width: 80px;">
+                        </td>
+                        <td>
+                            <input type="number" name="final_{{ s.student_id }}" max="50" min="0" value="0" class="form-control" style="width: 80px;">
+                        </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="actions" style="margin-top: 30px; display: flex; gap: 15px;">
+            <button type="button" onclick="handleUpload()" class="btn-submit" style="background-color: #28a745; color: white; padding: 10px 25px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                 Upload Result
+            </button>
+            <button type="reset" class="btn-cancel" style="background-color: #6c757d; color: white; padding: 10px 25px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                 Reset Form
+            </button>
+            <a href="{{ url_for('teacher.class_structure', section_id=info.section_id) }}" class="btn-cancel" style="text-decoration: none; padding: 10px 25px; background: #dc3545; color: white; border-radius: 5px;">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+
+<script>
+    
+    function handleUpload() {
+        if (typeof confirmResultSubmission === "function") {
+            confirmResultSubmission('resultForm');
+        } else {
+            if(confirm("Are you sure you want to upload these results?")) {
+                document.getElementById('resultForm').submit();
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const flashMessages = document.querySelectorAll('.flash-message');
+        flashMessages.forEach(function(element) {
+            const category = element.getAttribute('data-category');
+            const message = element.getAttribute('data-message');
+            
+            if (typeof displayFlashMessage === "function") {
+                displayFlashMessage(category, message);
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+
+

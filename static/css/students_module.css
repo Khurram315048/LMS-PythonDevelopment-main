@@ -1,0 +1,675 @@
+/* students_module.css */
+
+/* Reset some defaults */
+body, h1, h2, h3, h4, h5, h6, p, ul, ol, li, form, input, button, table, th, td {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: #EBEBEB; /* Light background for the overall page */
+    color: #333;
+    line-height: 1.6;
+    background-image: url("../images/login_view.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* General Container Styling */
+.container {
+    max-width: 1000px; /* Adjust as needed */
+    margin: 20px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(16, 54, 125, 0.1); /* Soft shadow from primary color */
+    transition: box-shadow 0.3s ease;
+}
+
+.container:hover {
+    box-shadow: 0 6px 20px rgba(16, 54, 125, 0.15);
+}
+
+h1.headings, h2, h3 {
+    color: #10367D; /* Primary dark blue for headings */
+    margin-bottom: 20px;
+}
+
+/* Form Elements */
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="text"]:focus {
+    border-color: #74B4D9; /* Accent blue on focus */
+    box-shadow: 0 0 5px rgba(116, 180, 217, 0.5);
+    outline: none;
+}
+
+button[type="submit"],
+.edit-btn,
+.anchor-tags {
+    background-color: #10367D; /* Primary dark blue for buttons */
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    text-decoration: none; /* For anchor-tags acting as buttons */
+    display: inline-block; /* For anchor-tags acting as buttons */
+    text-align: center;
+}
+
+button[type="submit"]:hover,
+.edit-btn:hover,
+.anchor-tags:hover {
+    background-color: #0a2552; /* Slightly darker primary blue on hover */
+    transform: translateY(-2px);
+}
+
+/* Specific Styles for Login Page */
+.login-container {
+    max-width: 400px;
+    margin: 80px auto;
+    background: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(16, 54, 125, 0.15);
+    text-align: center;
+}
+
+.login-container .headings {
+    margin-bottom: 30px;
+    font-size: 28px;
+}
+
+.login-container p {
+    margin-top: 20px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+/* Login form layout fix */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: -5px;
+    margin-bottom: 10px;
+}
+
+.login-options label {
+    display: flex;
+    align-items: center;
+    font-size: 0.95em;
+    color: #333;
+    cursor: pointer;
+}
+
+.login-options input[type="checkbox"] {
+    margin-right: 6px;
+    accent-color: #10367D; /* dark blue checkbox */
+}
+
+.login-options .reset-btn {
+    background-color: #10367D;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 3px 8px;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.login-options .reset-btn:hover {
+    background-color: #0a2552;
+    transform: translateY(-2px);
+}
+
+.login-button {
+    width: 60%;
+    margin-top: 10px;
+    background-color: #10367D;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 12px;
+    font-size: 1.05em;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.login-button:hover {
+    background-color: #0a2552;
+    transform: translateY(-2px);
+}
+
+
+/* Table Styling for Dashboard */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border-radius: 8px;
+    overflow: hidden; /* Ensures rounded corners apply to table content */
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    background-color: #74B4D9; /* Accent blue for table headers */
+    color: #fff;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #e6f2f9; /* Lighter accent blue on row hover */
+    cursor: pointer;
+}
+
+.no-courses {
+    text-align: center;
+    padding: 30px;
+    font-size: 1.1em;
+    color: #10367D;
+    background-color: #f0f8ff;
+    border-radius: 8px;
+    border: 1px dashed #74B4D9;
+}
+
+/* Profile Card Specifics */
+.profile-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+}
+
+.profile-card h2 {
+    margin: 15px 0 10px;
+    font-size: 28px;
+    color: #10367D;
+}
+
+.profile-card p {
+    margin: 8px 0;
+    font-size: 1em;
+    text-align: left;
+    padding-left: 10px;
+}
+
+.profile-card p strong {
+    display: inline-block;
+    width: 130px;
+    color: #10367D;
+    font-weight: bold;
+}
+
+.details-section {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.details-section h3 {
+    margin-bottom: 25px;
+    color: #10367D;
+    font-size: 24px;
+    border-bottom: 2px solid #74B4D9;
+    padding-bottom: 10px;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 15px;
+    font-size: 1em;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.details-grid label {
+    font-weight: bold;
+    color: #10367D;
+    text-align: right;
+    padding-right: 10px;
+}
+
+.details-grid input[readonly] {
+    border: 1px solid #eee;
+    background: #fdfdfd;
+    padding: 10px;
+    font-size: 1em;
+    color: #555;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.edit-profile-section {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.edit-btn {
+    background-color: #74B4D9; /* Accent blue for the edit button */
+    padding: 12px 25px;
+    font-size: 1.1em;
+}
+
+.edit-btn:hover {
+    background-color: #5a9bc2; /* Darker accent blue on hover */
+}
+
+.notification {
+    background-color: #e6f2f9; /* Lighter accent blue for notifications */
+    color: #10367D;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    border: 1px solid #74B4D9;
+    transition: opacity 0.3s ease;
+    font-weight: bold;
+    font-size: 1.05em;
+}
+
+.notification:hover {
+    opacity: 0.9;
+}
+
+/* Course Registration Page Specifics */
+    .container {
+      max-width: 1200px;
+      margin: auto;
+    }
+    .profile-card, .progress-card, .subject-card, .actions-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .profile-card h3 {
+      margin: 0;
+      font-weight: 600;
+    }
+    .progress-steps {
+      display: flex;
+      justify-content: space-between;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .step {
+      flex: 1;
+      color: #ccc;
+    }
+    .step.active {
+      color: #000;
+      font-weight: bold;
+    }
+    .step::before {
+      content: "✔";
+      display: block;
+      margin-bottom: 5px;
+      font-size: 20px;
+    }
+    .subject-card h4 {
+      background: #343a40;
+      color: #fff;
+      padding: 10px;
+      border-radius: 6px 6px 0 0;
+    }
+    .subject-list {
+      padding: 15px;
+      background: #fff;
+      border-radius: 0 0 6px 6px;
+    }
+    .button-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 15px;
+    }
+    .btn-yellow {
+      background: #ffc107;
+      border: none;
+      color: #000;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-yellow:hover {
+      background: #e0a800;
+    }
+
+.delete-btn {
+  background: transparent;
+  border: none;
+  color: red;
+  cursor: pointer;
+  font-size: 14px;
+  transition: transform 0.2s;
+}
+.delete-btn:hover {
+  transform: scale(1.2);
+}
+
+
+.flash {
+  margin: 10px;
+  padding: 10px;
+  border-radius: 5px;
+}
+.flash.warning { background: #fff3cd; color: #856404; }
+.flash.success { background: #d4edda; color: #155724; }
+
+
+
+/* --- Attendance Dashboard Table Styling --- */
+
+/* 1. Table Container Cleanup */
+.dashboard-content .table {
+    width: 100%;
+    border-collapse: separate; /* Allows for rounded corners */
+    border-spacing: 0;
+    margin-top: 25px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden; /* Clips the inner rows to the rounded corners */
+    background-color: #fff;
+}
+
+/* 2. Header Styling - Using your primary dark blue */
+.dashboard-content .table thead th {
+    background-color: #10367D; 
+    color: #ffffff;
+    font-size: 0.9em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 15px;
+    border-bottom: none;
+}
+
+/* 3. Row and Cell Styling */
+.dashboard-content .table tbody td {
+    padding: 15px;
+    vertical-align: middle;
+    border-bottom: 1px solid #eee;
+    color: #444;
+    font-size: 0.95em;
+}
+
+.dashboard-content .table tbody tr:last-child td {
+    border-bottom: none; /* Removes border from the last row */
+}
+
+/* Alternating Row Colors */
+.dashboard-content .table tbody tr:nth-child(even) {
+    background-color: #fcfdfe;
+}
+
+/* Hover Effect */
+.dashboard-content .table tbody tr:hover {
+    background-color: #f0f7ff;
+}
+
+/* 4. Percentage Text Styling */
+.dashboard-content .table strong[style*="color: blue"] {
+    color: #10367D !important; /* Forces consistency with your theme */
+    font-size: 1.1em;
+}
+
+/* 5. Detailed History (The Scrollable Box) */
+/* We target the div you have inside the last TD */
+.dashboard-content .table td div[style*="overflow-y: auto"] {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 8px;
+    scrollbar-width: thin; /* For Firefox */
+}
+
+/* Webkit Scrollbar Styling (Chrome/Safari) */
+.dashboard-content .table td div::-webkit-scrollbar {
+    width: 6px;
+}
+.dashboard-content .table td div::-webkit-scrollbar-thumb {
+    background: #74B4D9;
+    border-radius: 10px;
+}
+
+/* 6. Dispute Button Styling */
+/* This transforms the small generic button into a clean design */
+.dashboard-content .table td form button {
+    background-color: #fff !important;
+    color: #d9534f !important; /* Subtle Red */
+    border: 1px solid #d9534f !important;
+    border-radius: 4px;
+    padding: 2px 8px !important;
+    margin-left: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.dashboard-content .table td form button:hover {
+    background-color: #d9534f !important;
+    color: #fff !important;
+    transform: scale(1.05);
+}
+
+/* 7. Present/Absent Text Labels */
+.dashboard-content .table td span[style*="color:green"] {
+    color: #28a745 !important;
+    font-weight: 600;
+}
+
+.dashboard-content .table td span[style*="color:red"] {
+    color: #dc3545 !important;
+    font-weight: 600;
+}
+
+
+/* Styling for disabled upload state */
+.text-danger.small {
+    display: block;
+    background-color: #fff5f5;
+    border: 1px solid #feb2b2;
+    color: #c53030 !important;
+    padding: 5px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+
+.upload-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.btn-upload-small {
+    background-color: #10367D;
+    color: white;
+    border: none;
+    font-size: 10px;
+    padding: 3px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.btn-upload-small:hover {
+    background-color: #74B4D9;
+}
+
+
+ .btn-cancel {
+    display: inline-block;    
+    padding: 10px 20px;       
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;    
+    border-radius: 5px;       
+    cursor: pointer;          
+    border: none;            
+    transition: background 0.3s ease;
+    vertical-align: middle;   
+    line-height: 1.2;        
+}
+
+.btn-cancel {
+    background-color: #789cbb;
+    color: white !important;
+}
+
+.btn-cancel:hover { background-color: #5a6268; color: white !important; }
+
+
+.att-wrapper {
+    padding: 24px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.att-wrapper h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #1a1a2e;
+}
+
+.att-table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.att-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+    font-size: 0.82rem;
+}
+
+.att-table thead tr {
+    background-color: #1a1a2e;
+    color: white;
+}
+
+.att-table thead th {
+    padding: 12px 14px;
+    text-align: left;
+    white-space: nowrap;
+    font-weight: 600;
+    border: 1px solid #2d2d4e;
+}
+
+.att-table thead th.lec-header {
+    text-align: center;
+    min-width: 90px;
+}
+
+.att-table tbody tr {
+    border-bottom: 1px solid #e0e0e0;
+    background: #fff;
+}
+
+.att-table tbody tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+.att-table tbody td {
+    padding: 10px 14px;
+    vertical-align: middle;
+    border: 1px solid #e0e0e0;
+    white-space: nowrap;
+}
+
+.count-cell {
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+}
+
+.lec-cell {
+    text-align: center;
+    padding: 6px 4px !important;
+}
+
+.lec-badge {
+    display: inline-block;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    width: 80px;
+    text-align: center;
+}
+
+.lec-badge.present {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.lec-badge.absent {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.lec-date {
+    display: block;
+    font-size: 0.68rem;
+    color: #777;
+    margin-top: 2px;
+}
+
+.empty-lec {
+    color: #ccc;
+    font-size: 0.75rem;
+}
+
+.perc-low { color: #e74c3c; font-weight: 700; }
+.perc-mid { color: #e67e22; font-weight: 700; }
+.perc-high { color: #27ae60; font-weight: 700; }

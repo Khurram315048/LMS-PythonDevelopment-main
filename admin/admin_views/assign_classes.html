@@ -1,0 +1,80 @@
+{% extends "layouts/admin_base.html" %}
+{% block title %}Assign Classes{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2><i class="fa-solid fa-chalkboard"></i> Assign Classes</h2>
+</div>
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>Teacher Course Assignments</h4>
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#assignModal">
+            <i class="fa-solid fa-plus"></i> Assign Course
+        </button>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Teacher</th>
+                    <th>Course</th>
+                    <th>Credit Hours</th>
+                    <th>Program</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for assignment in assignments %}
+                <tr>
+                    <td>{{ assignment.teacher_course_id }}</td>
+                    <td>{{ assignment.first_name }} {{ assignment.last_name }}</td>
+                    <td>{{ assignment.course_name }}</td>
+                    <td>{{ assignment.credit_hours }}</td>
+                    <td>{{ assignment.program_name }}</td>
+                    <td>
+                        <form method="POST" action="{{url_for('admin.delete_course')}}" style="display:inline;">
+                            <input type="hidden" name="teacher_course_id" value="{{ assignment.teacher_course_id }}">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Remove this assignment?')">
+                                <i class="fa-solid fa-trash"></i> Remove
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="assignModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Assign Course to Teacher</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{url_for('admin.assign_course')}}">
+                    <div class="mb-3">
+                        <label class="form-label">Teacher</label>
+                        <select class="form-select" name="teacher_id" required>
+                            {% for teacher in teachers %}
+                            <option value="{{ teacher.teacher_id }}">{{ teacher.first_name }} {{ teacher.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Course</label>
+                        <select class="form-select" name="course_id" required>
+                            {% for course in courses %}
+                            <option value="{{ course.course_id }}">{{ course.course_name }} ({{ course.program_name }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Assign</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

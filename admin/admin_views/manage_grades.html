@@ -1,0 +1,176 @@
+{% extends "layouts/admin_base.html" %}
+{% block title %}Maintain Grades{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2><i class="fa-solid fa-graduation-cap"></i> Maintain Grades</h2>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('admin.manage_grades') }}" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Program</label>
+                <select class="form-select" name="program_id">
+                    <option value="">All Programs</option>
+                    {% for program in programs %}
+                    <option value="{{ program.program_id }}" {% if selected_program == program.program_id %}selected{% endif %}>
+                        {{ program.program_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Semester</label>
+                <input type="text" class="form-control" name="semester" placeholder="e.g. 5" value="{{ selected_semester }}">
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Student Results</h4>
+        <input type="text" id="searchInput" class="form-control w-auto" placeholder="Search...">
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Semester</th>
+                    <th>Overall GPA</th>
+                    <th>Result</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="gradesBody">
+                {% for result in results %}
+                <tr>
+                    <td>{{ result.student_id }}</td>
+                    <td>{{ result.first_name }} {{ result.last_name }}</td>
+                    <td>{{ result.student_semester }}</td>
+                    <td>{{ result.overall_gpa }}</td>
+                    <td>
+                        {% if result.result_status == 'Pass' %}
+                            <span class="badge bg-success">Pass</span>
+                        {% else %}
+                            <span class="badge bg-danger">Fail</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#marksModal{{ result.student_result_id }}">
+                            <i class="fa-solid fa-eye"></i> View Marks
+                        </button>
+                        <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editResultModal{{ result.student_result_id }}">
+                            <i class="fa-solid fa-pen"></i> Edit
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not results %}
+                <tr><td colspan="6" class="text-center text-muted">No results found.</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% for result in results %}
+
+<div class="modal fade" id="marksModal{{ result.student_result_id }}" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Marks — {{ result.first_name }} {{ result.last_name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Course</th>
+                            <th>Sessional</th>
+                            <th>Mid</th>
+                            <th>Final</th>
+                            <th>Total</th>
+                            <th>Grade</th>
+                            <th>GPA</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mark in result.marks %}
+                        <tr>
+                            <td>{{ mark.course_name }}</td>
+                            <td>{{ mark.sessional_marks }}</td>
+                            <td>{{ mark.mid_marks }}</td>
+                            <td>{{ mark.final_marks }}</td>
+                            <td>{{ mark.total_marks }}</td>
+                            <td>{{ mark.student_grade }}</td>
+                            <td>{{ mark.subject_gpa }}</td>
+                            <td>
+                                {% if mark.status == 'Pass' %}
+                                    <span class="badge bg-success">Pass</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Fail</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="8" class="text-center text-muted">No marks recorded.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="editResultModal{{ result.student_result_id }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Result — {{ result.first_name }} {{ result.last_name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ url_for('admin.update_result') }}">
+                    <input type="hidden" name="student_result_id" value="{{ result.student_result_id }}">
+                    <div class="mb-3">
+                        <label class="form-label">Overall GPA</label>
+                        <input type="number" step="0.01" min="0" max="4" class="form-control"
+                            name="overall_gpa" value="{{ result.overall_gpa }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Result Status</label>
+                        <select class="form-select" name="result_status" required>
+                            <option value="Pass" {% if result.result_status == 'Pass' %}selected{% endif %}>Pass</option>
+                            <option value="Fail" {% if result.result_status == 'Fail' %}selected{% endif %}>Fail</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+
+{% block scripts %}
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        const filter = this.value.toLowerCase();
+        document.querySelectorAll('#gradesBody tr').forEach(row => {
+            row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

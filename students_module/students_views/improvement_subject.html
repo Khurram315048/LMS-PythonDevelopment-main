@@ -1,0 +1,40 @@
+{% extends "layouts/student_base.html" %}
+{% block title %}Select Improvement Subject{% endblock %}
+{% block content %}
+<head>
+    <title>Student-Course-Improvement</title>
+  </head>
+<div class="container">
+  <h2>Select Subject for Improvement</h2>
+  {% if courses %}
+  <table border="1" width="100%" cellpadding="8" style="border-collapse: collapse;">
+    <tr style="background-color: #f2f2f2;">
+      <th>#</th>
+      <th>Course Name</th>
+      <th>Credit Hours</th>
+      <th>Teacher Name</th>
+      <th>Semester</th>
+      <th>Action</th>
+    </tr>
+    {% for course in courses %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td>{{ course.course_name }}</td>
+      <td>{{ course.credit_hours }}</td>
+      <td>{{ course.teacher_name }}</td>
+      <td>{{ course.semester }}</td>
+      <td>
+        <form action="{{url_for('select_improvement',course_id=course.course_id)}}" method="POST">
+          <input type="hidden" name="course_id" value="{{course.course_id}}">
+            <button type="submit" style="background:#3aaed7;border:none;padding:5px 10px;cursor:pointer;">Select</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+    <p style="color:red;">No courses available for improvement.</p>
+  {% endif %}
+</div>
+
+{% endblock %}

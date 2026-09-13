@@ -1,0 +1,198 @@
+{% extends "layouts/admin_base.html" %}
+{% block title %}Exam Dates{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2><i class="fa-solid fa-file-pen"></i> Exam Dates</h2>
+</div>
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>Semester Exam Schedule</h4>
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addExamModal">
+            <i class="fa-solid fa-plus"></i> Add Exam Date
+        </button>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Exam ID</th>
+                    <th>Program</th>
+                    <th>Semester</th>
+                    <th>Date-Year</th>
+                    <th>Exam Type</th>
+                    <th>Exam Mode</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Venue</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for exam in exams %}
+                <tr>
+                    <td>{{ exam.exam_id }}</td>
+                    <td>{{ exam.program_name }}</td>
+                    <td>{{ exam.exam_semester }}</td>
+                    <td>{{ exam.exam_date }}</td>
+                    <td>{{ exam.exam_category }}</td>
+                    <td><span class="badge bg-primary">{{ exam.mode }}</span></td>
+                    <td>{{ exam.start_time }}</td>
+                    <td>{{ exam.end_time }}</td>
+                    <td>{{ exam.location }}</td>
+                    <td>{{ exam.status }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editExamModal{{ exam.exam_id }}">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <form method="POST" action="{{url_for('admin.delete_exams')}}" style="display:inline;">
+                            <input type="hidden" name="exam_id" value="{{ exam.exam_id }}">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this exam date?')">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% for exam in exams %}
+<div class="modal fade" id="editExamModal{{ exam.exam_id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Exam Date</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{url_for('admin.update_exams')}}">
+                    <input type="hidden" name="exam_id" value="{{ exam.exam_id }}">
+ 
+                      <div class="mb-3">
+                        <label class="form-label">Semester</label>
+                        <input type="number" class="form-control" name="exam_semester" value="{{ exam.exam_semester }}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Exam Type</label>
+                        <select class="form-select" name="exam_category" required>
+                            <option value="Mid"   {% if exam.exam_category == 'Mid'   %}selected{% endif %}>Mid</option>
+                            <option value="Final" {% if exam.exam_category == 'Final' %}selected{% endif %}>Final</option>
+                        </select>
+                    </div>
+ 
+                    <div class="mb-3">
+                        <label class="form-label">Exam Mode</label>
+                        <select class="form-select" name="mode" required>
+                            <option value="Online"    {% if exam.mode == 'Online'    %}selected{% endif %}>Online</option>
+                            <option value="On Campus" {% if exam.mode == 'On Campus' %}selected{% endif %}>On Campus</option>
+                        </select>
+                    </div>
+ 
+                    <div class="mb-3">
+                        <label class="form-label">Exam Date</label>
+                        <input type="date" class="form-control" name="exam_date" value="{{ exam.exam_date }}" required>
+                    </div>
+ 
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Start Time</label>
+                            <input type="time" class="form-control" name="start_time" value="{{ exam.start_time }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">End Time</label>
+                            <input type="time" class="form-control" name="end_time" value="{{ exam.end_time }}" required>
+                        </div>
+                    </div>
+ 
+                    <div class="mb-3">
+                        <label class="form-label">Venue</label>
+                        <input type="text" class="form-control" name="location" value="{{ exam.location }}" placeholder="e.g. Exam Hall A">
+                    </div>
+ 
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" name="status" required>
+                            <option value="Ongoing"   {% if exam.status == 'Ongoing'   %}selected{% endif %}>Ongoing</option>
+                            <option value="Concluded" {% if exam.status == 'Concluded' %}selected{% endif %}>Concluded</option>
+                        </select>
+                    </div>
+ 
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+<div class="modal fade" id="addExamModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Exam Date</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{url_for('admin.add_exams')}}">
+                    <div class="mb-3">
+                        <label class="form-label">Program</label>
+                        <select class="form-select" name="program_id" required>
+                            {% for prog in programs %}
+                            <option value="{{ prog.program_id }}">{{ prog.program_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Exam Category</label>
+                        <select class="form-select" name="exam_category" required>
+                            <option value="Mid">Mid</option>
+                            <option value="Final">Final</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Semester</label>
+                        <select class="form-select" name="exam_semester" required>
+                            {% for i in range(9) %}
+                            <option value="{{ i }}">{{ i }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Exam Date</label>
+                        <input type="date" class="form-control" name="exam_date" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Start Time</label>
+                            <input type="time" class="form-control" name="start_time" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">End Time</label>
+                            <input type="time" class="form-control" name="end_time" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Location</label>
+                        <input type="text" class="form-control" name="location" placeholder="e.g. Exam Hall A">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Exam Mode</label>
+                        <select class="form-select" name="exam_mode" required>
+                            <option value="#">--Select Here--</option>
+                            <option value="Online">Online</option>
+                            <option value="On campus">On Campus</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

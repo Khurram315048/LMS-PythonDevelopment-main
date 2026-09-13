@@ -1,0 +1,143 @@
+{% extends "layouts/admin_base.html" %}
+{% block title %}Summer Semester{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2><i class="fa-solid fa-sun"></i> Summer Semester</h2>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Summer Semesters</h4>
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSummerModal">
+            <i class="fa-solid fa-plus"></i> Add Summer Semester
+        </button>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Year</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sem in summer_semesters %}
+                <tr>
+                    <td>{{ sem.summer_semesters_id }}</td>
+                    <td>{{ sem.name }}</td>
+                    <td>{{ sem.year }}</td>
+                    <td>{{ sem.start_date }}</td>
+                    <td>{{ sem.end_date }}</td>
+                    <td><span class="badge bg-info text-dark">{{ sem.status }}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#registrationsModal{{ sem.summer_semesters_id }}">
+                            <i class="fa-solid fa-users"></i> Registrations
+                        </button>
+                        <form method="POST" action="{{ url_for('admin.delete_summer_semester') }}" style="display:inline;">
+                            <input type="hidden" name="summer_semesters_id" value="{{ sem.summer_semesters_id }}">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this summer semester?')">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not summer_semesters %}
+                <tr><td colspan="7" class="text-center text-muted">No summer semesters found.</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Registration Modals — outside table -->
+{% for sem in summer_semesters %}
+<div class="modal fade" id="registrationsModal{{ sem.summer_semesters_id }}" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Registrations — {{ sem.name }} {{ sem.year }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Student</th>
+                            <th>Course</th>
+                            <th>Registration Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reg in sem.registrations %}
+                        <tr>
+                            <td>{{ reg.first_name }} {{ reg.last_name }}</td>
+                            <td>{{ reg.course_name }}</td>
+                            <td>{{ reg.registration_date }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="3" class="text-center text-muted">No registrations yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- Add Summer Semester Modal -->
+<div class="modal fade" id="addSummerModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Summer Semester</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ url_for('admin.add_summer_semester') }}">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" name="name" placeholder="e.g. Summer" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Year</label>
+                        <input type="number" class="form-control" name="year" min="2020" max="2100" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" class="form-control" name="start_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">End Date</label>
+                        <input type="date" class="form-control" name="end_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" name="status" required>
+                            <option value="Open">Open</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Previous Semester</label>
+                        <select class="form-select" name="previous_semester_id">
+                            <option value="">None</option>
+                            {% for sem in semesters %}
+                            <option value="{{ sem.semester_id }}">{{ sem.name }} {{ sem.year }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
