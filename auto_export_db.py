@@ -4,14 +4,14 @@ import os
 from datetime import datetime
 
 
-DB_HOST     = '172.25.0.7'
+DB_HOST     = 'localhost'
 DB_PORT     = '3306'
 DB_USER     = 'root'
-DB_PASSWORD = 'root'         
+DB_PASSWORD = ''         
 DB_NAME     = 'lms_db'       
 OUTPUT_FILE = 'updated_lms.sql'  
 CHECK_EVERY = 10    
-MYSQLDUMP_PATH = '/usr/bin/mysqldump'   
+MYSQLDUMP_PATH =r"C:\xampp\mysql\bin\mysqldump.exe"  
 
 
 def export_database():
