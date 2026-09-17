@@ -1,6 +1,6 @@
-{% extends "layouts/student_base.html" %}
+{% extends "layouts/teacher_base.html" %}
 
-{% block title %}Student Dashboard{% endblock %}
+{% block title %}Teacher Dashboard{% endblock %}
 
 {% block content %}
 
@@ -10,13 +10,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/suggesstion_style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',path='css/suggesstion_style.css') }}">
 </head>
 <body>
 
     <div class="container">
         <h1 class="headings">Complaint/Suggestion Form</h1>
-        <form method="POST" action="{{ url_for('teacher.complaint_suggestion') }}" enctype="multipart/form-data">
+        <form method="POST" action="/teacher_complaint_suggestion" enctype="multipart/form-data">
             <label for="title">Title:</label>
             <select id="title" name="title" required>
                 <option value="" disabled selected>Select a title</option>

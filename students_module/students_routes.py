@@ -81,7 +81,7 @@ def student_login(request:Request,email:str=Form(None),
         print("Pydantic Validation Error:",e.errors())
         return templates.TemplateResponse(request=request,name="student_login.html", 
             context={"error":"Email Format Invalid"},
-            status_code=status.HTTP_422_UNPROCESSSABLE_ENTITY)
+            status_code=status.HTTP_422_UNPROCESSSABLE_CONTENT)
     
     from main import app
     with app.test_request_context():
@@ -243,6 +243,10 @@ def student_profile(request:Request):
                 )
 
         
+
+
+
+
 
 
 # @student.route('/student_dashboard',methods=['GET', 'POST'])

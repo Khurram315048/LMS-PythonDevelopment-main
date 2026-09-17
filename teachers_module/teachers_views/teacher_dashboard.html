@@ -23,7 +23,7 @@
         <tbody>
             {% for row in today_schedule %}
             <tr>
-                <td><a href="{{ url_for('teacher.class_structure', section_id=row.section_id) }}" class="btn-open">Open Class Structure</a></td>
+                <td><a href="/class_structure/{{row.section_id}}" class="btn-open">Open Class Structure</a></td>
                 <td>{{ row.coordinator_name }}</td>
                 <td>{{ row.section_id }}</td>
                 <td>{{ row.course_name }}</td>
@@ -62,7 +62,7 @@
             {% for row in full_schedule %}
             <tr>
                 <td>
-                    <a href="{{ url_for('teacher.class_structure', section_id=row.section_id) }}" class="btn-open">Open Class Structure</a>
+                    <a href="/class_structure/{{row.section_id}}" class="btn-open">Open Class Structure</a>
                 </td>
                 <td>{{ row.coordinator_name }}</td>
                 <td>{{ row.section_id }}</td>

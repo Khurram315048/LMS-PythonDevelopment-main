@@ -5,7 +5,7 @@ class TeacherModel:
     @staticmethod
     def get_profile(teacher_id):
         cursor=mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM teachers WHERE teacher_id=%s',(teacher_id,))
+        cursor.execute('SELECT * FROM teachers WHERE teacher_id=%s AND is_deleted=0',(teacher_id,))
         result=cursor.fetchone()
         cursor.close()
         return result
@@ -14,12 +14,19 @@ class TeacherModel:
     @staticmethod
     def get_by_email(email):
         cursor=mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM teachers WHERE email=%s',(email,))
-        teacher=cursor.fetchone()
-        cursor.execute('SELECT * FROM users WHERE email=%s',(email,))
+        cursor.execute('SELECT * FROM users WHERE email=%s AND is_deleted=0',(email,))
         user=cursor.fetchone()
         cursor.close()
-        return teacher, user
+        return  user
+
+    @staticmethod
+    def get_by_user_id(user_id):
+        cursor=mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM teachers WHERE user_id=%s AND is_deleted=0',(user_id,))
+        teacher=cursor.fetchone()
+        cursor.close()
+        return teacher
+
 
 
     @staticmethod
@@ -84,11 +91,18 @@ class TeacherModel:
             JOIN courses c ON s.course_id=c.course_id
             JOIN course_schedule cs ON s.section_id=cs.section_id
             WHERE s.section_id=%s LIMIT 1
-        ''', (section_id,))
+        ''',(section_id,))
         result=cursor.fetchone()
         cursor.close()
         return result
 
+    @staticmethod
+    def get_lecture_no(course_schedule_id):
+        cursor=mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT COUNT(DISTINCT attendance_date) AS total_lectures FROM course_attendance_log WHERE course_schedule_id=%s',(course_schedule_id,))
+        res=cursor.fetchone()
+        cursor.close()
+        return res
 
     @staticmethod
     def check_attendance_marked(schedule_id,attendance_date):
@@ -168,6 +182,7 @@ class TeacherModel:
             LEFT JOIN student_section ss ON s.student_id=ss.student_id
             LEFT JOIN sections sec ON ss.section_id=sec.section_id
             WHERE f.teacher_id=%s
+            GROUP BY f.fyp_id
         """
         cursor.execute(query,(teacher_id,))
         groups=cursor.fetchall()

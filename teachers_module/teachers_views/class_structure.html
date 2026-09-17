@@ -32,25 +32,25 @@
         <td>{{row.section_name}}</td>
         <td>{{row.total_enroll}}</td>
         <td>
-            <a href="{{ url_for('teacher.view_submissions', section_id=row.section_id, sub_type='assignment') }}" 
+            <a href="/view_submissions/{{row.section_id}}/assignment" 
                class="btn-open" style="background-color: #28a745; margin-bottom: 8px; display: block; text-align: center;">
                📥 View All
             </a>
         </td>
         <td>
-            <a href="{{ url_for('teacher.view_submissions', section_id=row.section_id, sub_type='quiz') }}" 
+            <a href="/view_submissions/{{row.section_id}}/quiz" 
                class="btn-open" style="background-color: #28a745; margin-bottom: 8px; display: block; text-align: center;">
                📥 View All
             </a>
         </td>
         <td>
             <div style="display: flex; flex-direction: column; gap: 5px;">
-                <form action="{{ url_for('teacher.toggle_upload', section_id=row.section_id, upload_type='assignment') }}" method="POST">
+                <form action="/toggle_upload/{{row.section_id}}/assignment" method="POST">
                     <button type="submit" class="btn-status {% if row.assignments_enabled %}btn-enabled{% else %}btn-disabled{% endif %}">
                         Assignments: {{ 'ON' if row.assignments_enabled else 'OFF' }}
                     </button>
                 </form>
-                <form action="{{ url_for('teacher.toggle_upload', section_id=row.section_id, upload_type='quiz') }}" method="POST">
+                <form action="/toggle_upload/{{row.section_id}}/quiz" method="POST">
                     <button type="submit" class="btn-status {% if row.quizzes_enabled %}btn-enabled{% else %}btn-disabled{% endif %}">
                         Quizzes: {{ 'ON' if row.quizzes_enabled else 'OFF' }}
                     </button>
@@ -58,7 +58,7 @@
             </div>
         </td>
         <td>
-            <a href="{{ url_for('teacher.generate_result', section_id=row.section_id) }}" 
+            <a href="/generate_result/{{row.section_id}}" 
             class="btn-open" style="background-color: #10367D; color: white; display: block; text-align: center; text-decoration: none; padding: 10px; border-radius: 5px;">
              Generate Result
             </a>

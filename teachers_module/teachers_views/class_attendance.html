@@ -23,7 +23,7 @@
         <tbody>
             {% for row in today_schedule %}
             <tr>
-                <td><a href="{{url_for('teacher.marked_attendance',section_id=row.section_id)}}" class="btn-open">Open Class Attendance</a></td>
+                <td><a href="/marked_attendance/{{row.section_id}}" class="btn-open">Open Class Attendance</a></td>
                 <td>{{ row.coordinator_name }}</td>
                 <td>{{ row.section_id }}</td>
                 <td>{{ row.course_name }}</td>

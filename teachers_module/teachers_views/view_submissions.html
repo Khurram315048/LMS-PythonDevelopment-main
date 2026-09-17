@@ -1,10 +1,10 @@
 {% extends "layouts/teacher_base.html" %}
 
-{% block title %}View {{ sub_type|capitalize }}s{% endblock %}
+{% block title %}View {{sub_type|capitalize}}s{% endblock %}
 
 {% block content %}
 <div class="container">
-    <h2 class="headings">{{ sub_type|capitalize }} Submissions for {{ course_name }}</h2>
+    <h2 class="headings">{{sub_type|capitalize }} Submissions for {{course_name}}</h2>
 
     <table class="table">
         <thead>
@@ -37,17 +37,17 @@
                         {% endif %}
 
                         <div style="display:flex; gap:4px; flex-wrap:wrap; margin-top:4px;">
-                            <form method="POST" action="{{ url_for('teacher.set_submission_status', submission_id=sub.submission_id, status='Best') }}">
+                            <form method="POST" action="/set_submission_status/{{sub.submission_id}}/Best">
                                 <input type="hidden" name="section_id" value="{{ section_id }}">
                                 <input type="hidden" name="sub_type" value="{{ sub_type }}">
                                 <button type="submit" style="font-size:10px; padding:2px 6px;" class="btn btn-success">Best</button>
                             </form>
-                            <form method="POST" action="{{ url_for('teacher.set_submission_status', submission_id=sub.submission_id, status='Average') }}">
+                            <form method="POST" action="/set_submission_status/{{sub.submission_id}}/Average">
                                 <input type="hidden" name="section_id" value="{{ section_id }}">
                                 <input type="hidden" name="sub_type" value="{{ sub_type }}">
                                 <button type="submit" style="font-size:10px; padding:2px 6px;" class="btn btn-warning">Avg</button>
                             </form>
-                            <form method="POST" action="{{ url_for('teacher.set_submission_status', submission_id=sub.submission_id, status='Worst') }}">
+                            <form method="POST" action="/set_submission/{{sub.submission_id}}/Worst">
                                 <input type="hidden" name="section_id" value="{{ section_id }}">
                                 <input type="hidden" name="sub_type" value="{{ sub_type }}">
                                 <button type="submit" style="font-size:10px; padding:2px 6px;" class="btn btn-danger">Worst</button>
@@ -55,7 +55,7 @@
                         </div>
                     </td>
                 <td>
-                    <a href="{{ url_for('static', filename=sub.file_path) }}" target="_blank" class="btn-submit"
+                    <a href="{{ url_for('static',path=sub.file_path) }}" target="_blank" class="btn-submit"
                         style="padding: 5px 10px; font-size: 12px; text-decoration: none; background-color: #10367D;">
                         View File
                     </a>
@@ -73,8 +73,7 @@
                         <br>
                     </div>
                     {% else %}
-                    <form action="{{ url_for('teacher.mark_submission', submission_id=sub.submission_id) }}"
-                        method="POST" style="display: flex; gap: 5px; align-items: center;">
+                    <form action="/mark_submission/{{sub.submission_id}}" method="POST" style="display:flex;gap:5px;align-items:center;">
                         <input type="hidden" name="section_id" value="{{ section_id }}">
                         <input type="hidden" name="sub_type" value="{{ sub_type }}">
 
@@ -96,7 +95,7 @@
     </table>
 
     <div class="actions" style="margin-top:20px;">
-        <a href="{{ url_for('teacher.class_structure', section_id=section_id) }}" class="btn-cancel">Back to Class</a>
+        <a href="/class_structure/{{section_id}}" class="btn-cancel">Back to Class</a>
     </div>
 </div>
 {% endblock %}

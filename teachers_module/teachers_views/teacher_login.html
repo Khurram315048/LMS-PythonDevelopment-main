@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/students_module.css') }}">
-    <link rel="icon" type="image/jpg" href="{{ url_for('static', filename='images/logo.jpg') }}">
+    <link rel="stylesheet" href="{{ url_for('static',path='css/students_module.css') }}">
+    <link rel="icon" type="image/jpg" href="{{ url_for('static',path='images/logo.jpg') }}">
     <title>Teacher Login</title>
 </head>
 <body>
     <div class="login-container"> 
         <h1 class="headings">Teacher Login</h1>
-        <form class="login-form" action="{{url_for('teacher.teacher_login')}}" method="POST">
+        <form class="login-form" action="/teacher_login" method="POST">
             <input type="email" name="email" placeholder="Email" required>
             <input type="password" name="password" placeholder="Password" required>
 
@@ -24,6 +24,12 @@
 
     <button type="submit" class="login-button" >Login</button>
 </form>
+
+{% if error %}
+<div style="color:red;margin-top:10px;">
+    <p>{{error}}</p>
+</div>
+{% endif %}
 </div>
 </body>
 </html>
