@@ -27,6 +27,17 @@ def allowed_file(filename):
 
 student=Blueprint('student', __name__, template_folder='students_views')
 
+
+def get_current_student(request:Request)->dict:
+    student_id=request.session.get('student_id')
+    role=request.session.get('role')
+    user_id=request.session.get('user_id')
+    if not role != 'student' or not not student_id or not user_id:
+        return templates.TemplateResponse(request=request,name="student_login.html",
+                                          context={"error":"Login Again"})
+
+    return {"student_id":student_id,"role":role,"user_id":user_id}
+
 # @student.before_request
 # def track_student_activity():
 #     student_id=session.get('student_id')
@@ -66,10 +77,7 @@ def student_login(request:Request,email:str=Form(None),
     remember_me:bool=Form(False)):
 
     if request.method=='GET':
-        return templates.TemplateResponse(
-            request=request, 
-            name="student_login.html"
-        )
+        return templates.TemplateResponse(request=request, name="student_login.html")
 
     try:
         check_inputs=StudentLoginRequest(
@@ -77,8 +85,8 @@ def student_login(request:Request,email:str=Form(None),
             password=password,
             remember_me=remember_me
         )
-    except ValidationError as e:
-        print("Pydantic Validation Error:",e.errors())
+    except ValidationError as v:
+        print("Pydantic Validation Error:",v.errors())
         return templates.TemplateResponse(request=request,name="student_login.html", 
             context={"error":"Email Format Invalid"},
             status_code=status.HTTP_422_UNPROCESSSABLE_CONTENT)
@@ -155,11 +163,8 @@ def student_login(request:Request,email:str=Form(None),
 
 
 @router.get('/student_base')
-def student_base(request:Request):
-    user_id=request.session.get('user_id')
-    if not user_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",
-                         context={"error":"PLease login again"})
+def student_base(request:Request,current_user:dict=Depends(get_current_student)):
+    user_id=current_user['user_id']
 
     from main import app
     try:
@@ -213,14 +218,9 @@ def student_base(request:Request):
 
 
 @router.get('/student_profile')
-def student_profile(request:Request):
-    if request.session.get('role') != 'student':
-        return templates.TemplateResponse(request=request,name="student_login.html",
-        context={"error":"Student Profile only"})
-    student_id=request.session.get('student_id')
-    if not student_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",
-                                          context={"error":"Registeration Number not found"})
+def student_profile(request:Request,current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
+    
     from main import app
     try:
         with app.app_context():
@@ -344,20 +344,11 @@ def student_profile(request:Request):
 
 
 @router.get('/student_dashboard')
-def student_dashboard(request:Request):
-    if request.session.get('role') != 'student':
-        return RedirectResponse(url='/student_login',status_code=303)
-
-    student_id=request.session.get('student_id')
-    user_id=request.session.get('user_id')
-    if not student_id or not user_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",
-                                          context={"error":"Registeration Id no found"})
-
-    role=request.session.get('role')
-    if role != 'student':
-        return templates.TemplateResponse(request=request,name="student_login.html",
-                                          context={"error":"Only Student can logged in"})
+def student_dashboard(request:Request,current_user:dict=Depends(get_current_student)):
+    role=current_user['role']
+    student_id=current_user['student_id']
+    user_id=current_user['user_id']
+   
     
     from main import app
     try:
@@ -476,19 +467,8 @@ def student_dashboard(request:Request):
 
     
 @router.get('/student_fee')
-def student_fee(request:Request):
-    if request.session.get('role') != 'student':
-        return templates.TemplateResponse(
-            request=request,name="student_login.html",
-            context={"error":"Only student can access"}
-        )
-
-    student_id=request.session.get('student_id')
-    if not student_id:
-        return templates.TemplateResponse(
-            request=request,name="student_login.html",
-            context={"error":"Please Login Again"}
-        )
+def student_fee(request:Request,current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
     
     from main import app
     try:
@@ -544,11 +524,9 @@ def student_fee(request:Request):
 
 @router.get('/complaint_suggestion')
 @router.post('/complaint_suggestion')
-def complaint_suggestion(request:Request,title:str=Form(None),description:str=Form(None)):
-    user_id=request.session.get('user_id')
-    if not user_id:
-                    return templates.TemplateResponse(request=request,name="student_login.html",
-                                                    context={"error":"Please Login Again"})
+def complaint_suggestion(request:Request,title:str=Form(None),description:str=Form(None),current_user:dict=Depends(get_current_student)):
+    user_id=current_user['user_id']
+    
 
     if request.method=='GET':
         return templates.TemplateResponse(request=request,name="complaint_suggestion.html")
@@ -581,11 +559,9 @@ def complaint_suggestion(request:Request,title:str=Form(None),description:str=Fo
 #     return render_template('notifications.html',complaint_status=complaint_status)
 
 @router.get('/notifications')
-def notifications(request:Request):
-    user_id=request.session.get('user_id')
-    if not user_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",
-                                          context={"error":"Please Login Again"})
+def notifications(request:Request,current_user:dict=Depends(get_current_student)):
+    user_id=current_user['user_id']
+
     from main import app
     try:
         with app.app_context():
@@ -600,11 +576,9 @@ def notifications(request:Request):
 
 @router.get('/upload_fee')
 @router.post('/upload_fee')
-def upload_fee(request:Request,month:str=Form(None),fee_amount:float=Form(None),front_voucher:UploadFile=File(None),back_voucher:UploadFile=File(None)):
-    student_id=request.session.get('student_id')
-    if not student_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",
-                                          context={"error":"Please Login Again"})
+def upload_fee(request:Request,month:str=Form(None),fee_amount:float=Form(None),front_voucher:UploadFile=File(None),back_voucher:UploadFile=File(None),current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
+    
 
     if request.method=='GET':
         return templates.TemplateResponse(request=request,name="upload_fee.html")
@@ -681,12 +655,9 @@ def upload_fee(request:Request,month:str=Form(None),fee_amount:float=Form(None),
 
 
 @router.get('/view_attendence')
-def view_attendence(request:Request):
+def view_attendence(request:Request,current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
     
-    student_id=request.session.get('student_id')
-    if not student_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",
-                                                  context={"error":"Student id not found"})
     from main import app
     try:
         with app.app_context():
@@ -791,11 +762,9 @@ def view_attendence(request:Request):
 
 
 @router.get('/view_grades')
-def view_grades(request:Request):
-    student_id=request.session.get('student_id')
-    if not student_id:
-        return templates.TemplateResponse(request=request,name="student_dashboard.html",
-                                          context={"message":"Registeration number not found"})
+def view_grades(request:Request,current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
+    
     from main import app
     try:
          with app.app_context():
@@ -826,10 +795,8 @@ def view_grades(request:Request):
 
 
 @router.get('/course_registeration')
-def course_registeration(request: Request):
-    student_id=request.session.get('student_id')
-    if not student_id or request.session.get('role') != 'student':
-        return RedirectResponse(url='/student_login',status_code=303)
+def course_registeration(request: Request,current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
 
     flash_success=request.session.pop('flash_success',None)
     flash_error=request.session.pop('flash_error',None)
@@ -885,11 +852,8 @@ def course_registeration(request: Request):
 
 
 @router.get('/improvement_subject')
-def improvement_subject(request:Request):
-    student_id=request.session.get('student_id')
-    if not student_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",
-        context={"error":"Please try again"})
+def improvement_subject(request:Request,current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
 
     from main import app
     try:
@@ -935,11 +899,8 @@ def improvement_subject(request:Request):
 
 
 @router.post('/delete_improvement/{improvement_id}')
-def delete_improvement(request:Request,improvement_id:int):
-    student_id=request.session.get('student_id')
-    if not student_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",
-        context={"error":"Try again login"})
+def delete_improvement(request:Request,improvement_id:int,current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
     
     from main import app
     try:
@@ -966,13 +927,10 @@ def delete_improvement(request:Request,improvement_id:int):
 
 
 @router.post('/select_improvement/{course_id}')
-def select_improvement(request:Request,course_id:int,form_course_id:int=Form(None)):
-    student_id=request.session.get('student_id')
-    user_id=request.session.get('user_id')
-    if not student_id or not user_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",
-        context={"error":"Please try again"})
-
+def select_improvement(request:Request,course_id:int,form_course_id:int=Form(None),current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
+    user_id=current_user['user_id']
+   
     target_cid=form_course_id or course_id
     from main import app
     try:
@@ -1023,10 +981,7 @@ def select_improvement(request:Request,course_id:int,form_course_id:int=Form(Non
 @router.get('/help_desk')
 @router.post('/help_desk')
 def help_desk(request:Request):
-    student_id=request.session.get('student_id')
-    if not student_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",
-                                          context={"error":"Please try again"})
+    
     return templates.TemplateResponse(request=request,name="help_desk.html")
 
 
@@ -1050,11 +1005,9 @@ def help_desk(request:Request):
 
 
 @router.get('/fail_subjects')
-def fail_subjects(request:Request):
-    student_id=request.session.get('student_id')
-    if not student_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",
-        context={"error":"PLease try again"})
+def fail_subjects(request:Request,current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
+    
     from main import app
     try:
         with app.app_context():
@@ -1095,12 +1048,10 @@ def fail_subjects(request:Request):
 
 
 @router.post('/select_fail/{course_id}')
-def select_fail(request:Request,course_id:int,form_course_id:int=Form(None)):
-    student_id=request.session.get('student_id')
-    user_id=request.session.get('user_id')
-    if not student_id or not user_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",
-        context={"error":"Please login again"})
+def select_fail(request:Request,course_id:int,form_course_id:int=Form(None),current_user:dict=Depends(get_current_student)):
+    user_id=current_user['user_id']
+    student_id=current_user['student_id']
+    
 
     target_cid=form_course_id or course_id
     from main import app
@@ -1120,12 +1071,9 @@ def select_fail(request:Request,course_id:int,form_course_id:int=Form(None)):
 
 
 @router.post('/delete_fail/{fail_id}')
-def delete_fail(request:Request,fail_id:int):
-    student_id=request.session.get('student_id')
-    if not student_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",
-        context={"error":"Please try again"})
-
+def delete_fail(request:Request,fail_id:int,current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
+    
     from main import app
     try:
         with app.app_context():
@@ -1151,11 +1099,9 @@ def delete_fail(request:Request,fail_id:int):
 
 @router.get('/semester_freeze')
 @router.post('/semester_freeze')
-def semester_freeze(request:Request,reason:str=Form(None)):
-    student_id=request.session.get('student_id')
-    if not student_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",
-        context={"error":"Try again"})
+def semester_freeze(request:Request,reason:str=Form(None),current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
+    
 
     from main import app
     try:
@@ -1261,11 +1207,9 @@ def semester_freeze(request:Request,reason:str=Form(None)):
 
 
 @router.get('/summer_semester')
-def summer_semester(request:Request):
-    student_id=request.session.get('student_id')
-    if not student_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",
-                                          context={"error":"Login again"})
+def summer_semester(request:Request,current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
+    
 
     from main import app
     try:
@@ -1299,11 +1243,9 @@ def summer_semester(request:Request):
    
     
 @router.get('/summer_subjects')
-def summer_subjects(request:Request):
-    student_id=request.session.get('student_id')
-    if not student_id:
-            return templates.TemplateResponse(request=request,name="student_login.html",
-                                              context={"error":"Login again"})
+def summer_subjects(request:Request,current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
+    
 
     from main import app
     try:
@@ -1348,12 +1290,9 @@ def summer_subjects(request:Request):
 
 
 @router.post('/select_summer_subject/{subject_id}')
-def select_summer_subject(request:Request,subject_id:int):
-    student_id=request.session.get('student_id')
-    if not student_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",
-        context={"error":"Please login again"})
-
+def select_summer_subject(request:Request,subject_id:int,current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
+    
     from main import app
     try:
         with app.app_context():
@@ -1391,11 +1330,9 @@ def select_summer_subject(request:Request,subject_id:int):
 
 
 @router.post('/delete_summer_subject/{subject_id}')
-def delete_summer_subject(request:Request,subject_id:int):
-    student_id=request.session.get('student_id')
-    if not student_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",
-        context={"error":"Try again"})
+def delete_summer_subject(request:Request,subject_id:int,current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
+    
 
     from main import app
     try:
@@ -1412,6 +1349,7 @@ def delete_summer_subject(request:Request,subject_id:int):
         context={"error":"Try again"})           
      
     return RedirectResponse(url='/summer_semester',status_code=303)
+
 # @student.route("/delete_summer_subject/<int:subject_id>", methods=["POST"])
 # @student_required
 # def delete_summer_subject(subject_id):
@@ -1426,11 +1364,9 @@ def delete_summer_subject(request:Request,subject_id:int):
 
 
 @router.get('/student_fyp')
-def student_fyp(request:Request):
-    student_id=request.session.get('student_id')
-    if not student_id:
-        return templates.TemplateResponse(request=request,name="student_fyp.html",
-        context={"error":"Please login again"})
+def student_fyp(request:Request,current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
+    
 
     flash_success=request.session.pop('flash_success',None)
     flash_error=request.session.pop('flash_error',None)
@@ -1458,6 +1394,7 @@ def student_fyp(request:Request):
         print(f"Error during fyp: {str(e)}")
         return RedirectResponse(url='/student_dashboard',status_code=303)
 
+
 # @student.route('/student_fyp', methods=['GET'])
 # @student_required
 # def student_fyp():
@@ -1483,11 +1420,9 @@ def student_fyp(request:Request):
 
 
 @router.post('/submit_fyp')
-def submit_fyp(request:Request,project_title:str=Form(...),description:str=Form(...),proposal_file:UploadFile=File(None)):
-    student_id=request.session.get('student_id')
-    if not student_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",
-                                          context={"error":"Please login again"})
+def submit_fyp(request:Request,project_title:str=Form(...),description:str=Form(...),proposal_file:UploadFile=File(None),current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
+    
 
     upload_folder=os.path.join(os.getcwd(),'static','uploads','students_uploads','students_fyp_proposal')
     db_file_path=None
@@ -1561,12 +1496,9 @@ def submit_fyp(request:Request,project_title:str=Form(...),description:str=Form(
 #     return redirect(url_for('student.student_fyp'))
 
 @router.post('/send_fyp_message/{fyp_id}')
-def send_fyp_message(request:Request,fyp_id:int,message:str=Form(...)):
-    student_id=request.session.get('student_id')
-    if not student_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",
-        context={"error":"Please login again"})
-
+def send_fyp_message(request:Request,fyp_id:int,message:str=Form(...),current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
+    
     from main import app
     try:
         with app.app_context():
@@ -1580,6 +1512,7 @@ def send_fyp_message(request:Request,fyp_id:int,message:str=Form(...)):
     except Exception as e:
         print(f"Error for sending fyp message: {str(e)}")
     return RedirectResponse(url='/student_fyp',status_code=303)            
+
 
 # @student.route('/send_fyp_message/<int:fyp_id>', methods=['POST'])
 # @login_required
@@ -1631,11 +1564,9 @@ def send_fyp_message(request:Request,fyp_id:int,message:str=Form(...)):
 
 
 @router.post('/update_fyp')
-def update_fyp(request:Request,project_title:str=Form(...),proposal_file:UploadFile=File(None)):
-    student_id=request.session.get('student_id')
-    if not student_id:
-        return RedirectResponse(url='/student_login',status_code=303)
-
+def update_fyp(request:Request,project_title:str=Form(...),proposal_file:UploadFile=File(None),current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
+    
     upload_folder=os.path.join(os.getcwd(),'static','uploads','students_uploads','students_fyp_proposal')
     db_file_path=None
     if proposal_file and proposal_file.filename:
@@ -1660,6 +1591,7 @@ def update_fyp(request:Request,project_title:str=Form(...),proposal_file:UploadF
         print(f"Error during updating fyp: {str(e)}")
 
     return RedirectResponse(url='/student_fyp',status_code=303)                
+
 
 # @student.route('/upload_submission', methods=['POST'])
 # @student_required
@@ -1742,11 +1674,8 @@ def update_fyp(request:Request,project_title:str=Form(...),proposal_file:UploadF
 
 
 @router.get('/my_submissions')
-def my_submissions(request:Request):
-    student_id=request.session.get('student_id')
-    if not student_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",
-                                          context={"error":"Student id not found"})
+def my_submissions(request:Request,current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
     
     flash_success=request.session.pop('flash_success', None)
     flash_error=request.session.pop('flash_error', None)
@@ -1796,11 +1725,9 @@ def my_submissions(request:Request):
 
 
 @router.post('/upload_submission')
-def upload_submission(request:Request,course_id:int=Form(...),section_id:int=Form(...),type:str=Form(...),file:UploadFile=File(...)):
-    student_id=request.session.get('student_id')
-    if not student_id:
-        return templates.TemplateResponse(request=request,name="student_login.html",context={"error":"PLease login again"})
-
+def upload_submission(request:Request,course_id:int=Form(...),section_id:int=Form(...),type:str=Form(...),file:UploadFile=File(...),current_user:dict=Depends(get_current_student)):
+    student_id=current_user['student_id']
+    
     if file and file.filename:
         if not allowed_file(file.filename):
             request.session['flash_error']="Only PDF files are allowed for upload."
