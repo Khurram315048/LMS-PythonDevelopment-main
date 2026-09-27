@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import check_password_hash
-from utils.auth import login_required ,teacher_required
+from utils.auth import *
 from .teachers_models import TeacherModel,Notifications,ActivityModel
 import datetime
 import MySQLdb.cursors
