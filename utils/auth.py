@@ -115,7 +115,7 @@ def get_current_user(request:Request)->dict:
     user_id=request.session.get('user_id')
     if not user_id:
         raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,
-                            headers={"location: /main_view"})
+                            headers={"location": "/main_view"})
 
     return {"user_id":user_id}
 
@@ -127,7 +127,7 @@ def get_current_student(request:Request)->dict:
     
     if role != 'student' or not student_id or not user_id:
         raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,
-                                    headers={"location: /student_login"})
+                                    headers={"location": "/student_login"})
 
     return {"student_id":student_id,"user_id":user_id,"role":role}
 
@@ -139,7 +139,7 @@ def get_current_teacher(request:Request)->dict:
     
     if role != 'teacher' or not teacher_id or not user_id:
         raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,
-                                    headers={"location: /teacher_login"})
+                                    headers={"location": "/teacher_login"})
 
     return {"teacher_id":teacher_id,"user_id":user_id,"role":role}
 
@@ -152,6 +152,6 @@ def get_current_admin(request:Request)->dict:
     
     if role != 'admin' or not admin_id or not user_id:
         raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,
-                                    headers={"location: /admin_login"})
+                                    headers={"location": "/admin_login"})
 
     return {"admin_id":admin_id,"user_id":user_id,"role":role}  

@@ -1129,7 +1129,7 @@ class StudentModel:
                     if not result:
                         raise ValueError("FYP Not found")
 
-                    current_progress=result.get('progresss')
+                    current_progress=result.get('progress')
                     if not current_progress is None:
                         raise ValueError("Invalid FYP Progress value")
                     

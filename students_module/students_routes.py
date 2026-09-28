@@ -65,7 +65,7 @@ def student_login(request:Request,email:str=Form(None),
         print("Pydantic Validation Error:",v.errors())
         return templates.TemplateResponse(request=request,name="student_login.html", 
             context={"error":"Email Format Invalid"},
-            status_code=status.HTTP_422_UNPROCESSSABLE_CONTENT)
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT)
     
     try:        
         user=UserModel.get_user_by_email(check_inputs.email)
@@ -297,7 +297,7 @@ def complaint_suggestion(request:Request,title:str=Form(None),description:str=Fo
     try:
         clean_title=bleach.clean(check_data.title,tags=[],strip=True)
         clean_description=bleach.clean(check_data.description,tags=[],strip=True)
-        StudentModel.insert_complaint_suggestion(check_data.title,check_data.description,user_id)     
+        StudentModel.insert_complaint_suggestion(clean_title,clean_description,user_id)     
         request.session['flash_success']="Complaint/Suggestion submitted successfull"
         return RedirectResponse(url='/notifications',status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
@@ -333,7 +333,7 @@ def upload_fee(request:Request,month:str=Form(None),fee_amount:float=Form(None),
         voucher_data=UploadFeeVoucherRequest(
             month=month,fee_amount=fee_amount
         )
-    except ValidationError as e:
+    except ValidationError:
         return templates.TemplateResponse(request=request,name="upload_fee.html",
         context={"error":"Please enter valid details"})
 
@@ -581,7 +581,7 @@ def fail_subjects(request:Request,current_user:dict=Depends(get_current_student)
         existing=StudentModel.get_existing_retake_request(student_id)
         if existing:
             request.session['flash_error']="Only one subject selected for retake"
-            return RedirectResponse(url='/course_registeration',status_code=303)
+            return RedirectResponse(url='/course_registeration',status_code=status.HTTP_303_SEE_OTHER)
 
         max_semester=StudentModel.get_max_semester_passed(student_id)
         if max_semester<1:

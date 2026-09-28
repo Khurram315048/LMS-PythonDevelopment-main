@@ -36,7 +36,7 @@
                 <td>{{ notification.title }}</td>
                 <td>{{ notification.description }}</td>
                 <td>
-                    {% if notification.is_status == 'Solved' %}
+                    {% if notification.status == 'Solved' %}
                         <span class="badge bg-success">Solved</span>
                     {% else %}
                         <span class="badge bg-warning text-dark">Pending</span>
