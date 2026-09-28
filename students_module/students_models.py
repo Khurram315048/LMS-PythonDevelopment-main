@@ -276,7 +276,12 @@ class StudentModel:
         try:
             conn=mysql.get_dict_connection()
             with conn.cursor() as cursor:
-                cursor.execute('INSERT INTO complaint_suggestion(title,description,user_id) VALUES (%s,%s,%s)',(title,description,user_id))
+                cursor.execute('INSERT INTO complaint_suggestion(title,description,user_id) VALUES (%s,%s,%s)',
+                               (title,description,user_id))
+                conn.commit()
+        except Exception as e:
+            conn.rollback()
+            raise        
         finally:
             conn.close()
 
@@ -303,6 +308,10 @@ class StudentModel:
                     (student_id,course_id,section_id,file_path,submission_type)
                     VALUES (%s,%s,%s,%s,%s)"""
                 cursor.execute(query,(student_id,course_id,section_id,file_path,submission_type))
+                conn.commit()
+        except Exception as e:
+            print(f"Error during insert submission in db(models): {str(e)}")
+            conn.rollback()        
         finally:
             conn.close()
 
@@ -347,6 +356,10 @@ class StudentModel:
                 cursor.execute('''INSERT INTO student_fees(fee_amount,fee_status,update_date,voucher_front_pic,
                     voucher_back_pic,program_id,fee_month,student_id,is_deleted)VALUES(%s,%s,NOW(),%s,%s,%s,%s,%s,%s)''',
                     (fee_amount,'due',front_path,back_path,program_id,month,student_id,0))
+                conn.commit()
+        except Exception as e:
+            print(f"Error during upload fee voucher(models): {str(e)}")
+            conn.rollback()        
         finally:
             conn.close()
 
@@ -379,6 +392,9 @@ class StudentModel:
                     JOIN student_course sc ON cs.course_id=sc.course_id
                     WHERE sc.student_course_id=%s''',(student_course_id,))
                 schedule=cursor.fetchone()
+                if not schedule:
+                    raise ValueError("No schedule found")
+                
                 return schedule
         finally:
             conn.close()
@@ -429,12 +445,15 @@ class StudentModel:
         try:
             conn=mysql.get_dict_connection()
             with conn.cursor() as cursor:
-                cursor.execute('''SELECT CONCAT(t.first_name,'',t.last_name) AS teacher_name
+                cursor.execute('''SELECT CONCAT(t.first_name,' ',t.last_name) AS teacher_name
                                     FROM teacher_course tc
                                     JOIN teachers t ON tc.teacher_id=t.teacher_id
                                     JOIN student_course sc ON sc.course_id=tc.course_id
                                     WHERE sc.student_course_id=%s LIMIT 1''',(student_course_id,))
                 res=cursor.fetchone()
+                if not res:
+                    raise ValueError("No record fetch")
+                
                 return res
         finally:
             conn.close()    
@@ -547,7 +566,12 @@ class StudentModel:
         try:
             conn=mysql.get_dict_connection()
             with conn.cursor() as cursor:
-                cursor.execute("DELETE FROM student_improvement WHERE improvement_id=%s AND student_id=%s",(improvement_id,student_id))
+                cursor.execute("DELETE FROM student_improvement WHERE improvement_id=%s AND student_id=%s",
+                               (improvement_id,student_id))
+                conn.commit()
+        except Exception as e:
+            print(f"Error during dlt improvement(models):{str(e)}")
+            conn.rollback()        
         finally:
             conn.close()        
     
@@ -558,7 +582,12 @@ class StudentModel:
         try:
             conn=mysql.get_dict_connection()
             with conn.cursor() as cursor:
-                cursor.execute("""INSERT INTO student_improvement(student_id,course_id,status)VALUES(%s,%s,%s)""",(student_id,course_id,'Pending'))
+                cursor.execute("""INSERT INTO student_improvement(student_id,course_id,status)VALUES(%s,%s,%s)""",
+                               (student_id,course_id,'Pending'))
+                conn.commit()
+        except Exception as e:
+            print(f"Error during add improvemnt(models): {str(e)}")
+            conn.rollback()        
         finally:        
             conn.close()
 
@@ -570,7 +599,12 @@ class StudentModel:
             conn=mysql.get_dict_connection()
             with conn.cursor() as cursor:
                 cursor.execute("""INSERT INTO notifications(sender_id,sender_role,receiver_id,receiver_role,title,description,related_course_id,status)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s)""",(sender_id,sender_role,receiver_id,receiver_role,title,description,related_course_id,status))
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s)""",
+                    (sender_id,sender_role,receiver_id,receiver_role,title,description,related_course_id,status))
+                conn.commit()
+        except Exception as e:
+            print(f"Error during add notification(models): {str(e)}")
+            conn.rollback()        
         finally:
                 conn.close()
 
@@ -622,6 +656,10 @@ class StudentModel:
             with conn.cursor() as cursor:
                 cursor.execute("""INSERT INTO student_fail_subjects(student_id,course_id,status)
                 VALUES(%s,%s,%s)""",(student_id,course_id,'Pending'))
+                conn.commit()
+        except Exception as e:
+            print(f"Error during add fail subj(models): {str(e)}")
+            conn.rollback()        
         finally:
             conn.close()
 
@@ -632,6 +670,10 @@ class StudentModel:
             conn=mysql.get_dict_connection()
             with conn.cursor() as cursor:
                 cursor.execute("DELETE FROM student_fail_subjects WHERE student_fail_id=%s AND student_id=%s",(fail_id,student_id))
+                conn.commit()
+        except Exception as e:
+            print(f"Error during dlt fail subj(models): {str(e)}")
+            conn.rollback()        
         finally:
             conn.close()
 
@@ -673,6 +715,10 @@ class StudentModel:
             with conn.cursor() as cursor:
                 cursor.execute("""INSERT INTO semester_freeze_students(student_id,semester,reason,status)
                 VALUES(%s,%s,%s,'Pending')""",(student_id,semester,reason))
+                conn.commit()
+        except Exception as e:
+            print(f"Error during add smstr freeze request: {str(e)}")
+            conn.rollback()        
         finally:
             conn.close()
 
@@ -757,13 +803,19 @@ class StudentModel:
         try:
             conn=mysql.get_dict_connection()
             with conn.cursor() as cursor:
-                cursor.execute('SELECT * FROM summer_registration WHERE student_id=%s AND course_id=%s AND summer_semesters_id=%s',(student_id,course_id,summer_semester_id))
+                cursor.execute('SELECT * FROM summer_registration WHERE student_id=%s AND course_id=%s AND summer_semesters_id=%s',
+                               (student_id,course_id,summer_semester_id))
                 if cursor.fetchone():
                     cursor.close()
                     return False
                 
-                cursor.execute('''INSERT INTO summer_registration(student_id,course_id,summer_semesters_id,registration_date)VALUES (%s,%s,%s, NOW())''',(student_id,course_id,summer_semester_id))
+                cursor.execute('''INSERT INTO summer_registration(student_id,course_id,summer_semesters_id,registration_date)VALUES (%s,%s,%s, NOW())''',
+                               (student_id,course_id,summer_semester_id))
+                conn.commit()
                 return True
+        except Exception as e:
+            print(f"Error during add summer subj(models): {str(e)}")
+            conn.rollback()    
         finally:
             conn.close()    
 
@@ -775,7 +827,11 @@ class StudentModel:
             with conn.cursor() as cursor:
                 query="DELETE FROM summer_registration WHERE student_id=%s AND course_id=%s AND summer_semesters_id=%s"
                 cursor.execute(query,(student_id,course_id,summer_semester_id))
+                conn.commit()
                 return True
+        except Exception as e:
+            print(f"Error during dlt summer subj(models): {str(e)}")
+            conn.rollback()    
         finally:
             conn.close()    
 
@@ -861,7 +917,11 @@ class StudentModel:
             with conn.cursor() as cursor:
                 query="""INSERT INTO fyp_groups(project_title,description,teacher_id,student_id,status,progress,last_submission) 
                 VALUES(%s,%s,%s,%s,'In Progress',0, %s)"""
-                cursor.execute(query, (title,description,teacher_id,student_id,filename))
+                cursor.execute(query,(title,description,teacher_id,student_id,filename))
+                conn.commit()
+        except Exception as e:
+            print(f"Error during insert fyp prop(models): {str(e)}")
+            conn.rollback()        
         finally:
             conn.close()
 
@@ -894,6 +954,10 @@ class StudentModel:
                     query="""INSERT INTO fyp_messages(fyp_id,teacher_id,student_id,sender_role,message)
                     VALUES (%s,%s,%s,%s,%s)"""
                     cursor.execute(query, (fyp_id,teacher_id,student_id,role,message_text))
+                    conn.commit()
+        except Exception as e:
+            print(f"Error during insert fyp msg(models): {str(e)}") 
+            conn.rollback()           
         finally:
             conn.close()
 
@@ -907,12 +971,20 @@ class StudentModel:
                 if filename:
                     cursor.execute('SELECT progress FROM fyp_groups WHERE student_id=%s',(student_id,))
                     current_progress=cursor.fetchone()['progress']
+                    if not current_progress:
+                        raise ValueError("FYP Not found")
+                    
                     new_progress=min(current_progress + 10, 100)
                     query="UPDATE fyp_groups SET project_title=%s,last_submission=%s,progress=%s WHERE student_id=%s"
                     cursor.execute(query,(title,filename,new_progress,student_id))
+                    conn.commit()
                 else:
                     query="UPDATE fyp_groups SET project_title=%s WHERE student_id=%s"
                     cursor.execute(query,(title,student_id))
+                    conn.commit()
+        except Exception as e:
+            print(f"error during updt fyp data(models): {str(e)}")
+            conn.rollback()            
         finally:
             conn.close()
 

@@ -15,7 +15,7 @@ from teachers_module.teachers_routes import teacher_router
 
 
 app=FastAPI()
-app.add_middleware(SessionMiddleware,secret_key=SECRET_KEY,max_age=420)
+app.add_middleware(SessionMiddleware,secret_key=SECRET_KEY,max_age=3600)
 app.mount("/static",StaticFiles(directory=os.path.join(BASE_DIR,"static")),name="static")
 templates=Jinja2Templates(directory=os.path.join(BASE_DIR,'templates'))
 

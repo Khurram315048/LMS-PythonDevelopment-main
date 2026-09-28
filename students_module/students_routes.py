@@ -25,6 +25,24 @@ def allowed_file(filename:str)->bool:
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+MAX_FILE_SIZE=5*1024*1024
+def validate_upload_file(file:UploadFile)->bool:
+    if not file or not file.filename:
+        return False
+
+    file.file.seek(0,2)
+    file_size=file.file.tell()
+    file.file.seek(0)
+    if file_size>MAX_FILE_SIZE:
+        raise ValueError("File size exceed. mAX LIMIT 5MB")
+
+    ext=file.filename.rsplit('.',1).lower() if '.' in file.filename else ''
+    if ext not in ALLOWED_EXTENSIONS:
+        raise ValueError("Only PDF files allowed")
+
+    return True
+
+
 
 @router.get('/student_login',response_class=HTMLResponse)
 @router.post('/student_login',response_class=HTMLResponse)
@@ -64,7 +82,7 @@ def student_login(request:Request,email:str=Form(None),
                 status_code=status.HTTP_403_FORBIDDEN
             )
 
-        if user and check_password_hash(user['password'],check_inputs.password):
+        if user and check_password_hash(check_inputs.password,user['password']):
             student_obj=StudentModel.get_student_by_user_id(user['user_id'])
             if student_obj:
                 request.session['user_id']=user['user_id']
@@ -74,14 +92,11 @@ def student_login(request:Request,email:str=Form(None),
                 request.session['remember']=remember_me
                 return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
             else:
-                return RedirectResponse(url='/student_login',status_code=status.HTTP_404_NOT_FOUND)
+                return RedirectResponse(url='/student_login',status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:  
         print(f"Error during login route: {str(e)}")      
         return templates.TemplateResponse(request=request,name="student_login.html",context={
                                     "error":"Invalid credentials"})
-
-
-
 
 
 
@@ -96,7 +111,7 @@ def student_base(request:Request,current_user:dict=Depends(get_current_student))
                                               context={"student_name":student_name})
     except Exception as e:
         print(f"Error for student base: {str(e)}")
-        return RedirectResponse(url='/student_dashboard.html',status_code=303)    
+        return RedirectResponse(url='/student_dashboard.html',status_code=status.HTTP_303_SEE_OTHER)    
 
 
 
@@ -183,50 +198,49 @@ def student_dashboard(request:Request,current_user:dict=Depends(get_current_stud
         uploaded_assignments=[sub['course_id'] for sub in submissions if sub['submission_type'] == 'assignment']
         uploaded_quizzes=[sub['course_id'] for sub in submissions if sub['submission_type'] == 'quiz']
         active_notifications=NotificationModel.get_active_notifications(user_id,'student')
-        exam_data=None
-        admit_card=None
+        # exam_data=None
+        # admit_card=None
         show_marquee=False
         flash_message=None
-        student_row=StudentModel.get_program_id_student(student_id)
+        # student_row=StudentModel.get_program_id_student(student_id)
 
-        if student_row:
-            program_id=student_row['program_id']
-            exam_details=StudentModel.get_exam_details_student(program_id)
-            print(f"Exam details: {exam_details}")
+        # if student_row:
+        #     program_id=student_row['program_id']
+        #     exam_details=StudentModel.get_exam_details_student(program_id)
+        #     print(f"Exam details: {exam_details}")
             
-        today=date.today()
-        upcoming=[ex for ex in exam_details if ex['exam_date'] >= today]
+        # today=date.today()
+        # upcoming=[ex for ex in exam_details if ex['exam_date'] >= today]
 
-        if upcoming:
-            exam_data=upcoming
-            show_marquee=True
-            student_info=StudentModel.get_student_details(student_id)
+        # if upcoming:
+        #     exam_data=upcoming
+        #     show_marquee=True
+        #     student_info=StudentModel.get_student_details(student_id)
 
-            exam_category=upcoming[0]['exam_category']
-            exam_location=upcoming[0]['location'] or 'Class Room'
+        #     exam_category=upcoming[0]['exam_category']
+        #     exam_location=upcoming[0]['location'] or 'Class Room'
 
-            admit_courses=[{
-                'course_id':c['course_id'],
-                'course_name':c['course_name'],
-                'exam_type':exam_category,
-                'location':exam_location,
-                'status':'Allowed',
-                } for c in course_data]
+        #     admit_courses=[{
+        #         'course_id':c['course_id'],
+        #         'course_name':c['course_name'],
+        #         'exam_type':exam_category,
+        #         'location':exam_location,
+        #         'status':'Allowed',
+        #         } for c in course_data]
                             
-            admit_card={
-                'student':student_info,
-                'courses':admit_courses,
-                'exam_date':upcoming[0]['exam_date'],
-                'start_time':upcoming[0]['start_time'],
-                'end_time':upcoming[0]['end_time'],
-                }
+        #     admit_card={
+        #         'student':student_info,
+        #         'courses':admit_courses,
+        #         'exam_date':upcoming[0]['exam_date'],
+        #         'start_time':upcoming[0]['start_time'],
+        #         'end_time':upcoming[0]['end_time'],
+        #         }
             
 
         return templates.TemplateResponse(request=request,name="student_dashboard.html",
                     context={"schedule":formatted_schedule,"teacher":teacher_info_list,
                         "uploaded_assignments":uploaded_assignments,"teacher_ids":{},
                         "uploaded_quizzes": uploaded_quizzes,"active_notifications":active_notifications,
-                        "exam_data":exam_data,"admit_card":admit_card,
                         "show_marquee":show_marquee,"flash_message":flash_message})
     except Exception as e:
         print(f"Error during dashboard: {str(e)}")
@@ -283,7 +297,7 @@ def complaint_suggestion(request:Request,title:str=Form(None),description:str=Fo
     try:
         StudentModel.insert_complaint_suggestion(check_data.title,check_data.description,user_id)     
         request.session['flash_success']="Complaint/Suggestion submitted successfull"
-        return RedirectResponse(url='/notifications',status_code=303)
+        return RedirectResponse(url='/notifications',status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         print(f"Error while inserting complaint or suggestion: {str(e)}")
         return templates.TemplateResponse(request=request,name="complaint_suggestion.html",
@@ -309,7 +323,6 @@ def notifications(request:Request,current_user:dict=Depends(get_current_student)
 @router.post('/upload_fee')
 def upload_fee(request:Request,month:str=Form(None),fee_amount:float=Form(None),front_voucher:UploadFile=File(None),back_voucher:UploadFile=File(None),current_user:dict=Depends(get_current_student)):
     student_id=current_user['student_id']
-    
 
     if request.method=='GET':
         return templates.TemplateResponse(request=request,name="upload_fee.html")
@@ -324,7 +337,14 @@ def upload_fee(request:Request,month:str=Form(None),fee_amount:float=Form(None),
 
     if not front_voucher or not front_voucher.filename or not back_voucher or not back_voucher.filename:
         return templates.TemplateResponse(request=request,name="upload_fee.html",
-        context={"error":"Both front and back voucher uploaded"})
+        context={"error":"Both front and back  voucher must be uploaded"})
+
+    try:
+        validate_upload_file(front_voucher)
+        validate_upload_file(back_voucher)
+    except ValueError as ve:
+        return templates.TemplateResponse(request=request,name="upload_fee.html",
+                                          context={"error":str(ve)})    
 
     upload_folder=os.path.join(os.getcwd(),'static','uploads','students_uploads','voucher_pics')
     front_filename=secure_filename(f"student_{student_id}_front_{front_voucher.filename}")
@@ -343,11 +363,11 @@ def upload_fee(request:Request,month:str=Form(None),fee_amount:float=Form(None),
         program_id=program_details['program_id']
         StudentModel.upload_fee_voucher(student_id,program_id,voucher_data.month,voucher_data.fee_amount,db_front_path,db_back_path)
         request.session['flash_success']="Fee voucher uploaded successfully"
-        return RedirectResponse(url='/student_fee',status_code=303)       
+        return RedirectResponse(url='/student_fee',status_code=status.HTTP_303_SEE_OTHER)       
     except Exception as e:
-        print(f"Database inser error: {str({e})}")
+        print(f"Database inser error: {str(e)}")
         return templates.TemplateResponse(request=request,name="upload_fee.html",
-        context={"error":f"Failed to upload: {str({e})}"})
+        context={"error":"Failed to upload"})
 
 
 
@@ -386,7 +406,7 @@ def view_attendence(request:Request,current_user:dict=Depends(get_current_studen
             attendance_report.append(course_record)
                 
                 
-            return templates.TemplateResponse(request=request,name="view_attendence.html",context={"attendance_report":attendance_report})
+        return templates.TemplateResponse(request=request,name="view_attendence.html",context={"attendance_report":attendance_report})
     except Exception as e:
         print(f"Error during attendance: {str(e)}")
         return templates.TemplateResponse(request=request,name="student_login.html",
@@ -464,12 +484,12 @@ def improvement_subject(request:Request,current_user:dict=Depends(get_current_st
         existing=StudentModel.get_existing_improvement_request(student_id)
         if existing:
             request.session['flash_error']="Only one subject for improvement"
-            return RedirectResponse(url='/course_registeration',status_code=303)
+            return RedirectResponse(url='/course_registeration',status_code=status.HTTP_303_SEE_OTHER)
 
         max_semester=StudentModel.get_max_semester_passed(student_id)
         if max_semester <1:
             request.session['flash_error']="NO previous semester found"
-            return RedirectResponse(url='/course_registeration',status_code=303)
+            return RedirectResponse(url='/course_registeration',status_code=status.HTTP_303_SEE_OTHER)
 
         courses=StudentModel.get_eligible_improvement_courses(student_id,max_semester)
         return templates.TemplateResponse(request=request,name="improvement_subject.html",
@@ -491,7 +511,7 @@ def delete_improvement(request:Request,improvement_id:int,current_user:dict=Depe
     try:
         StudentModel.delete_improvement_subject(improvement_id,student_id)
         request.session['flash_success']="Improvement subject deleted successfully"
-        return RedirectResponse(url='/course_registeration',status_code=303)
+        return RedirectResponse(url='/course_registeration',status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         print(f"Error while deleting the improvement: {str(e)}")
         return templates.TemplateResponse(request=request,name="course_registeration.html",
@@ -513,7 +533,13 @@ def select_improvement(request:Request,course_id:int,form_course_id:int=Form(Non
     try:
         already=StudentModel.get_existing_improvement_request(student_id)
         if not already:
-            StudentModel.add_improvement_subject(student_id,target_cid)
+            try:
+                StudentModel.add_improvement_subject(student_id,target_cid)
+                request.session['flash_success']="Improvement subject requested successfully!"
+            except Exception as e:
+                print(f"Error during add imporvmnt(routes): {str(e)}")
+                request.session['flash_error']="Only one subject allowed"
+            
             try:
                 title='Improvement Subject Selected'
                 description=f'Student {student_id} select course {target_cid} for improvement'
@@ -521,13 +547,11 @@ def select_improvement(request:Request,course_id:int,form_course_id:int=Form(Non
             except Exception as e:
                 print(f"Notification error: {str(e)}")
 
-        request.session['flash_success']="Improvement subject requested successfully!"
-
     except Exception as e:
         print(f"Error selecting imprvement: {str(e)}")
         request.session['flash_error']="Failed to select improvement subject"
 
-    return RedirectResponse(url='/course_registeration',status_code=303)            
+    return RedirectResponse(url='/course_registeration',status_code=status.HTTP_303_SEE_OTHER)            
 
 
 
@@ -554,14 +578,14 @@ def fail_subjects(request:Request,current_user:dict=Depends(get_current_student)
         max_semester=StudentModel.get_max_semester_passed(student_id)
         if max_semester<1:
             request.session['flash_error']="No previous semester"
-            return RedirectResponse(url='/course_registeration',status_code=303)
+            return RedirectResponse(url='/course_registeration',status_code=status.HTTP_303_SEE_OTHER)
 
         courses=StudentModel.get_eligible_fail_subjects(student_id,max_semester)
         return templates.TemplateResponse(request=request,name="fail_subjects.html",
                                               context={"courses":courses})
     except Exception as e:
         print(f"Error during fail subject: {str(e)}")
-        return RedirectResponse(url='/course_registeration',status_code=303)    
+        return RedirectResponse(url='/course_registeration',status_code=status.HTTP_303_SEE_OTHER)    
 
 
 
@@ -584,7 +608,7 @@ def select_fail(request:Request,course_id:int,form_course_id:int=Form(None),curr
             request.session['flash_success']="Retake subject request successfully!"
     except Exception as e:
         print(f"Error during retake: {str(e)}")
-    return RedirectResponse(url='/course_registeration',status_code=303)                
+    return RedirectResponse(url='/course_registeration',status_code=status.HTTP_303_SEE_OTHER)                
 
 
 
@@ -598,7 +622,7 @@ def delete_fail(request:Request,fail_id:int,current_user:dict=Depends(get_curren
         print(f"Error during delete fail subject: {str(e)}")
         request.session['flash_error']="Failed to remove retake subject"
 
-    return RedirectResponse(url='/course_registeration',status_code=303)    
+    return RedirectResponse(url='/course_registeration',status_code=status.HTTP_303_SEE_OTHER)    
 
 
 
@@ -630,7 +654,7 @@ def semester_freeze(request:Request,reason:str=Form(None),current_user:dict=Depe
                 
             StudentModel.add_semester_freeze_request(student_id,semester,freeze_input.reason)
             request.session['flash_success']="Your semester freeze request has been submitted successfully!"
-            return RedirectResponse(url='/semester_freeze',status_code=303)
+            return RedirectResponse(url='/semester_freeze',status_code=status.HTTP_303_SEE_OTHER)
 
         return templates.TemplateResponse(request=request,name="semester_freeze.html", 
                                         context={"semester":semester,"student":student,"already_applied":False})
@@ -638,7 +662,7 @@ def semester_freeze(request:Request,reason:str=Form(None),current_user:dict=Depe
         import traceback
         traceback.print_exc()
         print(f"Semester freeze error: {e}")
-        return RedirectResponse(url='/student_dashboard',status_code=303)
+        return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
 
     
 
@@ -684,7 +708,7 @@ def summer_subjects(request:Request,current_user:dict=Depends(get_current_studen
         latest_summer=StudentModel.get_latest_summer_semester()
         if not latest_summer:
             request.session['flash_error']="No active summer semester"
-            return RedirectResponse(url='/summer_semester')
+            return RedirectResponse(url='/summer_semester',status_code=status.HTTP_303_SEE_OTHER)
 
         summer_semester_id=latest_summer['summer_semesters_id']
         failed_subjects=StudentModel.get_eligible_summer_failed_subjects(student_id)
@@ -694,7 +718,7 @@ def summer_subjects(request:Request,current_user:dict=Depends(get_current_studen
         return templates.TemplateResponse(request=request,name="summer_subjects.html",context={"subjects":available_subjects})
     except Exception as e:
         print(f"Error for summer subjects: {e}")
-        return RedirectResponse(url='/summer_semester')
+        return RedirectResponse(url='/summer_semester',status_code=status.HTTP_303_SEE_OTHER)
 
 
 
@@ -706,12 +730,12 @@ def select_summer_subject(request:Request,subject_id:int,current_user:dict=Depen
         summer_semester=StudentModel.get_latest_summer_semester()
         if not summer_semester:
             request.session['flash_error']="No summer semester available"
-            return RedirectResponse(url='/summer_semester')
+            return RedirectResponse(url='/summer_semester',status_code=status.HTTP_303_SEE_OTHER)
 
         summer_id=summer_semester['summer_semesters_id']
         StudentModel.add_summer_subject(student_id,subject_id,summer_id)
         request.session['flash_success']="Subject add for summer semester"
-        return RedirectResponse(url='/summer_semester',status_code=303)
+        return RedirectResponse(url='/summer_semester',status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         print(f"Error for summer selecting subjects: {e}")
     return templates.TemplateResponse(request=request,name="summer_semester.html",
@@ -730,13 +754,13 @@ def delete_summer_subject(request:Request,subject_id:int,current_user:dict=Depen
             summer_id=summer_semester['summer_semesters_id']
             StudentModel.delete_summer_subject(student_id,subject_id,summer_id)
             request.session['flash_success']="Subject removed from summer semester"
-            return RedirectResponse(url='/summer_semester',status_code=303)
+            return RedirectResponse(url='/summer_semester',status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         print(f"Error while removing summer subject: {e}")
         return templates.TemplateResponse(request=request,name="summer_semester.html",
         context={"error":"Try again"})           
      
-    return RedirectResponse(url='/summer_semester',status_code=303)
+    return RedirectResponse(url='/summer_semester',status_code=status.HTTP_303_SEE_OTHER)
 
 
 
@@ -766,7 +790,7 @@ def student_fyp(request:Request,current_user:dict=Depends(get_current_student)):
         import traceback
         traceback.print_exc()
         print(f"Error during fyp: {str(e)}")
-        return RedirectResponse(url='/student_dashboard',status_code=303)
+        return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
 
 
 
@@ -781,8 +805,14 @@ def submit_fyp(request:Request,project_title:str=Form(...),description:str=Form(
     if proposal_file and proposal_file.filename:
         if not allowed_file(proposal_file.filename):
             request.session['flash_error']="Only pdf type allowed"
-            return RedirectResponse(url='/student_fyp',status_code=303)
+            return RedirectResponse(url='/student_fyp',status_code=status.HTTP_303_SEE_OTHER)
 
+        try:
+            validate_upload_file(proposal_file)
+        except ValueError as ve:
+            return templates.TemplateResponse(request=request,name="student_fyp.html",
+                                              context={"error":str(ve)})
+            
         filename=secure_filename(proposal_file.filename)
         unique_name=f"SID_{student_id}_{filename}"
         file_path=os.path.join(upload_folder,unique_name)
@@ -799,7 +829,7 @@ def submit_fyp(request:Request,project_title:str=Form(...),description:str=Form(
         traceback.print_exc()
         print(f"Errors submitted fyp proposal: {e}")
 
-    return RedirectResponse(url='/student_fyp',status_code=303)        
+    return RedirectResponse(url='/student_fyp',status_code=status.HTTP_303_SEE_OTHER)        
 
 
 
@@ -810,13 +840,13 @@ def send_fyp_message(request:Request,fyp_id:int,message:str=Form(...),current_us
         fyp=StudentModel.get_fyp_by_id_and_student(fyp_id,student_id)
         if not fyp:
             request.session['flash_error']="Not access available"
-            return RedirectResponse(url='/student_fyp',status_code=303)
+            return RedirectResponse(url='/student_fyp',status_code=status.HTTP_303_SEE_OTHER)
 
         if message and message.strip():
             StudentModel.insert_fyp_message(fyp_id,student_id,'student',message.strip())
     except Exception as e:
         print(f"Error for sending fyp message: {str(e)}")
-    return RedirectResponse(url='/student_fyp',status_code=303)            
+    return RedirectResponse(url='/student_fyp',status_code=status.HTTP_303_SEE_OTHER)            
 
 
 
@@ -829,8 +859,14 @@ def update_fyp(request:Request,project_title:str=Form(...),proposal_file:UploadF
     if proposal_file and proposal_file.filename:
         if not allowed_file(proposal_file.filename):
             request.session['flash_error']="Only pdf files allowed"
-            return RedirectResponse(url='/student_fyp',status_code=303)
+            return RedirectResponse(url='/student_fyp',status_code=status.HTTP_303_SEE_OTHER)
 
+        try:
+            validate_upload_file(proposal_file)
+        except ValueError as ve:
+            return templates.TemplateResponse(request=request,name="student_fyp.html",
+                                              context={"error":str(ve)})
+            
         filename=secure_filename(proposal_file.filename)
         unique_name=f"SID_{student_id}_{filename}"
         file_path=os.path.join(upload_folder,unique_name)
@@ -844,7 +880,7 @@ def update_fyp(request:Request,project_title:str=Form(...),proposal_file:UploadF
     except Exception as e:
         print(f"Error during updating fyp: {str(e)}")
 
-    return RedirectResponse(url='/student_fyp',status_code=303)                
+    return RedirectResponse(url='/student_fyp',status_code=status.HTTP_303_SEE_OTHER)                
 
 
 
@@ -903,8 +939,14 @@ def upload_submission(request:Request,course_id:int=Form(...),section_id:int=For
     if file and file.filename:
         if not allowed_file(file.filename):
             request.session['flash_error']="Only PDF files are allowed for upload."
-            return RedirectResponse(url='/my_submissions',status_code=303)
-        
+            return RedirectResponse(url='/my_submissions',status_code=status.HTTP_303_SEE_OTHER)
+
+        try:
+            validate_upload_file(file)
+        except ValueError as ve:
+            return templates.TemplateResponse(request=request,name="my_submissions.html",
+                                              context={"error":str(ve)})
+            
         folder_name='students_assignments' if type=='assignment' else 'students_quizes'
         upload_path=os.path.join(os.getcwd(),'static','uploads','students_uploads',folder_name)
         timestamp=datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -922,7 +964,7 @@ def upload_submission(request:Request,course_id:int=Form(...),section_id:int=For
                                               context={"error":"Error.. Try after a while"})    
 
     request.session['flash_success']=f"{filename} uploaded successfully!"
-    return RedirectResponse(url='/my_submissions',status_code=303)            
+    return RedirectResponse(url='/my_submissions',status_code=status.HTTP_303_SEE_OTHER)            
 
 
 

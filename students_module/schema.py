@@ -264,7 +264,7 @@ class SelectImprovementRequest(BaseModel):
     @validator('course_id')
     def validate_course_id(cls,v):
         if v<1:
-            raise ValueError('course id muust be positive')
+            raise ValueError('course id must be positive')
         return v
 
 
