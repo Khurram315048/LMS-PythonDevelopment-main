@@ -594,6 +594,7 @@ CREATE TABLE `student_improvement` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`improvement_id`),
+  UNIQUE KEY `unique_student_improvement` (`student_id`),
   KEY `student_id` (`student_id`),
   KEY `course_id` (`course_id`),
   CONSTRAINT `student_improvement_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`),
@@ -1048,4 +1049,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-09-27 19:48:16
+-- Dump completed on 2026-09-28 14:34:23
