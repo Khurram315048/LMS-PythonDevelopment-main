@@ -13,6 +13,8 @@ from fastapi import Form
 from fastapi.templating import Jinja2Templates
 from pydantic import ValidationError
 from pathlib import Path
+import bleach
+from html import escape
 import MySQLdb
 import MySQLdb.cursors
 
@@ -277,8 +279,6 @@ def student_fee(request:Request,current_user:dict=Depends(get_current_student)):
 
 
 
-
-
 @router.get('/complaint_suggestion')
 @router.post('/complaint_suggestion')
 def complaint_suggestion(request:Request,title:str=Form(None),description:str=Form(None),current_user:dict=Depends(get_current_student)):
@@ -295,6 +295,8 @@ def complaint_suggestion(request:Request,title:str=Form(None),description:str=Fo
                                           context={"error_msg":error_msg})
 
     try:
+        clean_title=bleach.clean(check_data.title,tags=[],strip=True)
+        clean_description=bleach.clean(check_data.description,tags=[],strip=True)
         StudentModel.insert_complaint_suggestion(check_data.title,check_data.description,user_id)     
         request.session['flash_success']="Complaint/Suggestion submitted successfull"
         return RedirectResponse(url='/notifications',status_code=status.HTTP_303_SEE_OTHER)
@@ -351,10 +353,16 @@ def upload_fee(request:Request,month:str=Form(None),fee_amount:float=Form(None),
     back_filename=secure_filename(f"student_{student_id}_back_{back_voucher.filename}")
     front_full_path=os.path.join(upload_folder,front_filename)
     back_full_path=os.path.join(upload_folder,back_filename)
-    with open(front_full_path,'wb') as f:
-        f.write(front_voucher.file.read())
-    with open(back_full_path,'wb') as f:
-        f.write(back_voucher.file.read())     
+    try:
+        with open(front_full_path,'wb') as f:
+            f.write(front_voucher.file.read())
+        with open(back_full_path,'wb') as f:
+            f.write(back_voucher.file.read())    
+    except IOError as ir:
+        print(f"Error during save file: {str(ir)}")
+        return templates.TemplateResponse(request=request,name="upload_fee.html",
+                                          context={"error":"Unexpected error. Please Try Again"})
+
 
     db_front_path=f"uploads/students_uploads/voucher_pics/{front_filename}"
     db_back_path=f"uploads/students_uploads/voucher_pics/{back_filename}"
@@ -636,7 +644,7 @@ def semester_freeze(request:Request,reason:str=Form(None),current_user:dict=Depe
         student=StudentModel.get_student_by_id(student_id)
         existing_request=StudentModel.get_active_semester_freeze_request(student_id)
         semester=StudentModel.get_last_recorded_semester(student_id)
-        if existing_request:
+        if existing_request and existing_request.get('status') in ['Pending','Approved']:
             return templates.TemplateResponse(request=request,name="semester_freeze.html",context={"existing_request":existing_request,"already_applied":True,
                 "semester":semester})
 
@@ -817,8 +825,13 @@ def submit_fyp(request:Request,project_title:str=Form(...),description:str=Form(
         unique_name=f"SID_{student_id}_{filename}"
         file_path=os.path.join(upload_folder,unique_name)
         contents=proposal_file.file.read()
-        with open(file_path, 'wb') as f:
-            f.write(contents)
+        try:
+            with open(file_path, 'wb') as f:
+                f.write(contents)
+        except IOError as ir:
+            print(f"Error during submit fyp file: {str(ir)}")
+            return templates.TemplateResponse(request=request,name="student_fyp.html",
+                                              context={"error":"Unexpected error.Please Try again"})        
 
         db_file_path=f"uploads/students_uploads/students_fyp_proposal/{unique_name}"
     try:    
@@ -871,8 +884,13 @@ def update_fyp(request:Request,project_title:str=Form(...),proposal_file:UploadF
         unique_name=f"SID_{student_id}_{filename}"
         file_path=os.path.join(upload_folder,unique_name)
         contents=proposal_file.file.read()
-        with open(file_path,'wb') as f:
-            f.write(contents)
+        try:
+            with open(file_path,'wb') as f:
+                f.write(contents)
+        except IOError as ir:
+            print(f"Error during update fyp file: {str(ir)}")
+            return templates.TemplateResponse(request=request,name="student_fyp.html",context={"error":"Unexpected error.Please Try again"})        
+        
         db_file_path=f"uploads/students_uploads/students_fyp_proposal/{unique_name}"
     try:
         StudentModel.update_fyp_data(student_id,project_title,db_file_path)
@@ -953,8 +971,13 @@ def upload_submission(request:Request,course_id:int=Form(...),section_id:int=For
         filename=secure_filename(f"SID: {student_id}_{timestamp}_{file.filename}")
         full_filepath=os.path.join(upload_path,filename)
         contents=file.file.read()
-        with open(full_filepath,'wb')as f:
-            f.write(contents)
+        try:
+            with open(full_filepath,'wb')as f:
+                f.write(contents)
+        except IOError as ir:
+            print(f"Error during upload submission file: {str(ir)}")
+            return templates.TemplateResponse(request=request,name="my_submissions.html",context={"error":"Unexpected error.Please Try again"})        
+        
         db_file_path=f"uploads/students_uploads/{folder_name}/{filename}"
         try:
             StudentModel.insert_submission(student_id,course_id,section_id,db_file_path,type)

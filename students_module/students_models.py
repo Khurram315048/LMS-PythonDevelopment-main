@@ -12,6 +12,9 @@ class CheckFreezeStatus:
                 cursor.execute('SELECT status FROM semester_freeze_students WHERE student_id=%s AND is_deleted=0 ORDER BY applied_date DESC LIMIT 1',(student_id,))
                 status=cursor.fetchone()
                 return status
+        except Exception as e:
+            print(f"Error during confirm freeze status: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -27,6 +30,9 @@ class UserModel:
                 cursor.execute('SELECT user_id,password,role_id FROM users WHERE email=%s',(email,))
                 user=cursor.fetchone()
                 return user
+        except Exception as e:
+            print(f"Error during user by email: {str(e)}")
+            raise
         finally:
             conn.close()
         
@@ -40,6 +46,9 @@ class StudentModel:
                 cursor.execute('SELECT * FROM students WHERE user_id=%s AND is_deleted=%s',(user_id,0,))
                 student=cursor.fetchone()
                 return student
+        except Exception as e:
+            print(f"Error during student by user id: {str(e)}")
+            raise
         finally:
             conn.close()
 
@@ -56,6 +65,9 @@ class StudentModel:
                                         """,(student_id,))
                 res=cursor.fetchone()
                 return res
+        except Exception as e:
+            print(f"Error during student details: {str(e)}")
+            raise
         finally:
             conn.close()
 
@@ -68,6 +80,9 @@ class StudentModel:
                 cursor.execute('SELECT * FROM students WHERE student_id=%s AND is_deleted=%s',(student_id,0,))
                 student=cursor.fetchone()
                 return student
+        except Exception as e:
+            print(f"Error during student id: {str(e)}")
+            raise
         finally:
             conn.close()
 
@@ -80,6 +95,9 @@ class StudentModel:
                 cursor.execute('SELECT first_name,last_name,student_id FROM students WHERE user_id=%s',(user_id,))
                 student_name=cursor.fetchone()
                 return student_name
+        except Exception as e:
+            print(f"Error during student name: {str(e)}")
+            raise
         finally:
             conn.close()
 
@@ -92,6 +110,9 @@ class StudentModel:
                 cursor.execute('SELECT program_id FROM students WHERE student_id=%s',(student_id,))
                 res=cursor.fetchone()
                 return res
+        except Exception as e:
+            print(f"Error during program id: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -108,6 +129,9 @@ class StudentModel:
                 """,(program_id,))
                 res=cursor.fetchall()
                 return res
+        except Exception as e:
+            print(f"Error during exam details: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -124,6 +148,9 @@ class StudentModel:
                     program=cursor.fetchone()
                     return program
                 return None
+        except Exception as e:
+            print(f"Error during student program: {str(e)}")
+            raise
         finally:
             conn.close()
 
@@ -141,6 +168,9 @@ class StudentModel:
                     AND c.is_deleted=0 """,(student_id,))
                 courses=cursor.fetchall()
                 return courses
+        except Exception as e:
+            print(f"Error during enroll course: {str(e)}")
+            raise
         finally:
             conn.close()
 
@@ -152,6 +182,9 @@ class StudentModel:
             with conn.cursor() as cursor:
                 if not course_ids:
                     return []
+
+                if not all(isinstance(id,int) and id>0 for id in course_ids):
+                    raise ValueError("Invalid course ids-must be positive")
                 
                 course_placeholders= ','.join(['%s'] * len(course_ids))
                 cursor.execute(f'''SELECT course_id,course_name
@@ -159,6 +192,9 @@ class StudentModel:
                     WHERE course_id IN ({course_placeholders})''',tuple(course_ids))
                 course_data=cursor.fetchall()
                 return course_data
+        except ValueError as v:
+            print(f"Error during course details ids: {str(v)}")
+            return []
         finally:
             conn.close()
 
@@ -170,6 +206,9 @@ class StudentModel:
             with conn.cursor() as cursor:
                 if not course_ids:
                     return []
+
+                if not all(isinstance(id,int) and id>0 for id in course_ids):
+                    raise ValueError("Invalid course ids-must be positive")
                 
                 course_placeholders=','.join(['%s'] * len(course_ids))
                 cursor.execute(f'''SELECT course_id,teacher_id
@@ -177,6 +216,9 @@ class StudentModel:
                     WHERE course_id IN ({course_placeholders}) AND is_deleted=0''',tuple(course_ids))
                 teacher_rows=cursor.fetchall()
                 return teacher_rows
+        except ValueError as v:
+            print(f"Error during teacher course ids: {str(v)}")
+            return []
         finally:
             conn.close()    
 
@@ -189,6 +231,9 @@ class StudentModel:
                 if not teacher_ids:
                     return []
 
+                if not all(isinstance(id,int) and id>0 for id in teacher_ids):
+                    raise ValueError("Invalid ids-must be positive")
+                
                 teacher_placeholders=','.join(['%s'] * len(teacher_ids))
                 cursor.execute(f'''SELECT teacher_id,first_name,last_name
                     FROM teachers
@@ -196,6 +241,9 @@ class StudentModel:
                 ''',tuple(teacher_ids))
                 teacher_data=cursor.fetchall()
                 return teacher_data
+        except ValueError as v:
+            print(f"Error during teacher info: {str(v)}")
+            return []
         finally:
             conn.close()
 
@@ -209,6 +257,9 @@ class StudentModel:
                 if not course_ids:
                     return []
 
+                if not all(isinstance(id,int) and id>0 for id in course_ids):
+                    raise ValueError("Invalid ids-must be positive")
+
                 placeholder= ', '.join(['%s'] * len(course_ids))
                 query=f"""SELECT cs.*,s.assignments_enabled,s.quizzes_enabled
                 FROM course_schedule cs
@@ -217,6 +268,9 @@ class StudentModel:
                 cursor.execute(query,tuple(course_ids))
                 schedule=cursor.fetchall()
                 return schedule
+        except ValueError as v:
+            print(f"Error during course schedule ids: {str(v)}")
+            return []
         finally:
             conn.close()
 
@@ -229,6 +283,9 @@ class StudentModel:
             with conn.cursor() as cursor:
                 if not course_ids:
                     return []
+
+                if not all(isinstance(id,int) and id>0 for id in course_ids):
+                    raise ValueError("Invalide ids-must be positive")
             
                 placeholders=', '.join(['%s'] * len(course_ids))
                 query=f"""SELECT DISTINCT cs.course_id,cs.section_id,
@@ -246,6 +303,9 @@ class StudentModel:
                 cursor.execute(query, tuple(params))
                 schedule=cursor.fetchall()
                 return schedule
+        except ValueError as v:
+            print(f"Error during course enrolled section: {str(v)}")
+            return []
         finally:
             conn.close()
 
@@ -266,7 +326,13 @@ class StudentModel:
                 WHERE sf.student_id=%s AND sf.is_deleted=0"""
                 cursor.execute(query,(student_id,))
                 fee_records=cursor.fetchall()
+                if not fee_records:
+                    raise ValueError("No record found")
+                
                 return fee_records
+        except Exception as e:
+            print(f"Error during fee records: {str(e)}")
+            raise
         finally:
             conn.close()
 
@@ -293,7 +359,12 @@ class StudentModel:
             with conn.cursor() as cursor:
                 cursor.execute('SELECT * FROM complaint_suggestion WHERE user_id=%s',(user_id,))
                 status=cursor.fetchall()
+                if not status:
+                    raise ValueError("No status fetch")
                 return status
+        except Exception as e:
+            print(f"Error during omplaint : {str(e)}")
+            raise
         finally:
             conn.close()    
             
@@ -328,7 +399,12 @@ class StudentModel:
                     ORDER BY sub.upload_date DESC"""
                 cursor.execute(query,(student_id,))
                 submissions=cursor.fetchall()
+                if not submissions:
+                    raise ValueError("No submissions fetch")
                 return submissions
+        except Exception as e:
+            print(f"Error during all submission: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -344,6 +420,9 @@ class StudentModel:
                 cursor.execute(query,(student_id,))
                 submissions=cursor.fetchall()
                 return submissions
+        except Exception as e:
+            print(f"Error during studen submission: {str(e)}")
+            raise
         finally:
             conn.close()     
 
@@ -376,7 +455,11 @@ class StudentModel:
                     JOIN courses c ON sc.course_id=c.course_id
                     WHERE sc.student_id=%s''',(student_id,))
                 courses=cursor.fetchall()
+
                 return courses
+        except Exception as e:
+            print(f"Error during student course: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -396,6 +479,9 @@ class StudentModel:
                     raise ValueError("No schedule found")
                 
                 return schedule
+        except Exception as e:
+            print(f"Error during course schedule: {str(e)}")
+            raise
         finally:
             conn.close()
 
@@ -406,20 +492,21 @@ class StudentModel:
         try:
             conn=mysql.get_dict_connection()
             with conn.cursor() as cursor:
-                cursor.execute('''
-                SELECT COUNT(*) AS total
+                cursor.execute('''SELECT COUNT(*) AS total
                 FROM attendance
                 WHERE student_course_id=%s
-                ''', (student_course_id,))
+                ''',(student_course_id,))
                 total_lectures_row=cursor.fetchone()
-                cursor.execute('''
-                SELECT COUNT(*) AS attended
+                cursor.execute('''SELECT COUNT(*) AS attended
                 FROM attendance
                 WHERE student_course_id=%s AND attendance_status=%s
-                ''', (student_course_id,'Present'))
+                ''',(student_course_id,'Present'))
                 attended_row=cursor.fetchone()
                 return total_lectures_row['total'] if total_lectures_row else 0, \
                 attended_row['attended'] if attended_row else 0
+        except Exception as e:
+            print(f"Error during attendance summar: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -436,6 +523,9 @@ class StudentModel:
                 ORDER BY attendance_date ASC''',(student_course_id,))
                 lecture_status=cursor.fetchall()
                 return lecture_status
+        except Exception as e:
+            print(f"Error during attendance status: {str(e)}")
+            raise
         finally:
             conn.close()
 
@@ -455,6 +545,9 @@ class StudentModel:
                     raise ValueError("No record fetch")
                 
                 return res
+        except Exception as e:
+            print(f"Error during teacher name: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -474,6 +567,9 @@ class StudentModel:
                 cursor.execute(query, (student_id,))
                 all_marks=cursor.fetchall()
                 return all_marks
+        except Exception as e:
+            print(f"Error during student result: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -489,6 +585,9 @@ class StudentModel:
                     WHERE si.student_id=%s""",(student_id,))
                 improvements=cursor.fetchall()
                 return improvements
+        except Exception as e:
+            print(f"Error during improvement subj: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -505,6 +604,9 @@ class StudentModel:
                     WHERE sf.student_id = %s""",(student_id,))
                 retakes=cursor.fetchall()
                 return retakes
+        except Exception as e:
+            print(f"Error during retake subj: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -517,6 +619,9 @@ class StudentModel:
                 cursor.execute("SELECT * FROM student_improvement WHERE student_id=%s",(student_id,))
                 existing=cursor.fetchone()
                 return existing
+        except Exception as e:
+            print(f"Error during existing improvement: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -529,6 +634,9 @@ class StudentModel:
                 cursor.execute("SELECT MAX(student_semester) AS max_sem FROM student_results WHERE student_id=%s",(student_id,))
                 res=cursor.fetchone()
                 return int(res['max_sem']) if res and res['max_sem'] else 0
+        except Exception as e:
+            print(f"Error during max smstr: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -557,6 +665,9 @@ class StudentModel:
                     ORDER BY semester ASC""",(student_id,student_id,max_semester))
                 courses=cursor.fetchall()
                 return courses
+        except Exception as e:
+            print(f"Error during eligible improvement: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -618,6 +729,9 @@ class StudentModel:
                 cursor.execute("SELECT * FROM student_fail_subjects WHERE student_id=%s",(student_id,))
                 existing=cursor.fetchone()
                 return existing
+        except Exception as e:
+            print(f"Error during existing retake subj: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -645,6 +759,9 @@ class StudentModel:
                     ORDER BY semester ASC""",(student_id,student_id,max_semester))
                 courses=cursor.fetchall()
                 return courses
+        except Exception as e:
+            print(f"Error during eligible fail subj: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -687,6 +804,9 @@ class StudentModel:
                     ORDER BY applied_date DESC LIMIT 1 """,(student_id,))
                 request=cursor.fetchone()
                 return request
+        except Exception as e:
+            print(f"Error during active summer freeze: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -704,6 +824,9 @@ class StudentModel:
                     LIMIT 1 """,(student_id,))
                 result=cursor.fetchone()
                 return result['student_semester'] if result else None
+        except Exception as e:
+            print(f"Error during last record semester: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -745,6 +868,9 @@ class StudentModel:
                 cursor.execute(query,(student_id,student_id))
                 failed_subjects=cursor.fetchall()
                 return failed_subjects
+        except Exception as e:
+            print(f"Error during eligible summer fail subj: {str(e)}")
+            raise
         finally:
             conn.close()    
  
@@ -761,6 +887,9 @@ class StudentModel:
                 LIMIT 1 """)
                 semester=cursor.fetchone()
                 return semester  
+        except Exception as e:
+            print(f"Error during latest summer semester: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -782,6 +911,9 @@ class StudentModel:
                     AND rm.status='Fail'""",(student_id,last_semester))
                 subjects=cursor.fetchall()
                 return subjects
+        except Exception as e:
+            print(f"Error during fail subj: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -794,6 +926,9 @@ class StudentModel:
                 cursor.execute('SELECT setting_value FROM system_settings WHERE setting_key=%s',(key,))
                 result=cursor.fetchone()
                 return result['setting_value'] if result else None
+        except Exception as e:
+            print(f"Error during system setting: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -806,7 +941,6 @@ class StudentModel:
                 cursor.execute('SELECT * FROM summer_registration WHERE student_id=%s AND course_id=%s AND summer_semesters_id=%s',
                                (student_id,course_id,summer_semester_id))
                 if cursor.fetchone():
-                    cursor.close()
                     return False
                 
                 cursor.execute('''INSERT INTO summer_registration(student_id,course_id,summer_semesters_id,registration_date)VALUES (%s,%s,%s, NOW())''',
@@ -815,7 +949,8 @@ class StudentModel:
                 return True
         except Exception as e:
             print(f"Error during add summer subj(models): {str(e)}")
-            conn.rollback()    
+            conn.rollback()   
+            raise 
         finally:
             conn.close()    
 
@@ -831,7 +966,8 @@ class StudentModel:
                 return True
         except Exception as e:
             print(f"Error during dlt summer subj(models): {str(e)}")
-            conn.rollback()    
+            conn.rollback() 
+            raise   
         finally:
             conn.close()    
 
@@ -848,6 +984,9 @@ class StudentModel:
                 cursor.execute(query,(student_id,summer_semester_id))
                 selected=cursor.fetchall()
                 return selected
+        except Exception as e:
+            print(f"Error during slct summer subj: {str(e)}")
+            raise
         finally:
             conn.close()    
     
@@ -864,6 +1003,10 @@ class StudentModel:
                     else:
                         cursor.execute("""INSERT INTO notifications(sender_id,sender_role,receiver_role,title,description,related_course_id,status)
                         VALUES (%s,%s,%s,%s,%s,%s,%s)""",(sender_id,sender_role,receiver_role,title,description,related_course_id,status))
+                    conn.commit()
+        except Exception as e:
+            print(f"Error creating notification: {str(e)}")
+            conn.rollback()            
         finally:
             conn.close()
 
@@ -876,6 +1019,9 @@ class StudentModel:
                 cursor.execute("SELECT teacher_id,first_name,last_name FROM teachers WHERE is_deleted=0")
                 teachers=cursor.fetchall()
                 return teachers
+        except Exception as e:
+            print(f"Error during all teachers: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -889,6 +1035,9 @@ class StudentModel:
                 cursor.execute("SELECT fyp_id FROM fyp_groups WHERE fyp_id=%s AND student_id=%s",(fyp_id,student_id))
                 fyp=cursor.fetchone()
                 return fyp
+        except Exception as e:
+            print(f"Error during fyp id : {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -905,6 +1054,9 @@ class StudentModel:
                 cursor.execute(query,(student_id,))
                 fyp=cursor.fetchone()
                 return fyp
+        except Exception as e:
+            print(f"Error during fyp project: {str(e)}")
+            raise
         finally:
             conn.close()
 
@@ -938,6 +1090,9 @@ class StudentModel:
                 cursor.execute(query,(fyp_id,))
                 messages=cursor.fetchall()
                 return messages
+        except Exception as e:
+            print(f"Error during fyp message: {str(e)}")
+            raise
         finally:
             conn.close()
 
@@ -970,9 +1125,13 @@ class StudentModel:
             with conn.cursor() as cursor:
                 if filename:
                     cursor.execute('SELECT progress FROM fyp_groups WHERE student_id=%s',(student_id,))
-                    current_progress=cursor.fetchone()['progress']
-                    if not current_progress:
+                    result=cursor.fetchone()
+                    if not result:
                         raise ValueError("FYP Not found")
+
+                    current_progress=result.get('progresss')
+                    if not current_progress is None:
+                        raise ValueError("Invalid FYP Progress value")
                     
                     new_progress=min(current_progress + 10, 100)
                     query="UPDATE fyp_groups SET project_title=%s,last_submission=%s,progress=%s WHERE student_id=%s"
@@ -999,6 +1158,9 @@ class StudentModel:
                 cursor.execute(query,(teacher_id,))
                 teacher=cursor.fetchone()
                 return teacher   
+        except Exception as e:
+            print(f"Error during teacher full details: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -1014,6 +1176,9 @@ class NotificationModel:
                 ORDER BY created_at DESC""",(user_id,student_id))
                 notifications=cursor.fetchall()
                 return notifications
+        except Exception as e:
+            print(f"Error during notification: {str(e)}")
+            raise
         finally:
             conn.close()    
 
@@ -1028,6 +1193,9 @@ class NotificationModel:
                 WHERE (receiver_id=%s OR receiver_id IS NULL) AND receiver_role=%s AND is_deleted=%s AND status='Pending' """,(user_id,role,0))
                 notifications=cursor.fetchall()
                 return notifications    
+        except Exception as e:
+            print(f"Error during active notify: {str(e)}")
+            raise
         finally:
             conn.close()
             
