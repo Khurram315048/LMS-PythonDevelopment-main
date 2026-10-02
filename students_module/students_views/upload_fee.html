@@ -4,6 +4,16 @@
 
 {% block content %}
 
+{% if error %}
+        <div class="alert alert-success" style="padding: 10px; background-color: #d4edda; color: #155724; border-radius: 4px; margin-bottom: 15px;">
+            {{error}}
+        </div>
+        {% endif %}
+        {% if flash_error %}
+        <div class="alert alert-danger" style="padding: 10px; background-color: #f8d7da; color: #721c24; border-radius: 4px; margin-bottom: 15px;">
+             {{flash_error}}
+        </div>
+        {% endif %}
     <div class="details-section">
         <h3>Upload Fee Voucher</h3>
         <form class="details-grid" method="POST" enctype="multipart/form-data" action="/upload_fee">

@@ -9,7 +9,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from pydantic import BaseModel ,EmailStr,Field,ValidationError
 from config import SECRET_KEY,BASE_DIR
 from models import MainModel
-
+import utils.logger
 from students_module.students_routes import router as student_router
 from teachers_module.teachers_routes import teacher_router
 

@@ -1,6 +1,6 @@
 
 ```
-LMS-PythonDevelopment
+LMS-PythonDevelopment-main
 ├─ admin
 │  ├─ admin_models.py
 │  ├─ admin_routes.py
@@ -68,10 +68,14 @@ LMS-PythonDevelopment
 │        │  ├─ SID3_20260204_120727_new_cover.docx
 │        │  └─ SID4_20260204_135820_add_view_st.PNG
 │        ├─ students_fyp_proposal
+│        │  ├─ SID_100_AI_Interns_Learning_Series_Workshop_02_1.pdf
+│        │  ├─ SID_100_DOC-20260812-WA0002.pdf
 │        │  ├─ SID_2_ccp_seo_project.pdf
+│        │  ├─ SID_2_GEOAI_Guradian_Report.pdf
 │        │  ├─ SID_2_Muhammad_Khurram_CV_Original.pdf
 │        │  ├─ SID_2_Profile.pdf
 │        │  ├─ SID_2_PROJECT_REPORT-osama-new.pdf
+│        │  ├─ SID_2_res.pdf
 │        │  ├─ SID_3_portfolio-cv.pdf
 │        │  ├─ SID_4_Leadership_Manager_as_a_Leader.pdf
 │        │  ├─ SID_4_Manager_as_a_Decision_Maker.pdf
@@ -85,15 +89,35 @@ LMS-PythonDevelopment
 │        │  ├─ SID3_20260204_121554_Student_Management_System_Report_Project.docx
 │        │  └─ SID4_20260204_135954_home_view.PNG
 │        └─ voucher_pics
-│           ├─ student_2_back_students_view.PNG
-│           ├─ student_2_front_dep_view.PNG
-│           ├─ student_3_back_2nd_design_1st_part.PNG
-│           ├─ student_3_back_ChatGPT_Image_Jul_31_2025_03_17_32_PM.png
-│           ├─ student_3_front_1st_design_1st_part.PNG
-│           ├─ student_3_front_WhatsApp_Image_2025-08-06_at_12.31.57_PM_1.jpeg
-│           ├─ student_4_back_prj.PNG
-│           └─ student_4_front_contact.PNG
+│           ├─ student_100_back_Screenshot_from_2026-08-27_17-15-29.png
+│           ├─ student_100_front_Screenshot_from_2026-08-27_17-01-24.png
+│           ├─ student_2_back_2026-02-26-152910.jpg
+│           ├─ student_2_back_2026-02-26-152934.jpg
+│           ├─ student_2_back_analyze_api_response.png
+│           ├─ student_2_back_IMG_0874.jpeg
+│           ├─ student_2_back_IMG_0895.jpeg
+│           ├─ student_2_back_IMG_1297.jpeg
+│           ├─ student_2_back_project_tree.png
+│           ├─ student_2_back_Screenshot_2026-09-14_184408.png
+│           ├─ student_2_back_Screenshot_2026-09-16_175806.png
+│           ├─ student_2_back_Screenshot_from_2026-08-26_14-01-26.png
+│           ├─ student_2_back_tuition_receipt.jpg
+│           ├─ student_2_front_2026-02-26-152934.jpg
+│           ├─ student_2_front_fayvo.jpeg
+│           ├─ student_2_front_geojson_api_response.png
+│           ├─ student_2_front_IMG_0833_1.jpeg
+│           ├─ student_2_front_IMG_1297.jpeg
+│           ├─ student_2_front_IMG_1517.jpeg
+│           ├─ student_2_front_map_visualization.png
+│           ├─ student_2_front_Screenshot_2026-09-14_184408.png
+│           ├─ student_2_front_Screenshot_2026-09-16_175618.png
+│           ├─ student_2_front_Screenshot_from_2026-04-01_16-03-18.png
+│           ├─ student_2_front_Screenshot_from_2026-08-26_14-25-11.png
+│           └─ student_2_front_Screenshot_from_2026-08-26_21-25-50.png
 ├─ students_module
+│  ├─ logs
+│  │  └─ students_errors.json
+│  ├─ log_helper.py
 │  ├─ schema.py
 │  ├─ students_models.py
 │  ├─ students_routes.py
@@ -119,6 +143,7 @@ LMS-PythonDevelopment
 │  │  └─ view_grades.html
 │  └─ __init__.py
 ├─ teachers_module
+│  ├─ schema.py
 │  ├─ teachers_models.py
 │  ├─ teachers_routes.py
 │  ├─ teachers_views

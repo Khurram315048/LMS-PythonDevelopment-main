@@ -7,9 +7,19 @@
 <div class="container">
     <div class="dashboard-content">
         <h1 class="headings">My Dashboard</h1>
+       {% if flash_success %}
+        <div class="alert alert-success" style="padding: 10px; background-color: #d4edda; color: #155724; border-radius: 4px; margin-bottom: 15px;">
+             {{flash_success}}
+        </div>
+        {% endif %}
+        {% if flash_error %}
+        <div class="alert alert-danger" style="padding: 10px; background-color: #f8d7da; color: #721c24; border-radius: 4px; margin-bottom: 15px;">
+             {{flash_error}}
+        </div>
+        {% endif %}
         {% if message %}
         <div class="alert alert-warning" role="alert" style="margin-top: 20px; padding: 15px; background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; border-radius: 4px;">
-            <i class="fa-solid fa-triangle-exclamation me-2"></i> {{ message }}
+            <i class="fa-solid fa-triangle-exclamation me-2"></i> {{message}}
         </div>
         {% elif schedule %}
         <table>

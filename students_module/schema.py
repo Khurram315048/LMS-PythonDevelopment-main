@@ -1,14 +1,12 @@
-from pydantic import BaseModel, Field,validator,EmailStr
+from pydantic import BaseModel,Field,EmailStr,ConfigDict,field_validator
 from typing import Optional,List
 from datetime import datetime
-
 
 
 class StudentLoginRequest(BaseModel):
     email:EmailStr
     password:str
     remember_me:bool=False
-
 
 
 class LoginResponse(BaseModel):
@@ -18,10 +16,8 @@ class LoginResponse(BaseModel):
     user_id:int
     student_name:str
 
-
-
-
 class StudentProfileHelper(BaseModel):
+    model_config=ConfigDict(from_attributes=True)
     student_id:int
     user_id:int
     first_name:str
@@ -30,9 +26,6 @@ class StudentProfileHelper(BaseModel):
     current_semester:int
     program_id:int
 
-    class Config:
-        from_attributes=True
-
 
 class ProgramDetailHelper(BaseModel):
     program_id:int
@@ -40,10 +33,12 @@ class ProgramDetailHelper(BaseModel):
     program_coordinator:str
 
 
+
 class StudentProfileResponse(BaseModel):
     student:StudentProfileHelper
     program:ProgramDetailHelper
     show_notification:bool
+
 
 
 class CourseHelper(BaseModel):
@@ -53,12 +48,14 @@ class CourseHelper(BaseModel):
     semester:Optional[int]=None
 
 
+
 class TeacherHelper(BaseModel):
     teacher_id:int
     first_name:str
     last_name:str
     email:Optional[str]=None
     contact_num:Optional[str]=None
+
 
 
 class CourseScheduleHelper(BaseModel):
@@ -73,6 +70,7 @@ class CourseScheduleHelper(BaseModel):
     quizzes_enabled:bool=False
 
 
+
 class StudentDashboardResponse(BaseModel):
     student_id:int
     student_name:str
@@ -84,16 +82,18 @@ class StudentDashboardResponse(BaseModel):
     exam_data:Optional[dict]=None
 
 
+
 class CourseRegsterationRequest(BaseModel):
     course_id:int
     semester:int
 
-    @validator('course_id')
+    @field_validator('course_id')
+    @classmethod
     def validate_course_id(cls,v):
-        if v<1:
+        if v < 1:
             raise ValueError('course_id must be positive')
+        
         return v
-
 
 
 class SubmissionHelper(BaseModel):
@@ -107,15 +107,18 @@ class SubmissionHelper(BaseModel):
     file_path:Optional[str]=None
 
 
+
 class UploadSubmissionRequest(BaseModel):
-    course_id:int
-    section_id:int
+    course_id:int=Field(gt=0)
+    section_id:int=Field(gt=0)
     submission_type:str
 
-    @validator('submission_type')
+    @field_validator('submission_type')
+    @classmethod
     def validate_submission_type(cls,v):
         if v not in ['assignment','quiz']:
             raise ValueError('submission must be assignment or quiz')
+        
         return v
 
 
@@ -144,6 +147,7 @@ class FYPHelper(BaseModel):
     progress:int=Field(ge=0,le=100)
 
 
+
 class FYPMessageHelper(BaseModel):
     message_id:int
     fyp_id:int
@@ -151,11 +155,15 @@ class FYPMessageHelper(BaseModel):
     message:str
     created_at:datetime
 
+
+
 class SubmitFYPResponse(BaseModel):
     success:bool
     message:str
     fyp_id:int
     status:str
+
+
 
 class FYPDetailResponse(BaseModel):
     fyp:Optional[FYPHelper]=None
@@ -166,8 +174,7 @@ class FYPDetailResponse(BaseModel):
 
 
 class SendFYPMessageRequest(BaseModel):
-    message:str=Field(...,min_length=1,max_length=100)
-
+    message:str=Field(...,min_length=1,max_length=1000)
 
 
 class AttendanceRecordHelper(BaseModel):
@@ -195,10 +202,9 @@ class GradeHelper(BaseModel):
     semester:int
     course_name:str
     credit_hours:int
-    total_marks:float
-    subject_gpa:float
-    status:str
-
+    total_marks:Optional[float]=None
+    subject_gpa:Optional[float]=None
+    status:Optional[str]=None
 
 
 class GradesResponse(BaseModel):
@@ -209,14 +215,15 @@ class GradesResponse(BaseModel):
     overall_cgpa:float
 
 
+
 class FeeRecordHelper(BaseModel):
     program:str
     month:str
     fee_amount:float
-    paid_date:datetime
+    paid_date:Optional[datetime]=None
     status:str
-    front_voucher:str
-    back_voucher:str
+    front_voucher:Optional[str]=""
+    back_voucher:Optional[str]=""
 
 
 
@@ -227,6 +234,7 @@ class StudentFeeResponse(BaseModel):
     fees_paid:float
     pending_fees:float
     fee_records:List[FeeRecordHelper]
+
 
 
 class UploadFeeVoucherRequest(BaseModel):
@@ -258,13 +266,16 @@ class RetakeSubjectHelper(BaseModel):
     type:str="retake"
 
 
+
 class SelectImprovementRequest(BaseModel):
     course_id:int
 
-    @validator('course_id')
+    @field_validator('course_id')
+    @classmethod
     def validate_course_id(cls,v):
-        if v<1:
+        if v < 1:
             raise ValueError('course id must be positive')
+        
         return v
 
 
@@ -274,14 +285,16 @@ class SelectImprovementResponse(BaseModel):
     improvement_id:int
 
 
+
 class ImprovementListResponse(BaseModel):
     available_courses:List[CourseHelper]
     existing_improvements:List[ImprovementSubjectHelper]
     can_select:bool
 
 
+
 class SemesterFreezeRequest(BaseModel):
-    reason:str=Field(...,min_length=10,max_length=1000) 
+    reason:str=Field(...,min_length=10,max_length=1000)
 
 
 class SemesterFreezeResponse(BaseModel):
@@ -291,9 +304,9 @@ class SemesterFreezeResponse(BaseModel):
     status:str
 
 
-class  ComplaintSuggestionRequest(BaseModel):
-    title:str=Field(...,min_length=5,max_length=200)
-    description:str=Field(...,min_length=10,max_length=2000)
+class ComplaintSuggestionRequest(BaseModel):
+    title:str=Field(..., min_length=5,max_length=200)
+    description:str=Field(..., min_length=10,max_length=2000)
 
 
 
@@ -302,7 +315,6 @@ class ComplaintResponse(BaseModel):
     message:str
     complaint_id:int
     status:str
-
 
 
 class NotificationHelper(BaseModel):
@@ -319,8 +331,6 @@ class NotificationResponse(BaseModel):
     unread_count:int
 
 
-
-
 class ErrorResponse(BaseModel):
     success:bool=False
     message:str
@@ -332,13 +342,3 @@ class SuccessResponse(BaseModel):
     success:bool=True
     message:str
     data:Optional[dict]=None
-
-
-
-
-
-
-
-            
-
-        
