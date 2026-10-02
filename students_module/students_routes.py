@@ -99,7 +99,20 @@ def student_fee(request:Request,current_user:dict=Depends(get_current_student)):
     student_id=current_user['student_id']
     try:
         fee_record=StudentModel.get_student_fee_records(student_id)
-        records=[FeeRecordHelper(program=str(row['program']),month=str(row['month'] or 'N/A'),fee_amount=float(row['fee_amount']), paid_date=row['paid_date'],status=str(row['status']),front_voucher=row['front_voucher'] or '',back_voucher=row['back_voucher'] or '') for row in fee_record]
+        records=[]
+        for row in fee_record:
+            records.append(
+                FeeRecordHelper(
+                    program=str(row.get('program')),
+                    month=str(row.get('month')),
+                    fee_amount=float(row.get('fee_amount')),
+                    paid_date=row.get('paid_date'),
+                    status=str(row.get('status')),
+                    front_voucher=str(row.get('front_voucher')),
+                    back_voucher=str(row.get('back_voucher'))
+                )
+            )
+        # records=[FeeRecordHelper(program=str(row['program']),month=str(row['month'] or 'N/A'),fee_amount=float(row['fee_amount']),paid_date=row['paid_date'],status=str(row['status']),front_voucher=row['front_voucher'] or '',back_voucher=row['back_voucher'] or '') for row in fee_record]
         return templates.TemplateResponse(request=request,name="student_fee.html",
                                           context={"fee_records":records})
     except Exception as e:
@@ -123,8 +136,8 @@ def complaint_suggestion(request:Request,title:str=Form(None),description:str=Fo
         request.session['flash_success']="Complaint/Suggestion submitted successfully"
         return RedirectResponse(url='/notifications',status_code=status.HTTP_303_SEE_OTHER)
     
-    except ValidationError:
-        logging.warning(f"Error during complnt suggstn route api: {str(e)}")
+    except ValidationError as v:
+        logging.warning(f"Error during complnt suggstn route api: {str(v)}")
         return templates.TemplateResponse(request=request,name="complaint_suggestion.html",
                                           context={"error_msg":"Length error"})
     
@@ -340,7 +353,7 @@ def fail_subjects(request:Request,current_user:dict=Depends(get_current_student)
 
 @router.post('/select_fail/{course_id}')
 def select_fail(request:Request,course_id:int,form_course_id:int=Form(None),current_user:dict=Depends(get_current_student)):
-    student_id=current_user['user_id']
+    student_id=current_user['student_id']
     user_id=current_user['user_id']
     try:
         StudentService.handle_fail_subject_request(student_id,user_id,form_course_id or course_id)
@@ -535,7 +548,7 @@ def submit_fyp(request:Request,project_title:str=Form(...),description:str=Form(
     except (BusinessRuleError,AppValidation,NotFoundError) as ee:
         logging.warning(f"Error during submit fyp route api: {str(ee)}")
         print(f"Error during all error on submit fyp: {str(ee)}")
-        request.session['flash_error']=str(e)    
+        request.session['flash_error']=str(ee)    
     except Exception as e:
         logging.exception(f"Error during submit fyp route api: {str(e)}")
         request.session['flash_error']="Try again"
@@ -570,7 +583,7 @@ def update_fyp(request:Request,project_title:str=Form(...),
         StudentService.update_fyp(student_id,project_title,proposal_file)
         request.session['flash_success']="FYP updated"
     except (BusinessRuleError,AppValidation,NotFoundError) as ee:
-        logging.warning(f"Error during update fyp route api: {str(e)}")
+        logging.warning(f"Error during update fyp route api: {str(ee)}")
         request.session['flash_error']=str(ee)
     except Exception as e:
         logging.exception(f"Error during updt fyp route api: {str(e)}")
@@ -644,5 +657,7 @@ def upload_submission(request:Request,course_id:int=Form(...),section_id:int=For
     except Exception as e:
         logging.exception(f"Error during upld submissions route api: {str(e)}")
         request.session['flash_error']="Try again"
+        return templates.TemplateResponse(request=request,name="my_submissions.html",
+                                          context={"error":str(e)})
 
     return RedirectResponse(url='/my_submissions',status_code=status.HTTP_303_SEE_OTHER)

@@ -49,7 +49,7 @@ class StudentService:
         try:
             user=UserModel.get_user_by_email(email)
             if not user or user['role_id'] !=2 or not check_password_hash(user['password'],password):
-                logging.warning(f"Invalid Password: {str(password)}")
+                logging.warning(f"Invalid Password: {email}")
                 raise BusinessRuleError("Invalid credentials")
 
             student_obj=StudentModel.get_student_by_user_id(user['user_id'])
@@ -62,6 +62,7 @@ class StudentService:
             raise
         except Exception as e:
             logging.exception(f"Unexpected error during student authenticated service: {str(e)}")
+            raise
 
 
     @staticmethod
@@ -255,7 +256,7 @@ class StudentService:
         try:
             summer=StudentModel.get_latest_summer_semester()
             if not summer:
-                logging.warning(f"Summeer registeration handle by student: {student_id}")
+                logging.warning(f"Summer registeration handle by student: {student_id}")
                 raise NotFoundError("No summer semester available")
             
             StudentModel.add_summer_subject(student_id,subject_id,summer['summer_semesters_id'])
