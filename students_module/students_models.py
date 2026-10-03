@@ -1081,6 +1081,9 @@ class StudentModel:
             with conn.cursor() as cursor:
                 cursor.execute('SELECT current_semester FROM students WHERE student_id=%s AND is_deleted=0',(student_id))
                 res=cursor.fetchone()
+                if not res:
+                    return None
+                
                 current_smstr=res['current_semester']
                 return current_smstr
         except Exception as e:

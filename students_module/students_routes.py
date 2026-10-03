@@ -151,8 +151,8 @@ def complaint_suggestion(request:Request,title:str=Form(None),description:str=Fo
 @router.get('/notifications')
 def notifications(request:Request,current_user:dict=Depends(get_current_student)):
     user_id=current_user['user_id']
-    complaint_status=StudentModel.get_complaint_status(user_id)
     try:
+        complaint_status=StudentModel.get_complaint_status(user_id)
         return templates.TemplateResponse(request=request,name="notifications.html",
                                           context={'complaint_status':complaint_status,
                                                    'msg':request.session.get('flash_success')})
@@ -165,7 +165,10 @@ def notifications(request:Request,current_user:dict=Depends(get_current_student)
 
 @router.get('/upload_fee')
 @router.post('/upload_fee')
-def upload_fee(request:Request,month:str=Form(None),fee_amount:float=Form(None),front_voucher:UploadFile=File(None),back_voucher:UploadFile=File(None),current_user:dict=Depends(get_current_student)):
+def upload_fee(request:Request,month:str=Form(None),fee_amount:float=Form(None),
+               front_voucher:UploadFile=File(None),back_voucher:UploadFile=File(None),
+               current_user:dict=Depends(get_current_student)):
+    
     student_id=current_user['student_id']
                
     if request.method=='GET':
@@ -431,6 +434,16 @@ def summer_semester(request:Request,current_user:dict=Depends(get_current_studen
                                                   })
         
         latest=StudentModel.get_latest_summer_semester()
+        if not latest:
+            return templates.TemplateResponse(request=request,name="summer_semester.html",
+                                              context={
+                                                  "student":student,
+                                                  "summer_closed":True,
+                                                  "selected":[],
+                                                  "can_register":False,
+                                                  "failed_count":0
+                                                  })
+        
         summer_id=latest['summer_semesters_id']
         selected=StudentModel.get_selected_summer_subjects(student_id,summer_id) if latest else []
         failed=StudentModel.get_eligible_summer_failed_subjects(current_user['student_id']) if latest else []
@@ -648,7 +661,8 @@ def my_submissions(request:Request,current_user:dict=Depends(get_current_student
 
 
 @router.post('/upload_submission')
-def upload_submission(request:Request,course_id:int=Form(...),section_id:int=Form(...),type:str=Form(...),file:UploadFile=File(...), current_user:dict=Depends(get_current_student)):
+def upload_submission(request:Request,course_id:int=Form(...),section_id:int=Form(...),type:str=Form(...),
+                      file:UploadFile=File(...), current_user:dict=Depends(get_current_student)):
     student_id=current_user['student_id']
     try:
         filename=StudentService.upload_assignment_quiz(student_id,course_id,section_id,type,file)

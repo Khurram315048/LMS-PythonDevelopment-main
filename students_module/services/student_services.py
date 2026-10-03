@@ -277,7 +277,8 @@ class StudentService:
         except BusinessRuleError:
             raise
         except Exception as e:
-            logging.exception(f"Error during check fyp smstr: {str(e)}")    
+            logging.exception(f"Error during check fyp smstr: {str(e)}") 
+            raise   
         
 
     @staticmethod
