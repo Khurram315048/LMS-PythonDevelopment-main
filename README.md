@@ -34,6 +34,7 @@ LMS-PythonDevelopment-main
 │     └─ view_teachers.html
 ├─ auto_export_db.py
 ├─ config.py
+├─ logs
 ├─ main.py
 ├─ models.py
 ├─ README.md
@@ -76,6 +77,7 @@ LMS-PythonDevelopment-main
 │        │  ├─ SID_2_Profile.pdf
 │        │  ├─ SID_2_PROJECT_REPORT-osama-new.pdf
 │        │  ├─ SID_2_res.pdf
+│        │  ├─ SID_2_test2.jpg
 │        │  ├─ SID_3_portfolio-cv.pdf
 │        │  ├─ SID_4_Leadership_Manager_as_a_Leader.pdf
 │        │  ├─ SID_4_Manager_as_a_Decision_Maker.pdf
@@ -83,6 +85,10 @@ LMS-PythonDevelopment-main
 │        │  ├─ SID_4_Organizational_Structure_and_Design.pdf
 │        │  ├─ SID_4_Strategic_Management.pdf
 │        │  ├─ SID_5_COA_CCP_sol.pdf
+│        │  ├─ SID_7_20261002_134647_GEOAI_Guradian_Report.pdf
+│        │  ├─ SID_7_20261002_135108_GEOAI_Guradian_Report.pdf
+│        │  ├─ SID_7_20261002_135334_GEOAI_Guradian_Report.pdf
+│        │  ├─ SID_7_20261002_140309_fine_report.pdf
 │        │  └─ SID_8_lecture_1.pdf
 │        ├─ students_quizes
 │        │  ├─ SID2_20260204_151638_login_view.PNG
@@ -101,6 +107,8 @@ LMS-PythonDevelopment-main
 │           ├─ student_2_back_Screenshot_2026-09-14_184408.png
 │           ├─ student_2_back_Screenshot_2026-09-16_175806.png
 │           ├─ student_2_back_Screenshot_from_2026-08-26_14-01-26.png
+│           ├─ student_2_back_test5.jpg
+│           ├─ student_2_back_test6.jpg
 │           ├─ student_2_back_tuition_receipt.jpg
 │           ├─ student_2_front_2026-02-26-152934.jpg
 │           ├─ student_2_front_fayvo.jpeg
@@ -110,15 +118,17 @@ LMS-PythonDevelopment-main
 │           ├─ student_2_front_IMG_1517.jpeg
 │           ├─ student_2_front_map_visualization.png
 │           ├─ student_2_front_Screenshot_2026-09-14_184408.png
+│           ├─ student_2_front_Screenshot_2026-09-14_190312.png
 │           ├─ student_2_front_Screenshot_2026-09-16_175618.png
 │           ├─ student_2_front_Screenshot_from_2026-04-01_16-03-18.png
 │           ├─ student_2_front_Screenshot_from_2026-08-26_14-25-11.png
-│           └─ student_2_front_Screenshot_from_2026-08-26_21-25-50.png
+│           ├─ student_2_front_Screenshot_from_2026-08-26_21-25-50.png
+│           ├─ student_2_front_test4.jpg
+│           └─ student_2_front_test8.jpg
 ├─ students_module
-│  ├─ logs
-│  │  └─ students_errors.json
-│  ├─ log_helper.py
 │  ├─ schema.py
+│  ├─ services
+│  │  └─ student_services.py
 │  ├─ students_models.py
 │  ├─ students_routes.py
 │  ├─ students_views
@@ -169,7 +179,10 @@ LMS-PythonDevelopment-main
 ├─ updated_lms.sql
 └─ utils
    ├─ auth.py
+   ├─ csrf.py
    ├─ db.py
+   ├─ exceptions.py
+   ├─ logger.py
    └─ __init__.py
 
 ```

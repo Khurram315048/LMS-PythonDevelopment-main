@@ -63,6 +63,7 @@
           <form method="POST" 
             action="{% if sel.type == 'improvement' %}{{ url_for('delete_improvement',improvement_id=sel.id) }}{% else %}{{ url_for('delete_fail',fail_id=sel.id) }}{% endif %}" 
             style="display:inline;">
+            <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
           <button type="submit" class="btn btn-danger btn-sm">Remove</button>
       </form>
         </p>

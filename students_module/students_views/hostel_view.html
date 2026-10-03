@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/students_module.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/students_module.css') }}">
     <title>Hostel Login</title>
 </head>
 <body>
     <div class="login-container"> 
         <h1 class="headings">Hostel Login</h1>
         <form action="" method="POST">
+            <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
             <input type="email" name="hostel_id" placeholder="Hostel ID" required><br>
             <input type="password" name="hostel_password" placeholder="Password" required><br>
             <button type="submit">Hostel Login</button>

@@ -17,6 +17,7 @@
     <div class="details-section">
         <h3>Upload Fee Voucher</h3>
         <form class="details-grid" method="POST" enctype="multipart/form-data" action="/upload_fee">
+            <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
             <label >Select Month</label>
             <options>
                 <select name="month" required>

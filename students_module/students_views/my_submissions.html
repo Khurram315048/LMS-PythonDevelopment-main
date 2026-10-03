@@ -45,6 +45,7 @@
                             </div>
                         {% else %}
                             <form action="/upload_submission" method="POST" enctype="multipart/form-data">
+                                <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                                 <input type="hidden" name="course_id" value="{{ s.course_id }}">
                                 <input type="hidden" name="section_id" value="{{ s.section_id }}">
                                 <input type="hidden" name="type" value="assignment">
@@ -71,6 +72,7 @@
                             </div>
                         {% else %}
                             <form action="/upload_submission" method="POST" enctype="multipart/form-data">
+                                <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                                 <input type="hidden" name="course_id" value="{{ s.course_id }}">
                                 <input type="hidden" name="section_id" value="{{ s.section_id }}">
                                 <input type="hidden" name="type" value="quiz">

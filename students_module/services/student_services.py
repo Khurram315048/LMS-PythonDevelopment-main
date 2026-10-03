@@ -44,6 +44,22 @@ class FileService:
 
 
 class StudentService:
+
+    @staticmethod
+    def check_freeze_student(student_id:int):
+        try:
+            freeze_student=CheckFreezeStatus.confirm_freeze_status(student_id)
+            if freeze_student and freeze_student.get('status') == 'Approved':
+                return True
+            
+        except Exception as e:
+            logging.exception(f"Error during chck frz stndt service: {e}")    
+
+
+
+
+
+
     @staticmethod
     def authenticate_student(email:str,password:str):
         try:

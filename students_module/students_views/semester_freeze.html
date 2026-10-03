@@ -67,6 +67,7 @@
         </div>
         <div class="card-body p-4">
             <form method="POST" onsubmit="return confirm('⚠️ Are you sure you want to freeze this semester?');">
+                <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                 <div class="mb-3">
                     <label class="form-label"><strong>Current Semester:</strong></label>
                     <input type="text" name="semester" class="form-control" value="{{ semester }}" readonly>

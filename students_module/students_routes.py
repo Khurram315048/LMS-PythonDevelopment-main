@@ -11,12 +11,14 @@ from students_module.students_models import StudentModel
 from utils.auth import get_current_student
 from utils.exceptions import BusinessRuleError,ValidationError as AppValidation,NotFoundError
 import logging
+import secrets
+from utils.csrf import verify_csrf,get_csrf_token
 
 
-
-router=APIRouter()
+router=APIRouter(dependencies=[Depends(verify_csrf)])
 base_dir=Path(__file__).parent.parent
 templates=Jinja2Templates(directory=[str(base_dir/"students_module" / "students_views"),str(base_dir/"templates")])
+templates.env.globals["csrf_token"]=get_csrf_token
 
 
 
@@ -152,7 +154,11 @@ def complaint_suggestion(request:Request,title:str=Form(None),description:str=Fo
 def notifications(request:Request,current_user:dict=Depends(get_current_student)):
     user_id=current_user['user_id']
     try:
-        complaint_status=StudentModel.get_complaint_status(user_id)
+        try:
+            complaint_status=StudentModel.get_complaint_status(user_id)
+        except ValueError:
+            complaint_status=[]
+
         return templates.TemplateResponse(request=request,name="notifications.html",
                                           context={'complaint_status':complaint_status,
                                                    'msg':request.session.get('flash_success')})
@@ -246,6 +252,11 @@ def view_grades(request:Request,current_user:dict=Depends(get_current_student)):
 def course_registeration(request:Request,current_user:dict=Depends(get_current_student)):
     student_id=current_user['student_id']
     try:
+        check_status=StudentService.check_freeze_student(student_id)
+        if check_status:
+            request.session['flash_error']="Your semester has been freeze"
+            return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        
         student=StudentModel.get_student_by_id(student_id)
         if str(StudentModel.get_system_setting('is_course_reg_open')) != '1':
             return templates.TemplateResponse(request=request,name="course_registeration.html",
@@ -278,6 +289,11 @@ def course_registeration(request:Request,current_user:dict=Depends(get_current_s
 def improvement_subject(request:Request,current_user:dict=Depends(get_current_student)):
     student_id=current_user['student_id']
     try:
+        check_status=StudentService.check_freeze_student(student_id)
+        if check_status:
+            request.session['flash_error']="Your semester has been freeze"
+            return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        
         if StudentModel.get_existing_improvement_request(student_id):
             request.session['flash_error']="Only one subject for improvement"
             return RedirectResponse(url='/course_registeration',status_code=status.HTTP_303_SEE_OTHER)
@@ -300,6 +316,11 @@ def delete_improvement(request:Request,improvement_id:int,current_user:dict=Depe
     student_id=current_user['student_id']
 
     try:
+        check_status=StudentService.check_freeze_student(student_id)
+        if check_status:
+            request.session['flash_error']="Your semester has been freeze"
+            return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        
         StudentModel.delete_improvement_subject(improvement_id,student_id)
         request.session['flash_success']="Improvement subject deleted"
 
@@ -316,6 +337,12 @@ def select_improvement(request:Request,course_id:int,form_course_id:int=Form(Non
     student_id=current_user['student_id']
     user_id=current_user['user_id']
     try:
+        check_status=StudentService.check_freeze_student(student_id)
+        if check_status:
+            request.session['flash_error']="Your semester has been freeze"
+            return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+
+        
         StudentService.handle_improvement_request(student_id,user_id,form_course_id or course_id)
         request.session['flash_success']="Improvement requested!"
     except Exception as e:
@@ -340,6 +367,11 @@ def help_desk(request:Request):
 def fail_subjects(request:Request,current_user:dict=Depends(get_current_student)):
     student_id=current_user['student_id']
     try:
+        check_status=StudentService.check_freeze_student(student_id)
+        if check_status:
+            request.session['flash_error']="Your semester has been freeze"
+            return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        
         if StudentModel.get_existing_retake_request(student_id):
             request.session['flash_error']="Only one subject for retake"
             return RedirectResponse(url='/course_registeration',status_code=status.HTTP_303_SEE_OTHER)
@@ -359,6 +391,11 @@ def select_fail(request:Request,course_id:int,form_course_id:int=Form(None),curr
     student_id=current_user['student_id']
     user_id=current_user['user_id']
     try:
+        check_status=StudentService.check_freeze_student(student_id)
+        if check_status:
+            request.session['flash_error']="Your semester has been freeze"
+            return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        
         StudentService.handle_fail_subject_request(student_id,user_id,form_course_id or course_id)
         request.session['flash_success']="Retake request successfully!"
 
@@ -374,6 +411,11 @@ def select_fail(request:Request,course_id:int,form_course_id:int=Form(None),curr
 def delete_fail(request:Request,fail_id:int,current_user:dict=Depends(get_current_student)):
     student_id=current_user['student_id']
     try:
+        check_status=StudentService.check_freeze_student(student_id)
+        if check_status:
+            request.session['flash_error']="Your semester has been freeze"
+            return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        
         StudentModel.delete_fail_subject(fail_id,student_id)
         request.session['flash_success']="Retake removed"
 
@@ -389,18 +431,21 @@ def delete_fail(request:Request,fail_id:int,current_user:dict=Depends(get_curren
 @router.post('/semester_freeze')
 def semester_freeze(request:Request,reason:str=Form(None),current_user:dict=Depends(get_current_student)):
     student_id=current_user['student_id']
-    student=StudentModel.get_student_by_id(student_id)
-    semester=StudentModel.get_last_recorded_semester(student_id)
-    if request.method=='GET':
-        existing=StudentModel.get_active_semester_freeze_request(student_id)
-        return templates.TemplateResponse(request=request,name="semester_freeze.html",
-                                          context={
-                                              "existing_request":existing,
-                                              "already_applied":bool(existing),
-                                              "semester":semester,
-                                              "student":student
-                                              })
+    
     try:
+        student=StudentModel.get_student_by_id(student_id)
+        semester=StudentModel.get_last_recorded_semester(student_id)
+        
+        if request.method=='GET':
+            existing=StudentModel.get_active_semester_freeze_request(student_id)
+            return templates.TemplateResponse(request=request,name="semester_freeze.html",
+                                                        context={
+                                                            "existing_request":existing,
+                                                            "already_applied":bool(existing),
+                                                            "semester":semester,
+                                                            "student":student
+                                                        })
+        
         inputs=SemesterFreezeRequest(reason=reason)
         StudentService.handle_semester_freeze(student_id,inputs.reason)
         request.session['flash_success']="Request submitted"
@@ -409,12 +454,21 @@ def semester_freeze(request:Request,reason:str=Form(None),current_user:dict=Depe
     except (ValidationError,BusinessRuleError,NotFoundError) as e:
         logging.exception(f"Error during smstr freeze route api: {str(e)}")
         return templates.TemplateResponse(request=request,name="semester_freeze.html",
-                                          context={
-                                            "semester":semester,
-                                            "student": student,
-                                            "already_applied":False,
-                                            "error":"Try again"
-                                            })
+                                                            context={
+                                                                "semester":None,
+                                                                "student":None,
+                                                                "already_applied":False,
+                                                                "error":"Try again"
+                                                            })
+    except Exception as e:
+        logging.exception(f"Error during smstr freeze route api: {str(e)}")
+        return templates.TemplateResponse(request=request,name="semester_freeze.html",
+                                                                context={
+                                                                    "semester":None,
+                                                                    "student":None,
+                                                                    "already_applied":False,
+                                                                    "error":"Try again"
+                                                                })
 
 
 
@@ -422,6 +476,11 @@ def semester_freeze(request:Request,reason:str=Form(None),current_user:dict=Depe
 def summer_semester(request:Request,current_user:dict=Depends(get_current_student)):
     student_id=current_user['student_id']
     try:
+        check_status=StudentService.check_freeze_student(student_id)
+        if check_status:
+            request.session['flash_error']="Your semester has been freeze"
+            return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        
         student=StudentModel.get_student_by_id(student_id)
         if str(StudentModel.get_system_setting('is_summer_app_open')) != '1':
             return templates.TemplateResponse(request=request,name="summer_semester.html",
@@ -467,6 +526,11 @@ def summer_semester(request:Request,current_user:dict=Depends(get_current_studen
 def summer_subjects(request:Request,current_user:dict=Depends(get_current_student)):
     student_id=current_user['student_id']
     try:
+        check_status=StudentService.check_freeze_student(student_id)
+        if check_status:
+            request.session['flash_error']="Your semester has been freeze"
+            return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        
         latest=StudentModel.get_latest_summer_semester()
         if not latest:
             request.session['flash_error']="No summer active"
@@ -488,6 +552,11 @@ def summer_subjects(request:Request,current_user:dict=Depends(get_current_studen
 def select_summer_subject(request:Request,subject_id:int,current_user:dict=Depends(get_current_student)):
     student_id=current_user['student_id']
     try:
+        check_status=StudentService.check_freeze_student(student_id)
+        if check_status:
+            request.session['flash_error']="Your semester has been freeze"
+            return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        
         StudentService.handle_summer_registration(student_id,subject_id)
         request.session['flash_success']="Subject added"
     except Exception as e:
@@ -502,11 +571,19 @@ def select_summer_subject(request:Request,subject_id:int,current_user:dict=Depen
 def delete_summer_subject(request:Request,subject_id:int,current_user:dict=Depends(get_current_student)):
     student_id=current_user['student_id']
     try:
+        check_status=StudentService.check_freeze_student(student_id)
+        if check_status:
+            request.session['flash_error']="Your semester has been freeze"
+            return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        
         latest=StudentModel.get_latest_summer_semester()
+        if not latest:
+            request.session['flash_error']="No summer semester available"
+            return RedirectResponse(url='/summer_semester',status_code=status.HTTP_303_SEE_OTHER)
+        
         summer_id=latest['summer_semesters_id']
-        if latest:
-            StudentModel.delete_summer_subject(student_id,subject_id,summer_id)
-            request.session['flash_success']="Subject removed"
+        StudentModel.delete_summer_subject(student_id,subject_id,summer_id)
+        request.session['flash_success']="Subject removed"
 
     except Exception as e:
         logging.exception(f"Error during dlt summr subjs route api: {str(e)}")
@@ -520,6 +597,11 @@ def delete_summer_subject(request:Request,subject_id:int,current_user:dict=Depen
 def student_fyp(request:Request,current_user:dict=Depends(get_current_student)):
     student_id=current_user['student_id']
     try:
+        check_status=StudentService.check_freeze_student(student_id)
+        if check_status:
+            request.session['flash_error']="Your semester has been freeze"
+            return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        
         StudentService.check_fyp_semester(student_id)
         student=StudentModel.get_student_by_id(student_id)
         fyp=StudentModel.get_fyp_project(student_id)
@@ -556,6 +638,11 @@ def submit_fyp(request:Request,project_title:str=Form(...),description:str=Form(
     
     student_id=current_user['student_id']
     try:
+        check_status=StudentService.check_freeze_student(student_id)
+        if check_status:
+            request.session['flash_error']="Your semester has been freeze"
+            return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        
         StudentService.submit_fyp_proposal(student_id,project_title,description,teacher_id,proposal_file)
         request.session['flash_success']="FYP proposal submitted"
     except (BusinessRuleError,AppValidation,NotFoundError) as ee:
@@ -575,6 +662,11 @@ def submit_fyp(request:Request,project_title:str=Form(...),description:str=Form(
 def send_fyp_message(request:Request,fyp_id:int,message:str=Form(...),current_user:dict=Depends(get_current_student)):
     student_id=current_user['student_id']
     try:
+        check_status=StudentService.check_freeze_student(student_id)
+        if check_status:
+            request.session['flash_error']="Your semester has been freeze"
+            return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        
         fyp_obj=StudentModel.get_fyp_by_id_and_student(fyp_id,student_id)
         if fyp_obj and message.strip():
             StudentModel.insert_fyp_message(fyp_id,student_id,'student',message.strip())
@@ -592,6 +684,11 @@ def update_fyp(request:Request,project_title:str=Form(...),
     
     student_id=current_user['student_id']
     try:
+        check_status=StudentService.check_freeze_student(student_id)
+        if check_status:
+            request.session['flash_error']="Your semester has been freeze"
+            return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        
         StudentService.update_fyp(student_id,project_title,proposal_file)
         request.session['flash_success']="FYP updated"
     except (BusinessRuleError,AppValidation,NotFoundError) as ee:
@@ -608,6 +705,11 @@ def update_fyp(request:Request,project_title:str=Form(...),
 def my_submissions(request:Request,current_user:dict=Depends(get_current_student)):
     student_id=current_user['student_id']
     try:
+        check_status=StudentService.check_freeze_student(student_id)
+        if check_status:
+            request.session['flash_error']="Your semester has been freeze"
+            return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        
         courses=StudentModel.get_enrolled_courses_by_student_id(student_id)
         if not courses:
             return templates.TemplateResponse(request=request,name="student_dashboard.html",
@@ -665,11 +767,15 @@ def upload_submission(request:Request,course_id:int=Form(...),section_id:int=For
                       file:UploadFile=File(...), current_user:dict=Depends(get_current_student)):
     student_id=current_user['student_id']
     try:
+        check_status=StudentService.check_freeze_student(student_id)
+        if check_status:
+            request.session['flash_error']="Your semester has been freeze"
+            return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        
         filename=StudentService.upload_assignment_quiz(student_id,course_id,section_id,type,file)
         request.session['flash_success']=f"{filename} uploaded successfully!"
     except Exception as e:
         logging.exception(f"Error during upld submissions route api: {str(e)}")
         request.session['flash_error']="Try again"
-        return RedirectResponse(url='/my_submissions',status_code=status.HTTP_303_SEE_OTHER)
 
     return RedirectResponse(url='/my_submissions',status_code=status.HTTP_303_SEE_OTHER)
