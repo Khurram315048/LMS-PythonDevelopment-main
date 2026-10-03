@@ -384,6 +384,7 @@ class StudentService:
             raise
         except Exception as e:
             logging.exception(f"Error during upload submission(assignmnt,quiz) service: {str(e)}")
+            raise
 
 
 

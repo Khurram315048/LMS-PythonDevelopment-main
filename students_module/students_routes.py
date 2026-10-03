@@ -547,7 +547,6 @@ def submit_fyp(request:Request,project_title:str=Form(...),description:str=Form(
         request.session['flash_success']="FYP proposal submitted"
     except (BusinessRuleError,AppValidation,NotFoundError) as ee:
         logging.warning(f"Error during submit fyp route api: {str(ee)}")
-        print(f"Error during all error on submit fyp: {str(ee)}")
         request.session['flash_error']=str(ee)    
     except Exception as e:
         logging.exception(f"Error during submit fyp route api: {str(e)}")
@@ -657,7 +656,6 @@ def upload_submission(request:Request,course_id:int=Form(...),section_id:int=For
     except Exception as e:
         logging.exception(f"Error during upld submissions route api: {str(e)}")
         request.session['flash_error']="Try again"
-        return templates.TemplateResponse(request=request,name="my_submissions.html",
-                                          context={"error":str(e)})
+        return RedirectResponse(url='/my_submissions',status_code=status.HTTP_303_SEE_OTHER)
 
     return RedirectResponse(url='/my_submissions',status_code=status.HTTP_303_SEE_OTHER)
