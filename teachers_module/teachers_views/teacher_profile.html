@@ -4,6 +4,16 @@
 
 {% block content %}
 <div class="container">
+    {% if flash_success %}
+    <div class="alert alert-success" style="padding: 10px; background-color: #d4edda; color: #155724; border-radius: 4px; margin-bottom: 15px;">
+        {{ flash_success }}
+    </div>
+    {% endif %}
+    {% if flash_error %}
+    <div class="alert alert-danger" style="padding: 10px; background-color: #f8d7da; color: #721c24; border-radius: 4px; margin-bottom: 15px;">
+        {{ flash_error }}
+    </div>
+    {% endif %}
     <div class="profile-card">
         {% if details %}
         <h2>{{details.first_name}} {{details.last_name}}</h2>
@@ -34,19 +44,6 @@
             <label>Joining Date</label>
             <input type="text" name="joining_date" value="{{details.joining_date}}" readonly>
         </form>
-        
-        <div class="edit-profile-section">
-            <form method="POST">
-                <button type="submit" name="edit_request" value="true" class="edit-btn">
-                    Click Here If Anything Is Wrong 😊
-                </button>
-            </form>
-            {% if show_notification %}
-            <div class="notification">
-                Contact To Register Office
-            </div>
-            {% endif %}
-        </div>
         {% endif %}
     </div>
 </div>

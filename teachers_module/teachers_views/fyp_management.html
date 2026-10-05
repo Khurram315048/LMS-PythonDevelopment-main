@@ -4,6 +4,16 @@
 
 {% block content %}
 <div class="container mt-4">
+    {% if flash_success %}
+    <div class="alert alert-success" style="padding: 10px; background-color: #d4edda; color: #155724; border-radius: 4px; margin-bottom: 15px;">
+        {{ flash_success }}
+    </div>
+    {% endif %}
+    {% if flash_error %}
+    <div class="alert alert-danger" style="padding: 10px; background-color: #f8d7da; color: #721c24; border-radius: 4px; margin-bottom: 15px;">
+        {{ flash_error }}
+    </div>
+    {% endif %}
     <h2><i class="fa-solid fa-user-tie"></i> FYP Supervision Dashboard</h2>
     
  <div class="row mb-4">
@@ -11,7 +21,7 @@
         <div class="card bg-info text-white shadow">
             <div class="card-body">
                 <h5>Total Groups</h5>
-                <h3>{{ total }}</h3>
+                <h3>{{total}}</h3>
             </div>
         </div>
     </div>
@@ -19,7 +29,7 @@
         <div class="card bg-success text-white shadow">
             <div class="card-body">
                 <h5>Completed/Approved</h5>
-                <h3>{{ completed }}</h3>
+                <h3>{{completed}}</h3>
             </div>
         </div>
     </div>
@@ -27,7 +37,7 @@
         <div class="card bg-warning text-dark shadow">
             <div class="card-body">
                 <h5>Pending Approvals</h5>
-                <h3>{{ pending }}</h3>
+                <h3>{{pending}}</h3>
             </div>
         </div>
     </div>

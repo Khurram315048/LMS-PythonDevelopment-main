@@ -6,7 +6,18 @@
 
 <br><br>
 <div class="container">
-    <h2>My Today Timetable ({{ today_name }})</h2>
+    {% if flash_success %}
+    <div class="alert alert-success" style="padding: 10px; background-color: #d4edda; color: #155724; border-radius: 4px; margin-bottom: 15px;">
+        {{ flash_success }}
+    </div>
+    {% endif %}
+    {% if flash_error %}
+    <div class="alert alert-danger" style="padding: 10px; background-color: #f8d7da; color: #721c24; border-radius: 4px; margin-bottom: 15px;">
+        {{ flash_error }}
+    </div>
+    {% endif %}
+
+    <h2>My Today Timetable ({{today_name}})</h2>
     <table class="today-time-tbl">
         <thead>
             <tr>
@@ -24,13 +35,13 @@
             {% for row in today_schedule %}
             <tr>
                 <td><a href="/marked_attendance/{{row.section_id}}" class="btn-open">Open Class Attendance</a></td>
-                <td>{{ row.coordinator_name }}</td>
-                <td>{{ row.section_id }}</td>
-                <td>{{ row.course_name }}</td>
-                <td>{{ row.semester }}</td>
-                <td>{{ row.class_name }}</td>
-                <td>{{ row.section }}</td>
-                <td>{{ row.day_of_week }} ({{ row.start }} - {{ row.end }})</td>
+                <td>{{row.coordinator_name}}</td>
+                <td>{{row.section_id}}</td>
+                <td>{{row.course_name}}</td>
+                <td>{{row.semester}}</td>
+                <td>{{row.class_name}}</td>
+                <td>{{row.section}}</td>
+                <td>{{row.day_of_week}} ({{row.start}} - {{row.end}})</td>
             </tr>
             {% else %}
             <tr>
