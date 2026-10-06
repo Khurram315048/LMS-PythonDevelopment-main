@@ -56,11 +56,13 @@
         <td>
             <div style="display: flex; flex-direction: column; gap: 5px;">
                 <form action="/toggle_upload/{{row.section_id}}/assignment" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                     <button type="submit" class="btn-status {% if row.assignments_enabled %}btn-enabled{% else %}btn-disabled{% endif %}">
                         Assignments: {{ 'ON' if row.assignments_enabled else 'OFF' }}
                     </button>
                 </form>
                 <form action="/toggle_upload/{{row.section_id}}/quiz" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                     <button type="submit" class="btn-status {% if row.quizzes_enabled %}btn-enabled{% else %}btn-disabled{% endif %}">
                         Quizzes: {{ 'ON' if row.quizzes_enabled else 'OFF' }}
                     </button>

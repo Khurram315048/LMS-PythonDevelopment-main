@@ -70,7 +70,7 @@ CREATE TABLE `attendance` (
   CONSTRAINT `attendance_ibfk_1` FOREIGN KEY (`student_course_id`) REFERENCES `student_course` (`student_course_id`),
   CONSTRAINT `attendance_ibfk_2` FOREIGN KEY (`course_schedule_id`) REFERENCES `course_schedule` (`course_schedule_id`),
   CONSTRAINT `fk_attendance_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -79,7 +79,7 @@ CREATE TABLE `attendance` (
 
 LOCK TABLES `attendance` WRITE;
 /*!40000 ALTER TABLE `attendance` DISABLE KEYS */;
-INSERT INTO `attendance` VALUES (1,2,3,'2025-12-31','Absent',3,0),(2,3,4,'2025-12-31','Absent',4,0),(3,2,3,'2026-02-04','Absent',3,0),(4,2,3,'2026-02-04','Present',3,0),(5,3,4,'2026-02-04','Present',4,0),(6,2,3,'2026-03-04','Present',3,0),(7,3,4,'2026-03-04','Present',4,0),(10,2,3,'2026-03-11','Absent',3,0),(11,3,4,'2026-03-11','Present',4,0),(12,2,3,'2026-03-13','Present',3,0),(13,3,4,'2026-03-19','Present',4,0),(14,2,3,'2026-09-17','Present',3,0),(15,1,4,'2026-09-16','Absent',2,0),(16,3,4,'2026-09-16','Absent',4,0),(17,1,4,'2026-09-17','Present',2,0),(18,3,4,'2026-09-17','Present',4,0),(19,4,2,'2026-09-18','Present',5,0),(20,4,2,'2026-09-17','Present',5,0);
+INSERT INTO `attendance` VALUES (1,2,3,'2025-12-31','Absent',3,0),(2,3,4,'2025-12-31','Absent',4,0),(3,2,3,'2026-02-04','Absent',3,0),(4,2,3,'2026-02-04','Present',3,0),(5,3,4,'2026-02-04','Present',4,0),(6,2,3,'2026-03-04','Present',3,0),(7,3,4,'2026-03-04','Present',4,0),(10,2,3,'2026-03-11','Absent',3,0),(11,3,4,'2026-03-11','Present',4,0),(12,2,3,'2026-03-13','Present',3,0),(13,3,4,'2026-03-19','Present',4,0),(14,2,3,'2026-09-17','Present',3,0),(15,1,4,'2026-09-16','Absent',2,0),(16,3,4,'2026-09-16','Absent',4,0),(17,1,4,'2026-09-17','Present',2,0),(18,3,4,'2026-09-17','Present',4,0),(19,4,2,'2026-09-18','Present',5,0),(20,4,2,'2026-09-17','Present',5,0),(21,1,1,'2026-10-06','Absent',2,0),(22,1,1,'2026-10-05','Present',2,0),(23,2,3,'2026-10-05','Absent',3,0);
 /*!40000 ALTER TABLE `attendance` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -101,7 +101,7 @@ CREATE TABLE `complaint_suggestion` (
   PRIMARY KEY (`complt_sugst_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `complaint_suggestion_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -110,7 +110,7 @@ CREATE TABLE `complaint_suggestion` (
 
 LOCK TABLES `complaint_suggestion` WRITE;
 /*!40000 ALTER TABLE `complaint_suggestion` DISABLE KEYS */;
-INSERT INTO `complaint_suggestion` VALUES (1,'Result','check my result',NULL,3,'Solved',0),(2,'Finance_Department','Give my salary\r\n',NULL,4,'Solved',0),(3,'Exam_Department','Where is my shedule??',NULL,3,'Solved',0),(4,'Finance_Department','hy testing fastapi teacher routes',NULL,11,'Pending',0),(5,'Library','checking again teacher fastapi route ',NULL,11,'Pending',0),(6,'Exam_Department','checking the flash message',NULL,11,'Pending',0),(7,'Finance_Department','checking the fastapi student module ',NULL,3,'Pending',0),(8,'Result','checking apirouter',NULL,3,'Pending',0),(9,'Library','checking again apirouter\r\n',NULL,3,'Pending',0),(10,'Hostel','checking service type fastapi',NULL,3,'Pending',0),(11,'Library','checking the service fastapi new student route',NULL,10,'Pending',0);
+INSERT INTO `complaint_suggestion` VALUES (1,'Result','check my result',NULL,3,'Solved',0),(2,'Finance_Department','Give my salary\r\n',NULL,4,'Solved',0),(3,'Exam_Department','Where is my shedule??',NULL,3,'Solved',0),(4,'Finance_Department','hy testing fastapi teacher routes',NULL,11,'Pending',0),(5,'Library','checking again teacher fastapi route ',NULL,11,'Pending',0),(6,'Exam_Department','checking the flash message',NULL,11,'Pending',0),(7,'Finance_Department','checking the fastapi student module ',NULL,3,'Pending',0),(8,'Result','checking apirouter',NULL,3,'Pending',0),(9,'Library','checking again apirouter\r\n',NULL,3,'Pending',0),(10,'Hostel','checking service type fastapi',NULL,3,'Pending',0),(11,'Library','checking the service fastapi new student route',NULL,10,'Pending',0),(12,'Exam_Department','checking teacher fastapi service based',NULL,4,'Pending',0);
 /*!40000 ALTER TABLE `complaint_suggestion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -140,7 +140,7 @@ CREATE TABLE `course_attendance_log` (
   CONSTRAINT `cal_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `teachers` (`teacher_id`),
   CONSTRAINT `cal_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `courses` (`course_id`),
   CONSTRAINT `cal_ibfk_3` FOREIGN KEY (`course_schedule_id`) REFERENCES `course_schedule` (`course_schedule_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -149,7 +149,7 @@ CREATE TABLE `course_attendance_log` (
 
 LOCK TABLES `course_attendance_log` WRITE;
 /*!40000 ALTER TABLE `course_attendance_log` DISABLE KEYS */;
-INSERT INTO `course_attendance_log` VALUES (3,1,1,3,'2026-03-11',91,41,50,'2026-03-11 07:37:21',0,5),(4,1,1,4,'2026-03-11',1,1,0,'2026-03-11 07:37:26',0,5),(5,1,1,3,'2026-03-13',1,1,0,'2026-03-13 06:38:50',0,5),(6,1,1,4,'2026-03-19',1,1,0,'2026-03-19 05:57:07',0,5),(7,5,6,4,'2026-03-26',15,10,5,'2026-03-25 13:34:10',0,5),(8,1,1,4,'2026-09-16',2,0,2,'2026-09-17 17:59:38',0,5),(9,1,1,4,'2026-09-17',2,0,2,'2026-09-17 18:04:13',0,5),(10,1,1,2,'2026-09-18',1,1,0,'2026-09-17 18:08:00',0,5),(11,1,1,2,'2026-09-17',1,1,0,'2026-09-17 18:28:14',0,5);
+INSERT INTO `course_attendance_log` VALUES (3,1,1,3,'2026-03-11',91,41,50,'2026-03-11 07:37:21',0,5),(4,1,1,4,'2026-03-11',1,1,0,'2026-03-11 07:37:26',0,5),(5,1,1,3,'2026-03-13',1,1,0,'2026-03-13 06:38:50',0,5),(6,1,1,4,'2026-03-19',1,1,0,'2026-03-19 05:57:07',0,5),(7,5,6,4,'2026-03-26',15,10,5,'2026-03-25 13:34:10',0,5),(8,1,1,4,'2026-09-16',2,0,2,'2026-09-17 17:59:38',0,5),(9,1,1,4,'2026-09-17',2,0,2,'2026-09-17 18:04:13',0,5),(10,1,1,2,'2026-09-18',1,1,0,'2026-09-17 18:08:00',0,5),(11,1,1,2,'2026-09-17',1,1,0,'2026-09-17 18:28:14',0,5),(12,1,1,1,'2026-10-06',1,0,1,'2026-10-05 15:07:04',0,5),(13,1,1,1,'2026-10-05',1,1,0,'2026-10-05 15:07:50',0,5),(14,1,1,3,'2026-10-05',1,0,1,'2026-10-05 15:08:01',0,5);
 /*!40000 ALTER TABLE `course_attendance_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -310,7 +310,7 @@ CREATE TABLE `fyp_messages` (
   PRIMARY KEY (`message_id`),
   KEY `fyp_id` (`fyp_id`),
   CONSTRAINT `fyp_messages_ibfk_1` FOREIGN KEY (`fyp_id`) REFERENCES `fyp_groups` (`fyp_id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -319,7 +319,7 @@ CREATE TABLE `fyp_messages` (
 
 LOCK TABLES `fyp_messages` WRITE;
 /*!40000 ALTER TABLE `fyp_messages` DISABLE KEYS */;
-INSERT INTO `fyp_messages` VALUES (1,1,1,2,'teacher','hy','2026-02-24 11:21:54',0),(2,2,1,3,'teacher','hy','2026-02-24 11:22:04',0),(3,1,1,2,'student','ji','2026-03-13 09:45:29',0),(4,5,4,4,'student','hi guys','2026-03-13 11:11:25',0),(5,1,1,2,'teacher','checking fastapi send message route','2026-09-17 16:33:28',0),(6,2,1,3,'teacher','also you checking','2026-09-17 16:34:03',0),(7,1,1,2,'student','hy i am testing fastapi response','2026-09-23 11:00:55',0),(8,1,1,2,'student','checking apirouter','2026-09-27 13:16:49',0),(9,7,3,7,'student','hi i am testing the fyp send message service based fastapi','2026-10-02 09:03:38',0);
+INSERT INTO `fyp_messages` VALUES (1,1,1,2,'teacher','hy','2026-02-24 11:21:54',0),(2,2,1,3,'teacher','hy','2026-02-24 11:22:04',0),(3,1,1,2,'student','ji','2026-03-13 09:45:29',0),(4,5,4,4,'student','hi guys','2026-03-13 11:11:25',0),(5,1,1,2,'teacher','checking fastapi send message route','2026-09-17 16:33:28',0),(6,2,1,3,'teacher','also you checking','2026-09-17 16:34:03',0),(7,1,1,2,'student','hy i am testing fastapi response','2026-09-23 11:00:55',0),(8,1,1,2,'student','checking apirouter','2026-09-27 13:16:49',0),(9,7,3,7,'student','hi i am testing the fyp send message service based fastapi','2026-10-02 09:03:38',0),(10,1,1,2,'teacher','hecking the tchr fastapi service based api','2026-10-05 15:19:55',0),(11,2,1,3,'teacher','you didn\'t reply i am checking the fastapi servie based api','2026-10-05 15:20:27',0),(12,1,1,2,'teacher','so you didn\'t ans','2026-10-06 08:49:44',0);
 /*!40000 ALTER TABLE `fyp_messages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -347,7 +347,7 @@ CREATE TABLE `notifications` (
   KEY `sender_id` (`sender_id`),
   CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`related_course_id`) REFERENCES `courses` (`course_id`) ON DELETE SET NULL,
   CONSTRAINT `notifications_ibfk_2` FOREIGN KEY (`sender_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -356,7 +356,7 @@ CREATE TABLE `notifications` (
 
 LOCK TABLES `notifications` WRITE;
 /*!40000 ALTER TABLE `notifications` DISABLE KEYS */;
-INSERT INTO `notifications` VALUES (1,8,'admin',NULL,'student','Notification checking','checking the method of notification',1,'Rejected','2026-03-13 06:21:45',1),(2,8,'admin',NULL,'teacher','checking the teacher  notify','i am just checking it.',NULL,'Pending','2026-03-13 06:38:10',0),(3,8,'admin',5,'student','Assigning the Course','this course has been assigned to you kindly visit my office.',5,'Pending','2026-03-13 06:44:07',0),(4,8,'admin',8,'admin','hhhhhh','mjhvyufdzay',1,'Pending','2026-03-25 13:38:54',0),(5,3,'student',NULL,'admin','Improvement Subject Selected','Student 2 select course 1 for improvement',1,'Pending','2026-09-14 13:57:44',0),(6,3,'student',NULL,'admin','Improvement Subject Selected','Student 2 select course 1 for improvement',1,'Pending','2026-09-23 10:59:45',0),(7,3,'student',NULL,'admin','Improvement Subject Selected','Student 2 select course 1 for improvement',1,'Pending','2026-09-27 13:14:55',0),(8,3,'student',NULL,'admin','Improvement Subject Selected','Student 2 select course 1 for improvement',1,'Pending','2026-09-27 13:31:38',0),(9,3,'student',NULL,'admin','Improvement Subject Selected','Student 2 select course 1 for improvement',1,'Pending','2026-09-27 14:41:44',0),(10,3,'student',NULL,'admin','Improvement Subject Selected','Student 2 select course 1 for improvement',1,'Pending','2026-10-02 06:59:01',0),(11,3,'student',NULL,'admin','Improvement Subject Selected','Student 2 select course 1 for improvement',1,'Pending','2026-10-02 06:59:10',0),(12,3,'student',NULL,'admin','Improvement Subject Selected','Student 2 select course 1 for improvement',1,'Pending','2026-10-02 14:35:42',0);
+INSERT INTO `notifications` VALUES (1,8,'admin',NULL,'student','Notification checking','checking the method of notification',1,'Rejected','2026-03-13 06:21:45',1),(2,8,'admin',NULL,'teacher','checking the teacher  notify','i am just checking it.',NULL,'Pending','2026-03-13 06:38:10',0),(3,8,'admin',5,'student','Assigning the Course','this course has been assigned to you kindly visit my office.',5,'Pending','2026-03-13 06:44:07',0),(4,8,'admin',8,'admin','hhhhhh','mjhvyufdzay',1,'Pending','2026-03-25 13:38:54',0),(5,3,'student',NULL,'admin','Improvement Subject Selected','Student 2 select course 1 for improvement',1,'Pending','2026-09-14 13:57:44',0),(6,3,'student',NULL,'admin','Improvement Subject Selected','Student 2 select course 1 for improvement',1,'Pending','2026-09-23 10:59:45',0),(7,3,'student',NULL,'admin','Improvement Subject Selected','Student 2 select course 1 for improvement',1,'Pending','2026-09-27 13:14:55',0),(8,3,'student',NULL,'admin','Improvement Subject Selected','Student 2 select course 1 for improvement',1,'Pending','2026-09-27 13:31:38',0),(9,3,'student',NULL,'admin','Improvement Subject Selected','Student 2 select course 1 for improvement',1,'Pending','2026-09-27 14:41:44',0),(10,3,'student',NULL,'admin','Improvement Subject Selected','Student 2 select course 1 for improvement',1,'Pending','2026-10-02 06:59:01',0),(11,3,'student',NULL,'admin','Improvement Subject Selected','Student 2 select course 1 for improvement',1,'Pending','2026-10-02 06:59:10',0),(12,3,'student',NULL,'admin','Improvement Subject Selected','Student 2 select course 1 for improvement',1,'Pending','2026-10-02 14:35:42',0),(13,3,'student',NULL,'admin','Improvement Subject Selected','Student 2 select course 1 for improvement',1,'Pending','2026-10-03 10:44:43',0),(14,3,'student',NULL,'admin','Improvement Subject Selected','Student 2 select course 1 for improvement',1,'Pending','2026-10-03 10:45:41',0),(15,3,'student',NULL,'admin','Improvement Subject Selected','Student 2 select course 1 for improvement',1,'Pending','2026-10-03 10:50:41',0);
 /*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -495,6 +495,7 @@ CREATE TABLE `student_course` (
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`student_course_id`),
+  UNIQUE KEY `unique_student_course` (`student_id`,`course_id`),
   KEY `student_id` (`student_id`),
   KEY `course_id` (`course_id`),
   CONSTRAINT `student_course_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`),
@@ -566,7 +567,7 @@ CREATE TABLE `student_fees` (
   KEY `student_id` (`student_id`),
   CONSTRAINT `student_fees_ibfk_1` FOREIGN KEY (`program_id`) REFERENCES `programs` (`program_id`),
   CONSTRAINT `student_fees_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -575,7 +576,7 @@ CREATE TABLE `student_fees` (
 
 LOCK TABLES `student_fees` WRITE;
 /*!40000 ALTER TABLE `student_fees` DISABLE KEYS */;
-INSERT INTO `student_fees` VALUES (1,18708.00,'paid','2025-12-31 09:10:20','uploads/students_uploads/voucher_pics/student_4_front_contact.PNG','uploads/students_uploads/voucher_pics/student_4_back_prj.PNG',1,'December',4,0),(2,68102.00,'paid','2026-03-05 07:08:03','uploads/students_uploads/voucher_pics/student_2_front_dep_view.PNG','uploads/students_uploads/voucher_pics/student_2_back_students_view.PNG',1,'January',2,0),(3,18708.00,'due','2026-03-25 13:21:57',NULL,NULL,4,'December',5,0),(4,19644.00,'paid','2026-03-19 10:25:10',NULL,NULL,4,'December',9,0),(5,12000.00,'due','2026-03-25 13:22:22',NULL,NULL,3,'December',8,0),(6,12345.00,'due','2026-09-14 13:48:46','uploads/students_uploads/voucher_pics/student_2_front_Screenshot_2026-09-14_184408.png','uploads/students_uploads/voucher_pics/student_2_back_Screenshot_2026-09-14_184408.png',1,'February',2,0),(7,19000.00,'due','2026-09-23 10:58:42','uploads/students_uploads/voucher_pics/student_2_front_Screenshot_2026-09-16_175618.png','uploads/students_uploads/voucher_pics/student_2_back_Screenshot_2026-09-16_175806.png',1,'September',2,0),(8,12345.00,'due','2026-09-27 12:53:09','uploads/students_uploads/voucher_pics/student_2_front_map_visualization.png','uploads/students_uploads/voucher_pics/student_2_back_project_tree.png',1,'July',2,0),(9,30000.00,'due','2026-10-02 06:56:26','uploads/students_uploads/voucher_pics/student_2_front_test4.jpg','uploads/students_uploads/voucher_pics/student_2_back_test5.jpg',1,'October',2,0),(10,123455.00,'due','2026-10-02 14:05:21','uploads/students_uploads/voucher_pics/student_2_front_test8.jpg','uploads/students_uploads/voucher_pics/student_2_back_test6.jpg',1,'July',2,0),(11,30000.00,'due','2026-10-02 14:32:35','uploads/students_uploads/voucher_pics/student_2_front_map_visualization.png','uploads/students_uploads/voucher_pics/student_2_back_analyze_api_response.png',1,'August',2,0);
+INSERT INTO `student_fees` VALUES (1,18708.00,'paid','2025-12-31 09:10:20','uploads/students_uploads/voucher_pics/student_4_front_contact.PNG','uploads/students_uploads/voucher_pics/student_4_back_prj.PNG',1,'December',4,0),(2,68102.00,'paid','2026-03-05 07:08:03','uploads/students_uploads/voucher_pics/student_2_front_dep_view.PNG','uploads/students_uploads/voucher_pics/student_2_back_students_view.PNG',1,'January',2,0),(3,18708.00,'due','2026-03-25 13:21:57',NULL,NULL,4,'December',5,0),(4,19644.00,'paid','2026-03-19 10:25:10',NULL,NULL,4,'December',9,0),(5,12000.00,'due','2026-03-25 13:22:22',NULL,NULL,3,'December',8,0),(6,12345.00,'due','2026-09-14 13:48:46','uploads/students_uploads/voucher_pics/student_2_front_Screenshot_2026-09-14_184408.png','uploads/students_uploads/voucher_pics/student_2_back_Screenshot_2026-09-14_184408.png',1,'February',2,0),(7,19000.00,'due','2026-09-23 10:58:42','uploads/students_uploads/voucher_pics/student_2_front_Screenshot_2026-09-16_175618.png','uploads/students_uploads/voucher_pics/student_2_back_Screenshot_2026-09-16_175806.png',1,'September',2,0),(8,12345.00,'due','2026-09-27 12:53:09','uploads/students_uploads/voucher_pics/student_2_front_map_visualization.png','uploads/students_uploads/voucher_pics/student_2_back_project_tree.png',1,'July',2,0),(9,30000.00,'due','2026-10-02 06:56:26','uploads/students_uploads/voucher_pics/student_2_front_test4.jpg','uploads/students_uploads/voucher_pics/student_2_back_test5.jpg',1,'October',2,0),(10,123455.00,'due','2026-10-02 14:05:21','uploads/students_uploads/voucher_pics/student_2_front_test8.jpg','uploads/students_uploads/voucher_pics/student_2_back_test6.jpg',1,'July',2,0),(11,30000.00,'due','2026-10-02 14:32:35','uploads/students_uploads/voucher_pics/student_2_front_map_visualization.png','uploads/students_uploads/voucher_pics/student_2_back_analyze_api_response.png',1,'August',2,0),(12,87655.00,'due','2026-10-03 10:13:26','uploads/students_uploads/voucher_pics/student_2_front_Screenshot_2026-09-14_190312.png','uploads/students_uploads/voucher_pics/student_2_back_Screenshot_2026-09-14_184408.png',1,'February',2,0);
 /*!40000 ALTER TABLE `student_fees` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -599,7 +600,7 @@ CREATE TABLE `student_improvement` (
   KEY `course_id` (`course_id`),
   CONSTRAINT `student_improvement_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`),
   CONSTRAINT `student_improvement_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `courses` (`course_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -608,7 +609,7 @@ CREATE TABLE `student_improvement` (
 
 LOCK TABLES `student_improvement` WRITE;
 /*!40000 ALTER TABLE `student_improvement` DISABLE KEYS */;
-INSERT INTO `student_improvement` VALUES (2,3,4,'Pending','2026-03-05 07:57:05',0);
+INSERT INTO `student_improvement` VALUES (2,3,4,'Pending','2026-03-05 07:57:05',0),(13,2,1,'Pending','2026-10-03 10:50:41',0);
 /*!40000 ALTER TABLE `student_improvement` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -637,7 +638,7 @@ CREATE TABLE `student_result_marks` (
   KEY `student_result_id` (`student_result_id`),
   CONSTRAINT `student_result_marks_ibfk_1` FOREIGN KEY (`student_course_id`) REFERENCES `student_course` (`student_course_id`),
   CONSTRAINT `student_result_marks_ibfk_2` FOREIGN KEY (`student_result_id`) REFERENCES `student_results` (`student_result_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -646,7 +647,7 @@ CREATE TABLE `student_result_marks` (
 
 LOCK TABLES `student_result_marks` WRITE;
 /*!40000 ALTER TABLE `student_result_marks` DISABLE KEYS */;
-INSERT INTO `student_result_marks` VALUES (1,1,2,83,'B+','Pass',5,17,23,43,3.40,0),(2,1,2,83,'B+','Pass',5,19,21,43,3.40,0),(3,1,2,92,'A-','Pass',5,19,26,47,3.80,0),(6,4,4,84,'B+','Pass',5,18,23,43,3.40,0),(7,3,5,81,'B+','Pass',5,13,23,45,3.40,0),(8,2,3,68,'C','Pass',5,13,23,32,2.00,0);
+INSERT INTO `student_result_marks` VALUES (1,1,1,89,'A','Pass',5,18,28,43,4.00,0);
 /*!40000 ALTER TABLE `student_result_marks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -670,7 +671,7 @@ CREATE TABLE `student_results` (
   KEY `student_id` (`student_id`),
   KEY `idx_student_semester` (`student_id`,`student_semester`),
   CONSTRAINT `student_results_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -679,7 +680,7 @@ CREATE TABLE `student_results` (
 
 LOCK TABLES `student_results` WRITE;
 /*!40000 ALTER TABLE `student_results` DISABLE KEYS */;
-INSERT INTO `student_results` VALUES (2,2,5,1.27,'Fail',0,'2026-03-16 08:16:08'),(3,3,5,2.70,'Fail',0,'2026-03-16 08:16:08'),(4,5,5,3.20,'Pass',0,'2026-03-16 08:16:08'),(5,4,5,3.10,'Pass',0,'2026-03-16 08:16:08');
+INSERT INTO `student_results` VALUES (1,2,5,4.00,'Pass',0,'2026-10-06 10:05:39');
 /*!40000 ALTER TABLE `student_results` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -697,6 +698,7 @@ CREATE TABLE `student_section` (
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`student_section_id`),
+  UNIQUE KEY `unique_student_section` (`student_id`,`section_id`),
   KEY `fk_ss_student` (`student_id`),
   KEY `fk_ss_section` (`section_id`),
   CONSTRAINT `fk_ss_section` FOREIGN KEY (`section_id`) REFERENCES `sections` (`section_id`),
@@ -1049,4 +1051,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-10-02 19:39:56
+-- Dump completed on 2026-10-06 16:35:12

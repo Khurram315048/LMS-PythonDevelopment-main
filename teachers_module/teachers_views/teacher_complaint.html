@@ -27,6 +27,7 @@
     {% endif %}
         <h1 class="headings">Complaint/Suggestion Form</h1>
         <form method="POST" action="/teacher_complaint" enctype="multipart/form-data">
+           <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
             <label for="title">Title:</label>
             <select id="title" name="title" required>
                 <option value="" disabled selected>Select a title</option>

@@ -122,7 +122,8 @@ class TeacherModel:
         try:
             conn=mysql.get_dict_connection()
             with conn.cursor() as cursor:
-                cursor.execute('''SELECT c.course_name,c.course_id,cs.course_schedule_id,s.section_id, s.semester  
+                cursor.execute('''SELECT c.course_name,c.course_id,cs.course_schedule_id,s.section_id,s.semester,s.section_name,
+                    cs.end_time,cs.day_of_week
                     FROM sections s
                     JOIN courses c ON s.course_id=c.course_id
                     JOIN course_schedule cs ON s.section_id=cs.section_id

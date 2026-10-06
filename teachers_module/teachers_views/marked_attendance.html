@@ -25,6 +25,7 @@
     {% endif %}
 
     <form method="POST" action="/marked_attendance/{{section_id}}">
+        <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
         <div class="form-group">
             <label for="attendance_date">Attendance Date: </label>
             <input type="date" name="attendance_date" value="{{ attendance_date }}" 

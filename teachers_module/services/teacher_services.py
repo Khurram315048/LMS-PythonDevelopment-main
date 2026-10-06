@@ -17,7 +17,7 @@ class TeacherService:
     @staticmethod
     def _format_time(time_obj):
         if isinstance(time_obj,timedelta):
-            return (datetime.min + time_obj).time().strftime('%I:%M:5p')
+            return (datetime.min + time_obj).time().strftime('%I:%M:%p')
         return time_obj
 
 
@@ -149,6 +149,17 @@ class TeacherService:
             if not meta:
                 raise NotFoundError("Attendance metadata not found")
 
+            now=datetime.now()
+            end_time_obj=meta['end_time']
+            if isinstance(end_time_obj,timedelta):
+                end_datetime=datetime.combine(now.date(),datetime.min.time())+end_time_obj
+            else:
+                end_datetime=datetime.combine(now.date(),end_time_obj)
+
+            timeout_limit=end_datetime+timedelta(hours=3)
+            if now>timeout_limit:
+                raise BusinessRuleError("Attendance time out!")    
+
             students=TeacherModel.get_student_list_for_attendance(section_id, meta['course_id'])
             lecture_info=TeacherModel.get_lecture_no(meta['course_schedule_id'])
             lecture_no=(lecture_info['total_lectures'] or 0) + 1
@@ -197,7 +208,7 @@ class TeacherService:
             for st in students:
                 sc_id=st['student_course_id']
                 sid=st['student_id']
-                status=form_data.get(f"status_{sc_id}","Absent")
+                status=form_data.get(f"status_{sc_id}")
                 bulk_data.append((sc_id,sched_id,att_date,status,sid))
 
             if bulk_data:
@@ -292,19 +303,23 @@ class TeacherService:
             if not TeacherModel.is_section_owned_by_teacher(section_id,teacher_id):
                 raise BusinessRuleError("Unauthorized status attempt")
             valid = ['Best','Average','Worst']
-            if status not in valid: raise ValidationError("Invalid status")
+            if status not in valid:
+                raise ValidationError("Invalid status")
             
             conn=mysql.get_dict_connection()
             with conn.cursor() as cursor:
                 cursor.execute("UPDATE student_submissions SET submission_status=%s WHERE submission_id=%s",(status,sub_id))
                 conn.commit()
-            conn.close()
         except (BusinessRuleError,ValidationError):
-            conn.rollback()
+            if conn:
+                conn.rollback()
             raise
         except Exception as e:
             logging.exception(f"Error during set submission status: {str(e)}")
             raise
+        finally:
+            if conn:
+                conn.close()
 
 
 
@@ -342,15 +357,24 @@ class TeacherService:
                 sid=st['student_id']
                 if f"sessional_{sid}" in form_data:
                     sessional=float(form_data.get(f"sessional_{sid}",0))
+                    if sessional < 0 or sessional >20:
+                        raise BusinessRuleError("Sessional Marks must between 0 and 20")
+                    
                     mids=float(form_data.get(f"mids_{sid}",0))
+                    if mids < 0 or mids > 30:
+                        raise BusinessRuleError("Mids Marks must be between 0 and 30")
+                    
                     final=float(form_data.get(f"final_{sid}",0))
+                    if final<0 or final >50:
+                        raise BusinessRuleError("Final Marks must be between 0 and 50")
+                    
                     total_marks=sessional+mids+final
-                    if total_marks>100 or total_marks<0:
-                        continue
+                    if total_marks > 100 or total_marks < 0:
+                        raise ValidationError("Total marks must be between 0 and 100")
 
                     percentage=(total_marks/100)*100
                     if percentage >= 85:
-                        grade='A',
+                        grade='A'
                         gpa=4.0
                     elif percentage >= 80:
                         grade='A-'
@@ -376,11 +400,6 @@ class TeacherService:
                     else:
                         grade='F'
                         gpa=0.0
-
-            if total_marks > 100 or total_marks < 0:
-                raise ValidationError("Total marks must be between 0 and 100")
-
-            percentage=(total_marks / 100) * 100
             status='Pass' if grade != 'F' else 'Fail'
             data={
                 'total':total_marks,

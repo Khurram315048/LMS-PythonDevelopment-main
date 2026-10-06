@@ -154,6 +154,7 @@
                 </div>
 
                 <form action="/send_message/{{group.fyp_id}}" method="POST" class="p-3 bg-light border-top">
+                    <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                     <div class="input-group">
                         <input type="text" name="message" class="form-control" placeholder="Type a message..." required autocomplete="off">
                         <button type="submit" class="btn btn-primary">
