@@ -63,6 +63,7 @@ CREATE TABLE `attendance` (
   `student_id` int(11) DEFAULT NULL,
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`attendance_id`),
+  UNIQUE KEY `uq_att` (`student_course_id`,`course_schedule_id`,`attendance_date`),
   KEY `student_course_id` (`student_course_id`),
   KEY `course_schedule_id` (`course_schedule_id`),
   KEY `fk_attendance_student` (`student_id`),
@@ -79,7 +80,7 @@ CREATE TABLE `attendance` (
 
 LOCK TABLES `attendance` WRITE;
 /*!40000 ALTER TABLE `attendance` DISABLE KEYS */;
-INSERT INTO `attendance` VALUES (1,2,3,'2025-12-31','Absent',3,0),(2,3,4,'2025-12-31','Absent',4,0),(3,2,3,'2026-02-04','Absent',3,0),(4,2,3,'2026-02-04','Present',3,0),(5,3,4,'2026-02-04','Present',4,0),(6,2,3,'2026-03-04','Present',3,0),(7,3,4,'2026-03-04','Present',4,0),(10,2,3,'2026-03-11','Absent',3,0),(11,3,4,'2026-03-11','Present',4,0),(12,2,3,'2026-03-13','Present',3,0),(13,3,4,'2026-03-19','Present',4,0),(14,2,3,'2026-09-17','Present',3,0),(15,1,4,'2026-09-16','Absent',2,0),(16,3,4,'2026-09-16','Absent',4,0),(17,1,4,'2026-09-17','Present',2,0),(18,3,4,'2026-09-17','Present',4,0),(19,4,2,'2026-09-18','Present',5,0),(20,4,2,'2026-09-17','Present',5,0),(21,1,1,'2026-10-06','Absent',2,0),(22,1,1,'2026-10-05','Present',2,0),(23,2,3,'2026-10-05','Absent',3,0);
+INSERT INTO `attendance` VALUES (1,2,3,'2025-12-31','Absent',3,0),(2,3,4,'2025-12-31','Absent',4,0),(4,2,3,'2026-02-04','Present',3,0),(5,3,4,'2026-02-04','Present',4,0),(6,2,3,'2026-03-04','Present',3,0),(7,3,4,'2026-03-04','Present',4,0),(10,2,3,'2026-03-11','Absent',3,0),(11,3,4,'2026-03-11','Present',4,0),(12,2,3,'2026-03-13','Present',3,0),(13,3,4,'2026-03-19','Present',4,0),(14,2,3,'2026-09-17','Present',3,0),(15,1,4,'2026-09-16','Absent',2,0),(16,3,4,'2026-09-16','Absent',4,0),(17,1,4,'2026-09-17','Present',2,0),(18,3,4,'2026-09-17','Present',4,0),(19,4,2,'2026-09-18','Present',5,0),(20,4,2,'2026-09-17','Present',5,0),(21,1,1,'2026-10-06','Absent',2,0),(22,1,1,'2026-10-05','Present',2,0),(23,2,3,'2026-10-05','Absent',3,0);
 /*!40000 ALTER TABLE `attendance` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1051,4 +1052,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-10-06 16:35:12
+-- Dump completed on 2026-10-07 13:40:03

@@ -1,21 +1,20 @@
-from fastapi import APIRouter,Depends,Request,Form,status
+import pathlib
+from fastapi import APIRouter,Depends,Request,Form,status,Path
 from fastapi.responses import RedirectResponse,HTMLResponse
 from fastapi.templating import Jinja2Templates
-from pathlib import Path
 from datetime import datetime
 from pydantic import ValidationError as PydanticValidationError
 import logging
-from pathlib import Path
 from utils.auth import get_current_teacher
 from utils.exceptions import BusinessRuleError,ValidationError,NotFoundError
 from teachers_module.services.teacher_services  import TeacherService
 from teachers_module.teachers_models import TeacherModel
-from teachers_module.schema import *
+from teachers_module.schema import (TeacherLoginRequest,AttendanceForm,SendMessageForm,MarkSubmissionForm,ComplaintSuggestionForm,subType,subStatus,FypStatus)
 from utils.csrf import verify_csrf,get_csrf_token
 
 
 router=APIRouter(dependencies=[Depends(verify_csrf)])
-base_dir=Path(__file__).parent.parent
+base_dir=pathlib.Path(__file__).parent.parent
 templates=Jinja2Templates(directory=[str(base_dir / "teachers_module" / "teachers_views"),str(base_dir / "templates")])
 templates.env.globals["csrf_token"]=get_csrf_token
 
@@ -44,7 +43,10 @@ def teacher_login(request:Request,email:str=Form(None),password:str=Form(None),r
             'remember':remember_me
         })
         return RedirectResponse(url='/teacher_dashboard',status_code=status.HTTP_303_SEE_OTHER)
-        
+    except PydanticValidationError as ve:
+        logging.error(f"Error during pydntvl tchr lgn route api: {str(ve)}")
+        return templates.TemplateResponse(request=request,name="teacher_login.html",
+                                          context={"error":str(ve)})
     except (ValidationError,BusinessRuleError,NotFoundError) as e:
         logging.warning(f"Error during teacher login: {str(e)}")
         return templates.TemplateResponse(request=request,name="teacher_login.html",context={"error":str(e)})
@@ -168,15 +170,30 @@ def marked_attendance_get(request:Request,section_id:int,current_user:dict=Depen
 
 
 @router.post('/marked_attendance/{section_id}')
-async def marked_attendance_post(request:Request,section_id:int,attendance_date:str=Form(...),
+async def marked_attendance_post(request:Request,section_id:int=Path(...,gt=0),attendance_date:str=Form(...),
                                  current_user:dict=Depends(get_current_teacher)):
     teacher_id=current_user['teacher_id']
     try:
         form_data=dict(await request.form())
+        records={}
+        for k,v in form_data.items():
+            if k.startswith('status'):
+                try:
+                    records[int(k.split('_',1)[1])]=v
+                except ValueError:
+                    continue
+
+        AttendanceForm(
+            attendance_date=attendance_date,
+            status_record=records
+        )
         TeacherService.submit_attendance(teacher_id,section_id,attendance_date,form_data)
         request.session['flash_success']="Attendance marked successfully."
         return RedirectResponse(url='/class_attendance',status_code=status.HTTP_303_SEE_OTHER)
-    
+    except PydanticValidationError as ve:
+        logging.error(f"Error during pdyntval mark attndc pst route api: {str(ve)}")
+        request.session['flash_error']=str(ve)
+        return RedirectResponse(url=f'/marked_attendance/{section_id}',status_code=status.HTTP_303_SEE_OTHER)
     except (BusinessRuleError,ValidationError) as e:
         logging.warning(f"Error during mrkd attnd post route: {str(e)}")
         request.session['flash_error']=str(e)
@@ -184,19 +201,19 @@ async def marked_attendance_post(request:Request,section_id:int,attendance_date:
     except Exception as e:
         logging.exception(f"Error during mrkd attnd post route api: {str(e)}")
         request.session['flash_error']="System error"
-        return RedirectResponse(url=f'/class_attendance/{section_id}',status_code=status.HTTP_303_SEE_OTHER)
+        return RedirectResponse(url=f'/marked_attendance/{section_id}',status_code=status.HTTP_303_SEE_OTHER)
 
 
 
 
 @router.post('/toggle_upload/{section_id}/{upload_type}')
-def toggle_upload(request:Request,section_id:int,upload_type:str,current_user:dict=Depends(get_current_teacher)):
+def toggle_upload(request:Request,section_id:int=Path(...,gt=0),upload_type:subType=Path(...),current_user:dict=Depends(get_current_teacher)):
     teacher_id=current_user['teacher_id']
     try:
         TeacherService.toggle_upload_status(teacher_id,section_id,upload_type)
         request.session['flash_success']=f"{upload_type.capitalize()} status updated."
     except(BusinessRuleError,ValidationError) as v:
-        logging.warnning(f"Error during uplod wraning: {str(v)}")
+        logging.warning(f"Error during uplod wraning: {str(v)}")
         request.session['flash_error']=str(v)    
     except Exception as e:
         logging.exception(f"Error during tgl uplo route api: {str(e)}")
@@ -221,7 +238,7 @@ def generate_result_get(request:Request,section_id:int,current_user:dict=Depends
                                             })
     except BusinessRuleError as b:
         logging.warning(f"warning during gnrt rst gpa: {str(b)}")
-        request.session['flash_error']=str(e)
+        request.session['flash_error']=str(b)
         return RedirectResponse(url=f'/class_structure/{section_id}',status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         logging.exception(f"Error during gnrt rslt route api: {str(e)}")
@@ -276,15 +293,15 @@ def fyp_management(request:Request,current_user:dict=Depends(get_current_teacher
     except (NotFoundError,BusinessRuleError) as nb:
         logging.warning(f"Error during fyp mngmnt route: {str(nb)}")
         request.session['flash_error']=str(nb)
-        return RedirectResponse(url='/fyp_management',status_code=status.HTTP_303_SEE_OTHER)
+        return RedirectResponse(url='/teacher_dashboard',status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         logging.exception(f"Error during fyp mngmnt route: {str(e)}")
         request.session['flash_error']="System error"
         return RedirectResponse(url='/teacher_dashboard',status_code=status.HTTP_303_SEE_OTHER)
 
 
-@router.get('/approve_fyp/{fyp_id}/{status}')
-def approve_fyp(request:Request,fyp_id:int,status_val:str,current_user:dict=Depends(get_current_teacher)):
+@router.get('/approve_fyp/{fyp_id}/{status_val}')
+def approve_fyp(request:Request,fyp_id:int=Path(...,gt=0),status_val:FypStatus=Path(...),current_user:dict=Depends(get_current_teacher)):
     teacher_id=current_user['teacher_id']
     try:
         TeacherService.manage_fyp_status(teacher_id,fyp_id,status_val)
@@ -300,24 +317,28 @@ def approve_fyp(request:Request,fyp_id:int,status_val:str,current_user:dict=Depe
 
 
 @router.post('/send_message/{fyp_id}')
-def send_message(request:Request,fyp_id:int,message:str=Form(...),current_user:dict=Depends(get_current_teacher)):
+def send_message(request:Request,fyp_id:int=Path(...,gt=0),message:str=Form(...),current_user:dict=Depends(get_current_teacher)):
     teacher_id=current_user['teacher_id']
     try:
-        TeacherService.send_fyp_message(teacher_id,fyp_id,message)
+        valid_data=SendMessageForm(
+            message=message
+        )
+        TeacherService.send_fyp_message(teacher_id,fyp_id,valid_data.message)
+    except PydanticValidationError as ve:
+        request.session['flash_error']=str(ve)
     except (BusinessRuleError,ValidationError) as bv:
         logging.warning(f"Error during snd msg route: {str(bv)}")
         request.session['flash_error']=str(bv)   
-        return RedirectResponse(url='/fyp_management',status_code=status.HTTP_303_SEE_OTHER) 
     except Exception as e:
         logging.exception(f"Error during snd msg route api: {str(e)}")
-        request.session['flash_error']=str(e)
+        request.session['flash_error']="System error"
     return RedirectResponse(url='/fyp_management',status_code=status.HTTP_303_SEE_OTHER)
 
 
 
 
 @router.get('/view_submissions/{section_id}/{sub_type}')
-def view_submissions(request:Request,section_id:int,sub_type:str,current_user:dict=Depends(get_current_teacher)):
+def view_submissions(request:Request,section_id:int=Path(...,gt=0),sub_type:subType=Path(...),current_user:dict=Depends(get_current_teacher)):
     teacher_id=current_user['teacher_id']
     try:
         subs,meta=TeacherService.get_submissions(teacher_id,section_id,sub_type)
@@ -336,7 +357,7 @@ def view_submissions(request:Request,section_id:int,sub_type:str,current_user:di
     except (BusinessRuleError,NotFoundError) as bn:
         logging.warning(f"Error during vw subms route: {str(bn)}")
         request.session['flash_error']=str(bn)
-        return RedirectResponse(url=f'/view_submissions/{section_id}/{sub_type}',status_code=status.HTTP_303_SEE_OTHER)
+        return RedirectResponse(url='/teacher_dashboard',status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         logging.exception(f"Error during vw submsn route api: {str(e)}")
         request.session['flash_error']="System error"
@@ -344,24 +365,33 @@ def view_submissions(request:Request,section_id:int,sub_type:str,current_user:di
 
 
 @router.post('/mark_submission/{submission_id}')
-def mark_submission(request:Request,submission_id:int,section_id:int=Form(...),sub_type:str=Form(...),marks:float=Form(...),total_marks:float=Form(...),current_user:dict=Depends(get_current_teacher)):
+def mark_submission(request:Request,submission_id:int=Path(...,gt=0),section_id:int=Form(...),sub_type:subType=Form(...),
+                    marks:float=Form(...),total_marks:float=Form(...),current_user:dict=Depends(get_current_teacher)):
     teacher_id=current_user['teacher_id']
     try:
-        TeacherService.grade_submission(teacher_id,section_id,submission_id,marks,total_marks)
+        valid_inputs=MarkSubmissionForm(
+            marks=marks,
+            total_marks=total_marks,
+            section_id=section_id,
+            sub_type=sub_type
+        )
+        TeacherService.grade_submission(teacher_id,valid_inputs.section_id,submission_id,valid_inputs.marks,valid_inputs.total_marks)
         request.session['flash_success']="Grades updated successfully."
+    except PydanticValidationError as ve:
+        request.session['flash_error']=str(ve)    
     except (BusinessRuleError,ValidationError) as bv:
         logging.warning(f"Error during mrk submsn route: {str(bv)}")
         request.session['flash_error']=str(bv)
-        return RedirectResponse(url=f'/mark_submission/{submission_id}',status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         logging.exception(f"Error during mrk submsn route api: {str(e)}")
         request.session['flash_error']="System error"
     return RedirectResponse(url=f'/view_submissions/{section_id}/{sub_type}',status_code=status.HTTP_303_SEE_OTHER)
 
 
-@router.post('/set_submission_status/{submission_id}/{status}')
-@router.post('/set_submission/{submission_id}/{status}') 
-def set_submission_status(request:Request,submission_id:int,status_val:str,section_id:int=Form(...),sub_type:str=Form(...),current_user: dict = Depends(get_current_teacher)):
+@router.post('/set_submission_status/{submission_id}/{status_val}')
+@router.post('/set_submission/{submission_id}/{status_val}') 
+def set_submission_status(request:Request,submission_id:int=Path(...,gt=0),status_val:subStatus=Path(...),
+                          section_id:int=Form(...),sub_type:subType=Form(...),current_user:dict=Depends(get_current_teacher)):
     teacher_id=current_user['teacher_id']
     try:
         TeacherService.set_submission_status(teacher_id,section_id,submission_id,status_val)
@@ -369,7 +399,7 @@ def set_submission_status(request:Request,submission_id:int,status_val:str,secti
     except (BusinessRuleError,ValidationError) as bv:
         logging.warning(f"Error during st sbmsn route api: {str(bv)}")
         request.session['flash_error']=str(bv)
-        return RedirectResponse(url=f'/view_submission/{section_id}/{sub_type}',status_code=status.HTTP_303_SEE_OTHER)    
+        return RedirectResponse(url=f'/view_submissions/{section_id}/{sub_type}',status_code=status.HTTP_303_SEE_OTHER)    
     except Exception as e:
         request.session['flash_error']=str(e)
     return RedirectResponse(url=f'/view_submissions/{section_id}/{sub_type}',status_code=status.HTTP_303_SEE_OTHER)
@@ -398,12 +428,13 @@ def teacher_complaint(request:Request,title:str=Form(None),description:str=Form(
         TeacherService.submit_complaint(user_id,take_inputs.title,take_inputs.description)
         request.session['flash_success']="Complaint/Suggestion submitted successfully."
         return RedirectResponse(url='/teacher_complaint',status_code=status.HTTP_303_SEE_OTHER)
-        
-    except (ValidationError,PydanticValidationError) as e:
-
-        logging.warning(f"Validation error on complnt submson: {str(e)}")
+    except PydanticValidationError as ve:
+        logging.error(f"Error during tchr cpmlnt route api: {str(ve)}")
+        request.session['flash_error']=str(ve)    
+    except ValidationError as v:
+        logging.warning(f"Validation error on complnt submson: {str(v)}")
         return templates.TemplateResponse(request=request,name="teacher_complaint.html",
-                                          context={"flash_error":str(e)})
+                                          context={"flash_error":str(v)})
     except Exception as e:
         logging.exception(f"System error on complnt submsin: {str(e)}")
         return templates.TemplateResponse(request=request,name="teacher_complaint.html",

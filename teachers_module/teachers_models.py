@@ -1,7 +1,7 @@
 import logging
 from utils.db import mysql
 from datetime import datetime
-
+from utils.exceptions import NotFoundError
 class TeacherModel:
     @staticmethod
     def get_profile(teacher_id:int):
@@ -196,7 +196,9 @@ class TeacherModel:
         try:
             conn=mysql.get_dict_connection()
             with conn.cursor() as cursor:
-                query='INSERT INTO attendance(student_course_id,course_schedule_id,attendance_date,attendance_status,student_id) VALUES (%s,%s,%s,%s,%s)'
+                query='''INSERT INTO attendance(student_course_id,course_schedule_id,attendance_date,attendance_status,student_id) 
+                VALUES (%s,%s,%s,%s,%s) 
+                ON DUPLICATE KEY UPDATE attendance_status=VALUES(attendance_status)'''
                 cursor.executemany(query,attendance_data)
                 conn.commit()
         except Exception as e:
@@ -273,11 +275,14 @@ class TeacherModel:
 
 
     @staticmethod
-    def update_fyp_status(fyp_id:int,status:str):
+    def update_fyp_status(fyp_id:int,status:str,teacher_id:int):
         try:
             conn=mysql.get_dict_connection()
             with conn.cursor() as cursor:
-                cursor.execute("UPDATE fyp_groups SET status=%s WHERE fyp_id=%s",(status,fyp_id))
+                cursor.execute("UPDATE fyp_groups SET status=%s WHERE fyp_id=%s AND teacher_id=%s",(status,fyp_id,teacher_id))
+                if cursor.rowcount==0:
+                    raise NotFoundError("FYP not found")
+                
                 conn.commit()
         except Exception as e:
             logging.exception(f"Error during updt fyp(models): {str(e)}")
@@ -310,11 +315,11 @@ class TeacherModel:
 
 
     @staticmethod
-    def update_submission_marks(sub_id:int,marks:int,total:int):
+    def update_submission_marks(sub_id:int,marks:int,section_id:int,total:int):
         try:
             conn=mysql.get_dict_connection()
             with conn.cursor() as cursor:
-                cursor.execute("UPDATE student_submissions SET marks=%s,total_marks=%s WHERE submission_id=%s",(marks,total,sub_id))
+                cursor.execute("UPDATE student_submissions SET marks=%s,total_marks=%s WHERE submission_id=%s AND section_id=%s",(marks,total,sub_id,section_id))
                 conn.commit()
         except Exception as e:
             logging.exception(f"Error during updt submssn(models): {str(e)}")

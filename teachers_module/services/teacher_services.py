@@ -59,13 +59,14 @@ class TeacherService:
                 row['end']=TeacherService._format_time(row.get('end'))
 
             active_notifications=Notifications.get_active_notifications(user_id,'teacher')
-            today_list=[row for row in full_schedule if row['day_of_week']==today]
+            today_schedule=[row for row in full_schedule if row['day_of_week']==today]
             return {
                 "access_denied":False,
                 "full_schedule":full_schedule,
                 "active_notifications":active_notifications,
                 "today_name":today,
-                "today_list":today_list
+                "today_schedule":today_schedule
+                # "today_list":today_list
             }
         except Exception as e:
             logging.exception(f"Error during tchr dashbd service: {str(e)}")
@@ -239,7 +240,7 @@ class TeacherService:
                 raise ValidationError("Invalid status provided")
             
             
-            TeacherModel.update_fyp_status(fyp_id,status)
+            TeacherModel.update_fyp_status(fyp_id,status,teacher_id)
         except ValidationError:
             raise
         except Exception as e:
@@ -299,6 +300,7 @@ class TeacherService:
 
     @staticmethod
     def set_submission_status(teacher_id:int,section_id:int,sub_id:int,status:str):
+        conn=None
         try:
             if not TeacherModel.is_section_owned_by_teacher(section_id,teacher_id):
                 raise BusinessRuleError("Unauthorized status attempt")
@@ -344,74 +346,67 @@ class TeacherService:
 
 
     @staticmethod
+    def _grade(total:int):
+        if total>=85: return 'A',4.0
+        if total>=80: return 'A-',3.7
+        if total>=75: return 'B+',3.3
+        if total>=70: return 'B',3.0
+        if total>=65: return 'B-',2.7
+        if total>=60: return 'C+',2.3
+        if total>=55: return 'C',2.0
+        if total>=50: return 'C-',1.7
+
+        return 'F',0.0
+
+
+    @staticmethod
     def submit_bulk_results(teacher_id:int,section_id:int,form_data:dict):
         try:
             if not TeacherModel.is_section_owned_by_teacher(section_id, teacher_id):
                 raise BusinessRuleError("Unauthorized attempt to save grade")
 
             meta=TeacherModel.get_attendance_meta(section_id)
+            if not meta:
+                raise NotFoundError("Class not found")
+            
             course_id=meta['course_id']
             semester=meta['semester']
             students=TeacherModel.get_grading_data(course_id,section_id)
+            prepared=[]
             for st in students:
                 sid=st['student_id']
-                if f"sessional_{sid}" in form_data:
-                    sessional=float(form_data.get(f"sessional_{sid}",0))
-                    if sessional < 0 or sessional >20:
-                        raise BusinessRuleError("Sessional Marks must between 0 and 20")
-                    
-                    mids=float(form_data.get(f"mids_{sid}",0))
-                    if mids < 0 or mids > 30:
-                        raise BusinessRuleError("Mids Marks must be between 0 and 30")
-                    
-                    final=float(form_data.get(f"final_{sid}",0))
-                    if final<0 or final >50:
-                        raise BusinessRuleError("Final Marks must be between 0 and 50")
-                    
-                    total_marks=sessional+mids+final
-                    if total_marks > 100 or total_marks < 0:
-                        raise ValidationError("Total marks must be between 0 and 100")
+                if f"sessional_{sid}" not in form_data:
+                    continue
+                try:
+                    sessional=int(form_data.get(f"sessional_{sid}") or 0)
+                    mids=int(form_data.get(f"mids_{sid}") or 0)
+                    final=int(form_data.get(f"final_{sid}") or 0)  
+                except ValueError:
+                    raise ValidationError("Marks must be 0 to 100")
 
-                    percentage=(total_marks/100)*100
-                    if percentage >= 85:
-                        grade='A'
-                        gpa=4.0
-                    elif percentage >= 80:
-                        grade='A-'
-                        gpa=3.7
-                    elif percentage >= 70:
-                        grade='B'
-                        gpa=3.0
-                    elif percentage >= 75:
-                        grade='B+'
-                        gpa=3.3
-                    elif percentage >= 65:
-                        grade='B-'
-                        gpa=2.7
-                    elif percentage >= 60:
-                        grade='C+'
-                        gpa=2.3
-                    elif percentage >= 55:
-                        grade='C'
-                        gpa=2.0
-                    elif percentage >= 50:
-                        grade='C-'
-                        gpa=1.7
-                    else:
-                        grade='F'
-                        gpa=0.0
-            status='Pass' if grade != 'F' else 'Fail'
-            data={
-                'total':total_marks,
-                'grade':grade,
-                'gpa':gpa,
-                'status':status,
-                'sessional':sessional,
-                'mids':mids,
-                'final':final
-            }
-            
-            TeacherModel.process_student_result(sid,section_id,course_id,semester,data)
+                if not 0<=sessional<=20:
+                    raise BusinessRuleError("Sessional marks must be between 1 to 20")
+                if not 0<=mids<=30:
+                    raise BusinessRuleError("Mids marks must be between 1 to 30")
+                if not 0<=final<=50:
+                    raise BusinessRuleError("Final marks must be between 1 to 50")
+                
+                total=sessional+mids+final
+                grade,gpa=TeacherService._grade(total)
+                prepared.append((sid,{
+                    'total':total,
+                    'grade':grade,
+                    'gpa':gpa,
+                    'status':'Pass' if grade != 'F' else 'Fail',
+                    'sessional':sessional,
+                    'mids':mids,
+                    'final':final
+                }))
+            if not prepared:
+                raise ValidationError("No result data found")
+                
+            for sid,data in prepared:
+                TeacherModel.process_student_result(sid,section_id,course_id,semester,data)
         except (BusinessRuleError,ValidationError):
             raise
         except Exception as e:
