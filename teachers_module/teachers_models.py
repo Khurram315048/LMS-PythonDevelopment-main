@@ -315,11 +315,11 @@ class TeacherModel:
 
 
     @staticmethod
-    def update_submission_marks(sub_id:int,marks:int,section_id:int,total:int):
+    def update_submission_marks(sub_id:int,marks:int,section_id:int,total:int,sub_type:str):
         try:
             conn=mysql.get_dict_connection()
             with conn.cursor() as cursor:
-                cursor.execute("UPDATE student_submissions SET marks=%s,total_marks=%s WHERE submission_id=%s AND section_id=%s",(marks,total,sub_id,section_id))
+                cursor.execute("UPDATE student_submissions SET marks=%s,total_marks=%s WHERE submission_id=%s AND section_id=%s AND submission_type=%s",(marks,total,sub_id,section_id,sub_type))
                 conn.commit()
         except Exception as e:
             logging.exception(f"Error during updt submssn(models): {str(e)}")

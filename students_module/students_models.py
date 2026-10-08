@@ -1254,4 +1254,3 @@ class NotificationModel:
         finally:
             conn.close()
             
-

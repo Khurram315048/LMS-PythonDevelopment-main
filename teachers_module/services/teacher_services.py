@@ -282,7 +282,7 @@ class TeacherService:
 
 
     @staticmethod
-    def grade_submission(teacher_id:int,section_id:int,sub_id:int,marks:int,total:int):
+    def grade_submission(teacher_id:int,section_id:int,sub_id:int,marks:int,total:int,sub_type:str):
         try:
             if not TeacherModel.is_section_owned_by_teacher(section_id,teacher_id):
                 raise BusinessRuleError("Unauthorized grading attempt")
@@ -290,7 +290,7 @@ class TeacherService:
             if marks < 0 or total <= 0 or marks > total:
                 raise ValidationError("Invalid marks or total marks")
                 
-            TeacherModel.update_submission_marks(sub_id,marks,total)
+            TeacherModel.update_submission_marks(sub_id,marks,section_id,total,sub_type)
         except (BusinessRuleError,ValidationError):
             raise
         except Exception as e:

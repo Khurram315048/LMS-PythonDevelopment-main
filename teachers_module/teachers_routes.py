@@ -375,7 +375,7 @@ def mark_submission(request:Request,submission_id:int=Path(...,gt=0),section_id:
             section_id=section_id,
             sub_type=sub_type
         )
-        TeacherService.grade_submission(teacher_id,valid_inputs.section_id,submission_id,valid_inputs.marks,valid_inputs.total_marks)
+        TeacherService.grade_submission(teacher_id,valid_inputs.section_id,submission_id,valid_inputs.marks,valid_inputs.total_marks,valid_inputs.sub_type)
         request.session['flash_success']="Grades updated successfully."
     except PydanticValidationError as ve:
         request.session['flash_error']=str(ve)    
