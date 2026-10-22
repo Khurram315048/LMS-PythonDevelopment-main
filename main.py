@@ -134,7 +134,10 @@ def reset_password(request:Request,email:str=Form(None),new_password:str=Form(No
 @app.get("/logout")
 def logout(request:Request):
     request.session.clear()
-    return RedirectResponse(url='/main_view',status_code=status.HTTP_303_SEE_OTHER)
+    response=RedirectResponse(url='/main_view',status_code=status.HTTP_303_SEE_OTHER)
+    response.delete_cookie("access_token")
+    return response
+    # return RedirectResponse(url='/main_view',status_code=status.HTTP_303_SEE_OTHER)
 
 
 if __name__=='__main__':

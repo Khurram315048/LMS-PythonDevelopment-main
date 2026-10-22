@@ -13,6 +13,9 @@ from utils.exceptions import BusinessRuleError,ValidationError as AppValidation,
 import logging
 import secrets
 from utils.csrf import verify_csrf,get_csrf_token
+from jwt import create_token,refresh_token
+from jose import jwt,JWTError
+from config import SECRET_KEY
 
 
 router=APIRouter(dependencies=[Depends(verify_csrf)])
@@ -21,6 +24,34 @@ templates=Jinja2Templates(directory=[str(base_dir/"students_module" / "students_
 templates.env.globals["csrf_token"]=get_csrf_token
 
 
+@router.get('/refresh')
+def refresh_session(request:Request):
+    refresh_token=request.cookies.get("refresh_token")
+    
+    if not refresh_token:
+        request.session['flash_error']="Session expired. Please login again."
+        return RedirectResponse(url='/student_login',status_code=status.HTTP_303_SEE_OTHER)
+
+    try:
+        payload=jwt.decode(refresh_token,SECRET_KEY,algorithms=["HS256"])
+        new_payload={
+            'user_id':payload['user_id'],
+            'role':payload['role'],
+            'student_id':payload['student_id']
+        }
+        access_token=create_token(new_payload)
+        new_token=refresh_token(new_payload)
+        response=RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        response.set_cookie(key="access_token",value=access_token,httponly=True,max_age=1800,samesite="lax")
+        response.set_cookie(key="refresh_token",value=new_token,httponly=True,max_age=7*24*60*60,samesite="lax")
+        return response
+        
+    except JWTError as je:
+        logging.exception(f"JWT Refresh get route: {str(je)}")
+        response=RedirectResponse(url='/student_login',status_code=status.HTTP_303_SEE_OTHER)
+        response.delete_cookie("access_token")
+        response.delete_cookie("refresh_token")
+        return response
 
 
 @router.get('/student_login',response_class=HTMLResponse)
@@ -36,14 +67,40 @@ def student_login(request:Request,email:str=Form(None),password:str=Form(None),r
             remember_me=remember_me
         )
         user,student_obj=StudentService.authenticate_student(inputs.email,inputs.password)
-        request.session.update({
+        token_payload={
             'user_id':user['user_id'],
             'role':'student',
-            'student_id':student_obj['student_id'],
-            'date':datetime.now().isoformat(),
-            'remember':inputs.remember_me
-        })
-        return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+            'student_id':student_obj['student_id']
+        }
+        access_token=create_token(token_payload)
+        new_token=refresh_token(token_payload)
+
+        response=RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        response.set_cookie(
+            key="access_token",
+            value=access_token,
+            httponly=True,
+            max_age=1800,
+            samesite="lax"
+        )
+        response.set_cookie(
+            key="refresh_token",
+            value=new_token,
+            httponly=True,
+            max_age=7*24*60*60,
+            samesite="lax"
+            )
+        return response
+        # request.session.update({
+        #     'user_id':user['user_id'],
+        #     'role':'student',
+        #     'student_id':student_obj['student_id'],
+        #     'date':datetime.now().isoformat(),
+        #     'remember':inputs.remember_me
+        # })
+        # return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+    except JWTError  as je:
+        logging.exception(f"JWT fastapi route: {str(je)}")
     except (ValidationError,BusinessRuleError,NotFoundError) as e:
         logging.warning(f"Validation/Business error during login route api: {str(e)}")
         return templates.TemplateResponse(request=request,name="student_login.html",

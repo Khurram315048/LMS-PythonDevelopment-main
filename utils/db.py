@@ -36,3 +36,48 @@ class Database:
 
 
 mysql=Database()    
+
+
+
+
+# from sqlalchemy import create_engine
+# from sqlalchemy.engine import URL
+# from sqlalchemy.orm import declarative_base,sessionmaker
+ 
+# from config import MYSQL_HOST,MYSQL_USER,MYSQL_PASSWORD,MYSQL_DB,MYSQL_PORT
+
+# DATABASE_URL=URL.create(
+#     drivername="mysql+pymysql",
+#     username=MYSQL_USER,
+#     password=MYSQL_PASSWORD,
+#     host=MYSQL_HOST,
+#     port=int(MYSQL_PORT),
+#     database=MYSQL_DB,
+#     query={
+#         "charset":"utf8mb4"
+#     },
+# )
+
+# engine=create_engine(
+#     DATABASE_URL,
+#     pool_pre_ping=True,
+#     pool_recycle=280,
+#     pool_size=10,
+#     max_overflow=20,
+#     connect_args={
+#         "connect_timeout":10,
+#         "read_timeout":30,
+#         "write_timeout":30
+#     },
+# )
+
+# SessionLocal=sessionmaker(bind=engine,autocommit=False,autoflush=False)
+
+# Base=declarative_base()
+
+# def get_db():
+#     db=SessionLocal
+#     try:
+#         yield db
+#     finally:
+#         db.close()    

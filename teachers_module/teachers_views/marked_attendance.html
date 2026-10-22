@@ -28,8 +28,8 @@
         <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
         <div class="form-group">
             <label for="attendance_date">Attendance Date: </label>
-            <input type="date" name="attendance_date" value="{{ attendance_date }}" 
-                   {% if already_marked %} disabled {% endif %} required>
+            <input type="date" name="attendance_date" value="{{attendance_date}}" 
+                {% if already_marked %} disabled {% endif %} required readonly>
             <span><strong>Lecture No:</strong>{{lecture_no}}</span>
         </div>
         

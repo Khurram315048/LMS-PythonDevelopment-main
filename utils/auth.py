@@ -109,7 +109,10 @@
 
 
 from fastapi import Request,HTTPException,status
-
+from jose import jwt 
+from config import SECRET_KEY
+import logging
+ALGORITHM="HS256"
 
 def get_current_user(request:Request)->dict:
     user_id=request.session.get('user_id')
@@ -121,27 +124,64 @@ def get_current_user(request:Request)->dict:
 
 
 def get_current_student(request:Request)->dict:
-    student_id=request.session.get('student_id')
-    user_id=request.session.get('user_id')
-    role=request.session.get('role')
-    
-    if role != 'student' or not student_id or not user_id:
-        raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,
-                                    headers={"location": "/student_login"})
+    token=request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,headers={"location":"/student_login"})
 
-    return {"student_id":student_id,"user_id":user_id,"role":role}
+    try:
+        payload=jwt.decode(token,SECRET_KEY,algorithms=[ALGORITHM])
+        if payload.get("role") != "student":
+            raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,headers={"location":"/student_login"})
+
+        return payload
+    except jwt.ExpiredSignatureError as ese:
+        logging.exception(f"JWT Token expiration: {str(ese)}")
+        raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,headers={"location":"/refresh"})
+    except jwt.JWTError as je:
+        logging.exception(f"JWT Token : {str(je)}")
+        raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,headers={"location":"/student_login"})
+
+# def get_current_student(request:Request)->dict:
+#     student_id=request.session.get('student_id')
+#     user_id=request.session.get('user_id')
+#     role=request.session.get('role')
+    
+#     if role != 'student' or not student_id or not user_id:
+#         raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,
+#                                     headers={"location": "/student_login"})
+
+#     return {"student_id":student_id,"user_id":user_id,"role":role}
 
 
 def get_current_teacher(request:Request)->dict:
-    teacher_id=request.session.get('teacher_id')
-    user_id=request.session.get('user_id')
-    role=request.session.get('role')
+    token=request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,headers={"location":"/teacher_login"})
     
-    if role != 'teacher' or not teacher_id or not user_id:
-        raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,
-                                    headers={"location": "/teacher_login"})
+    try:
+        payload=jwt.decode(token,SECRET_KEY,algorithms=[ALGORITHM])
+        if payload.get("role") != "teacher":
+            raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,headers={"location":"/teacher_login"})
+    
+        return payload
+    except jwt.ExpiredSignatureError as ese:
+        logging.exception(f"JWT Token expiration: {str(ese)}")
+        raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,headers={"location":"/refresh"})
+    except jwt.JWTError as je:
+        logging.exception(f"JWT Token : {str(je)}")
+        raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,headers={"location":"/teacher_login"})
+    
 
-    return {"teacher_id":teacher_id,"user_id":user_id,"role":role}
+# def get_current_teacher(request:Request)->dict:
+#     teacher_id=request.session.get('teacher_id')
+#     user_id=request.session.get('user_id')
+#     role=request.session.get('role')
+    
+#     if role != 'teacher' or not teacher_id or not user_id:
+#         raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,
+#                                     headers={"location": "/teacher_login"})
+
+#     return {"teacher_id":teacher_id,"user_id":user_id,"role":role}
 
 
 

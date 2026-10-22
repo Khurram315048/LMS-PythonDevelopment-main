@@ -11,12 +11,49 @@ from teachers_module.services.teacher_services  import TeacherService
 from teachers_module.teachers_models import TeacherModel
 from teachers_module.schema import (TeacherLoginRequest,AttendanceForm,SendMessageForm,MarkSubmissionForm,ComplaintSuggestionForm,subType,subStatus,FypStatus)
 from utils.csrf import verify_csrf,get_csrf_token
+from jwt import create_token,refresh_token
+from jose import jwt,JWTError
+from config import SECRET_KEY
 
 
 router=APIRouter(dependencies=[Depends(verify_csrf)])
 base_dir=pathlib.Path(__file__).parent.parent
 templates=Jinja2Templates(directory=[str(base_dir / "teachers_module" / "teachers_views"),str(base_dir / "templates")])
 templates.env.globals["csrf_token"]=get_csrf_token
+
+
+
+
+@router.get('/refresh')
+def refresh_session(request:Request):
+    refresh_token=request.cookies.get("refresh_token")
+    
+    if not refresh_token:
+        request.session['flash_error']="Session expired. Please login again."
+        return RedirectResponse(url='/teacher_login',status_code=status.HTTP_303_SEE_OTHER)
+
+    try:
+        payload=jwt.decode(refresh_token,SECRET_KEY,algorithms=["HS256"])
+        new_payload={
+            'user_id':payload['user_id'],
+            'role':payload['role'],
+            'teacher_id':payload['teacher_id']
+        }
+        access_token=create_token(new_payload)
+        new_token=refresh_token(new_payload)
+        response=RedirectResponse(url='/teacher_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        response.set_cookie(key="access_token",value=access_token,httponly=True,max_age=1800,samesite="lax")
+        response.set_cookie(key="refresh_token",value=new_token,httponly=True,max_age=7*24*60*60,samesite="lax")
+        return response
+        
+    except JWTError as je:
+        logging.exception(f"JWT Refresh get route: {str(je)}")
+        response=RedirectResponse(url='/teacher_login',status_code=status.HTTP_303_SEE_OTHER)
+        response.delete_cookie("access_token")
+        response.delete_cookie("refresh_token")
+        return response
+
+
 
 @router.get('/teacher_login',response_class=HTMLResponse)
 @router.post('/teacher_login',response_class=HTMLResponse)
@@ -34,15 +71,41 @@ def teacher_login(request:Request,email:str=Form(None),password:str=Form(None),r
             remember_me=remember_me
         )   
         user,teacher_obj=TeacherService.authenticate_teacher(inputs.email,inputs.password)
-        
-        request.session.update({
+        token_payload={
             'user_id':user['user_id'],
             'role':'teacher',
-            'teacher_id':teacher_obj['teacher_id'],
-            'date':datetime.now().isoformat(),
-            'remember':remember_me
-        })
-        return RedirectResponse(url='/teacher_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+            'teacher_id':teacher_obj['teacher_id']
+            }
+        token=create_token(token_payload)
+        new_token=refresh_token(token_payload)
+        
+        response=RedirectResponse(url='/teacher_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        response.set_cookie(
+            key="access_token",
+            value=token,
+            httponly=True,
+            max_age=1800,
+            samesite="lax"
+            )
+        response.set_cookie(
+            key="refresh_token",
+            value=new_token,
+            httponly=True,
+            max_age=7*24*60*60,
+            samesite="lax"
+            )
+        return response
+        
+        # request.session.update({
+        #     'user_id':user['user_id'],
+        #     'role':'teacher',
+        #     'teacher_id':teacher_obj['teacher_id'],
+        #     'date':datetime.now().isoformat(),
+        #     'remember':remember_me
+        # })
+        # return RedirectResponse(url='/teacher_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+    except JWTError as je:
+        logging.exception(f"JWT route : {str(je)}")
     except PydanticValidationError as ve:
         logging.error(f"Error during pydntvl tchr lgn route api: {str(ve)}")
         return templates.TemplateResponse(request=request,name="teacher_login.html",
