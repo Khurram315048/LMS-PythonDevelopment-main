@@ -10,6 +10,7 @@ from pydantic import BaseModel ,EmailStr,Field,ValidationError
 from config import SECRET_KEY,BASE_DIR
 from models import MainModel
 import utils.logger
+import logging
 from students_module.students_routes import router as student_router
 from teachers_module.teachers_routes import router as teacher_router
 
@@ -90,13 +91,12 @@ async def user_signup(request:Request,first_name:str=Form(...),last_name=Form(..
                     return RedirectResponse(url='/teacher_login',status_code=status.HTTP_303_SEE_OTHER)
 
         except ValidationError as v:
+            logging.warning(f"Main sinup route validation: {str(v)}")
             error_msg="Please enter valid data"
             return templates.TemplateResponse(request=request,name="user_signup.html",context={"error":error_msg})
         
         except Exception as e:
-            import traceback
-            traceback.print_exc()
-            print(f"Error during signup: {str(e)}")
+            logging.exception(f"signup route main api: {str(e)}")
     return templates.TemplateResponse(request=request,name="user_signup.html",context={"error":error})     
 
 
@@ -108,6 +108,7 @@ def reset_password(request:Request,email:str=Form(None),new_password:str=Form(No
     if request.method=='POST':
         user=MainModel.get_user_by_email(email)
         if not user:
+            logging.error(f"rst psswrd route api")
             return RedirectResponse(url='/user_signup',status_code=status.HTTP_303_SEE_OTHER)
 
         MainModel.update_password(email,new_password)
