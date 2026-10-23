@@ -39,13 +39,14 @@ document.addEventListener("DOMContentLoaded",function(){
 
             messageElement.innerHTML=`
                 <div class="chat-bubble ${isMe ? 'msg-teacher' : 'msg-student'}">
-                    <p class="mb-0" style="font-size: 0.95rem;">${data.message}</p>
+                <p class="mb-0" style="font-size: 0.95rem;"></p>
                     <small class="text-muted d-block text-end" style="font-size: 0.7rem;">
                         ${timeString}
                     </small>
                 </div>
             `;
-            
+
+            messageElement.querySelector("p").textContent=data.message;
             chatBox.appendChild(messageElement);
             chatBox.scrollTop=chatBox.scrollHeight;
         };
@@ -56,7 +57,7 @@ document.addEventListener("DOMContentLoaded",function(){
                 event.preventDefault(); 
                 
                 const message=messageInput.value.trim();
-                if(message){
+                if(message && socket.readyState===WebSocket.OPEN){
                     socket.send(message); 
                     messageInput.value=""; 
                 }

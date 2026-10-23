@@ -46,20 +46,22 @@ document.addEventListener("DOMContentLoaded",function(){
                 <small class="d-block fw-bold mb-1" style="font-size:0.7rem; opacity:0.8;">
                     ${senderRole}
                 </small>
-                <p class="mb-1">${data.message}</p>
+                <p class="mb-1"></p>
                 <small class="d-block text-end" style="font-size:0.65rem; opacity:0.7;">${timeString}</small>
             </div>
         `;
         
+        messageElement.querySelector("p").textContent=data.message;
         chatBox.appendChild(messageElement);
         messageElement.scrollIntoView({behavior:"smooth"});
+        
     };
 
     chatForm.addEventListener("submit",function(event){
         event.preventDefault(); 
         
         const message=messageInput.value.trim();
-        if(message){
+        if(message && socket.readyState===WebSocket.OPEN){
             socket.send(message); 
             messageInput.value=""; 
         }
