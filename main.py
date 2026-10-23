@@ -11,6 +11,7 @@ from config import SECRET_KEY,BASE_DIR
 from models import MainModel
 import utils.logger
 import logging
+from routes.websocket_routes import router as websocket_router
 from students_module.students_routes import router as student_router
 from teachers_module.teachers_routes import router as teacher_router
 
@@ -22,6 +23,7 @@ templates=Jinja2Templates(directory=os.path.join(BASE_DIR,'templates'))
 
 app.include_router(student_router)
 app.include_router(teacher_router)
+app.include_router(websocket_router)
 
 EMAIL_PATTERN=r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]\.[a-zA-Z]{2,}$'
 

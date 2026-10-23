@@ -715,23 +715,23 @@ def submit_fyp(request:Request,project_title:str=Form(...),description:str=Form(
 
 
 
-@router.post('/send_fyp_message/{fyp_id}')
-def send_fyp_message(request:Request,fyp_id:int,message:str=Form(...),current_user:dict=Depends(get_current_student)):
-    student_id=current_user['student_id']
-    try:
-        check_status=StudentService.check_freeze_student(student_id)
-        if check_status:
-            request.session['flash_error']="Your semester has been freeze"
-            return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+# @router.post('/send_fyp_message/{fyp_id}')
+# def send_fyp_message(request:Request,fyp_id:int,message:str=Form(...),current_user:dict=Depends(get_current_student)):
+#     student_id=current_user['student_id']
+#     try:
+#         check_status=StudentService.check_freeze_student(student_id)
+#         if check_status:
+#             request.session['flash_error']="Your semester has been freeze"
+#             return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
         
-        fyp_obj=StudentModel.get_fyp_by_id_and_student(fyp_id,student_id)
-        if fyp_obj and message.strip():
-            StudentModel.insert_fyp_message(fyp_id,student_id,'student',message.strip())
-    except Exception as e:
-        logging.exception(f"Error during send fyp msg route api: {str(e)}")
-        pass
+#         fyp_obj=StudentModel.get_fyp_by_id_and_student(fyp_id,student_id)
+#         if fyp_obj and message.strip():
+#             StudentModel.insert_fyp_message(fyp_id,student_id,'student',message.strip())
+#     except Exception as e:
+#         logging.exception(f"Error during send fyp msg route api: {str(e)}")
+#         pass
 
-    return RedirectResponse(url='/student_fyp',status_code=status.HTTP_303_SEE_OTHER)
+#     return RedirectResponse(url='/student_fyp',status_code=status.HTTP_303_SEE_OTHER)
 
 
 

@@ -34,11 +34,14 @@ LMS-PythonDevelopment-main
 │     └─ view_teachers.html
 ├─ auto_export_db.py
 ├─ config.py
+├─ jwt.py
 ├─ logs
 ├─ main.py
 ├─ models.py
 ├─ README.md
 ├─ requirements.txt
+├─ routes
+│  └─ websocket_routes.py
 ├─ static
 │  ├─ css
 │  │  ├─ admin_css
@@ -59,18 +62,22 @@ LMS-PythonDevelopment-main
 │  │  ├─ logo.jpg
 │  │  └─ main_view.jpg
 │  ├─ js
+│  │  ├─ fyp_chat.js
 │  │  ├─ fyp_management.js
-│  │  └─ notifications.js
+│  │  ├─ notifications.js
+│  │  └─ teacher_fyp_chat.js
 │  └─ uploads
 │     └─ students_uploads
 │        ├─ students_assignments
 │        │  ├─ SID2_20260204_120529_new_cover.docx
 │        │  ├─ SID2_20260204_135331_signup_view.PNG
 │        │  ├─ SID3_20260204_120727_new_cover.docx
-│        │  └─ SID4_20260204_135820_add_view_st.PNG
+│        │  ├─ SID4_20260204_135820_add_view_st.PNG
+│        │  └─ SID_2_20261008_161308_Python_AI_ML_Developer.pdf
 │        ├─ students_fyp_proposal
 │        │  ├─ SID_100_AI_Interns_Learning_Series_Workshop_02_1.pdf
 │        │  ├─ SID_100_DOC-20260812-WA0002.pdf
+│        │  ├─ SID_2_20261008_160923_Attendance_Report.pdf
 │        │  ├─ SID_2_ccp_seo_project.pdf
 │        │  ├─ SID_2_GEOAI_Guradian_Report.pdf
 │        │  ├─ SID_2_Muhammad_Khurram_CV_Original.pdf
@@ -93,7 +100,8 @@ LMS-PythonDevelopment-main
 │        ├─ students_quizes
 │        │  ├─ SID2_20260204_151638_login_view.PNG
 │        │  ├─ SID3_20260204_121554_Student_Management_System_Report_Project.docx
-│        │  └─ SID4_20260204_135954_home_view.PNG
+│        │  ├─ SID4_20260204_135954_home_view.PNG
+│        │  └─ SID_2_20261008_161413_InfinityWave_internship_certificate.pdf
 │        └─ voucher_pics
 │           ├─ student_100_back_Screenshot_from_2026-08-27_17-15-29.png
 │           ├─ student_100_front_Screenshot_from_2026-08-27_17-01-24.png
@@ -154,15 +162,17 @@ LMS-PythonDevelopment-main
 │  └─ __init__.py
 ├─ teachers_module
 │  ├─ schema.py
+│  ├─ services
+│  │  └─ teacher_services.py
 │  ├─ teachers_models.py
 │  ├─ teachers_routes.py
 │  ├─ teachers_views
 │  │  ├─ class_attendance.html
 │  │  ├─ class_structure.html
-│  │  ├─ complaint_suggestion.html
 │  │  ├─ fyp_management.html
 │  │  ├─ generate_result.html
 │  │  ├─ marked_attendance.html
+│  │  ├─ teacher_complaint.html
 │  │  ├─ teacher_dashboard.html
 │  │  ├─ teacher_login.html
 │  │  ├─ teacher_profile.html
@@ -183,6 +193,7 @@ LMS-PythonDevelopment-main
    ├─ db.py
    ├─ exceptions.py
    ├─ logger.py
+   ├─ websocket_manager.py
    └─ __init__.py
 
 ```

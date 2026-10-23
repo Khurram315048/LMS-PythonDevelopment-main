@@ -351,7 +351,8 @@ def fyp_management(request:Request,current_user:dict=Depends(get_current_teacher
                                             "completed":completed_fyp,
                                             "pending":pending_fyp,
                                             "flash_success":flash_success,
-                                            "flash_error":flash_error
+                                            "flash_error":flash_error,
+                                            "current_user":current_user
                                         })
     except (NotFoundError,BusinessRuleError) as nb:
         logging.warning(f"Error during fyp mngmnt route: {str(nb)}")
@@ -379,23 +380,23 @@ def approve_fyp(request:Request,fyp_id:int=Path(...,gt=0),status_val:FypStatus=P
     return RedirectResponse(url='/fyp_management',status_code=status.HTTP_303_SEE_OTHER)
 
 
-@router.post('/send_message/{fyp_id}')
-def send_message(request:Request,fyp_id:int=Path(...,gt=0),message:str=Form(...),current_user:dict=Depends(get_current_teacher)):
-    teacher_id=current_user['teacher_id']
-    try:
-        valid_data=SendMessageForm(
-            message=message
-        )
-        TeacherService.send_fyp_message(teacher_id,fyp_id,valid_data.message)
-    except PydanticValidationError as ve:
-        request.session['flash_error']=str(ve)
-    except (BusinessRuleError,ValidationError) as bv:
-        logging.warning(f"Error during snd msg route: {str(bv)}")
-        request.session['flash_error']=str(bv)   
-    except Exception as e:
-        logging.exception(f"Error during snd msg route api: {str(e)}")
-        request.session['flash_error']="System error"
-    return RedirectResponse(url='/fyp_management',status_code=status.HTTP_303_SEE_OTHER)
+# @router.post('/send_message/{fyp_id}')
+# def send_message(request:Request,fyp_id:int=Path(...,gt=0),message:str=Form(...),current_user:dict=Depends(get_current_teacher)):
+#     teacher_id=current_user['teacher_id']
+#     try:
+#         valid_data=SendMessageForm(
+#             message=message
+#         )
+#         TeacherService.send_fyp_message(teacher_id,fyp_id,valid_data.message)
+#     except PydanticValidationError as ve:
+#         request.session['flash_error']=str(ve)
+#     except (BusinessRuleError,ValidationError) as bv:
+#         logging.warning(f"Error during snd msg route: {str(bv)}")
+#         request.session['flash_error']=str(bv)   
+#     except Exception as e:
+#         logging.exception(f"Error during snd msg route api: {str(e)}")
+#         request.session['flash_error']="System error"
+#     return RedirectResponse(url='/fyp_management',status_code=status.HTTP_303_SEE_OTHER)
 
 
 
