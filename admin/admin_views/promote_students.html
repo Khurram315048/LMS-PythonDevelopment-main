@@ -47,7 +47,8 @@
                                     <i class="fa-solid fa-check"></i> Already Promoted
                                 </button>
                             {% else %}
-                                <form method="POST" action="{{ url_for('admin.promote_student', student_id=student.student_id) }}">
+                                <form method="POST" action="{{url_for('promote_student',student_id=student.student_id)}}">
+                                    <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                                     <button type="submit" class="btn btn-primary btn-sm"
                                         onclick="return confirm('Promote {{ student.first_name }} to next semester?')">
                                         <i class="fa-solid fa-circle-arrow-up"></i> Promote

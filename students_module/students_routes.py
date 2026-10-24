@@ -11,11 +11,12 @@ from students_module.students_models import StudentModel
 from utils.auth import get_current_student
 from utils.exceptions import BusinessRuleError,ValidationError as AppValidation,NotFoundError
 import logging
-import secrets
+from fastapi import BackgroundTasks
 from utils.csrf import verify_csrf,get_csrf_token
 from jwt import create_token,refresh_token
 from jose import jwt,JWTError
 from config import SECRET_KEY
+from utils.send_mail import send_email
 
 
 router=APIRouter(dependencies=[Depends(verify_csrf)])
@@ -183,8 +184,10 @@ def student_fee(request:Request,current_user:dict=Depends(get_current_student)):
 
 @router.get('/complaint_suggestion')
 @router.post('/complaint_suggestion')
-def complaint_suggestion(request:Request,title:str=Form(None),description:str=Form(None),current_user:dict=Depends(get_current_student)):
+def complaint_suggestion(request:Request,background_tasks:BackgroundTasks,title:str=Form(None),description:str=Form(None),current_user:dict=Depends(get_current_student)):
     user_id=current_user['user_id']
+    student_email=StudentService.get_student_email(user_id)
+    
 
     if request.method=='GET':
         return templates.TemplateResponse(request=request,name="complaint_suggestion.html")
@@ -193,6 +196,9 @@ def complaint_suggestion(request:Request,title:str=Form(None),description:str=Fo
         inputs=ComplaintSuggestionRequest(title=title,description=description)
         StudentModel.insert_complaint_suggestion(bleach.clean(inputs.title,tags=[]),bleach.clean(inputs.description,tags=[]),user_id)
         request.session['flash_success']="Complaint/Suggestion submitted successfully"
+        if student_email:
+            background_tasks.add_task(send_email,[student_email],"Complaint sent successfully")
+
         return RedirectResponse(url='/notifications',status_code=status.HTTP_303_SEE_OTHER)
     
     except ValidationError as v:
@@ -228,11 +234,13 @@ def notifications(request:Request,current_user:dict=Depends(get_current_student)
 
 @router.get('/upload_fee')
 @router.post('/upload_fee')
-def upload_fee(request:Request,month:str=Form(None),fee_amount:float=Form(None),
+def upload_fee(request:Request,background_tasks:BackgroundTasks,month:str=Form(None),fee_amount:float=Form(None),
                front_voucher:UploadFile=File(None),back_voucher:UploadFile=File(None),
                current_user:dict=Depends(get_current_student)):
     
     student_id=current_user['student_id']
+    user_id=current_user['user_id']
+    student_email=StudentService.get_student_email(user_id)
                
     if request.method=='GET':
         return templates.TemplateResponse(request=request,name="upload_fee.html")
@@ -249,6 +257,9 @@ def upload_fee(request:Request,month:str=Form(None),fee_amount:float=Form(None),
         
         StudentService.upload_fee_voucher(student_id,inputs.month,inputs.fee_amount,front_voucher,back_voucher)
         request.session['flash_success']="Fee voucher uploaded successfully"
+        if student_email:
+            background_tasks.add_task(send_email,[student_email],"Fee uploaded successfully")
+
         return RedirectResponse(url='/student_fee',status_code=status.HTTP_303_SEE_OTHER)
     
     except (ValidationError,AppValidation) as e:
@@ -486,8 +497,9 @@ def delete_fail(request:Request,fail_id:int,current_user:dict=Depends(get_curren
 
 @router.get('/semester_freeze')
 @router.post('/semester_freeze')
-def semester_freeze(request:Request,reason:str=Form(None),current_user:dict=Depends(get_current_student)):
+def semester_freeze(request:Request,background_tasks:BackgroundTasks,reason:str=Form(None),current_user:dict=Depends(get_current_student)):
     student_id=current_user['student_id']
+    user_id=current_user['user_id']
     
     try:
         student=StudentModel.get_student_by_id(student_id)
@@ -506,7 +518,10 @@ def semester_freeze(request:Request,reason:str=Form(None),current_user:dict=Depe
         inputs=SemesterFreezeRequest(reason=reason)
         StudentService.handle_semester_freeze(student_id,inputs.reason)
         request.session['flash_success']="Request submitted"
-        return RedirectResponse(url='/semester_freeze', status_code=status.HTTP_303_SEE_OTHER)
+        student_email=StudentService.get_student_email(user_id)
+        if student_email:
+            background_tasks.add_task(send_email,[student_email],"Semester Freeze Request Send Successfully")
+        return RedirectResponse(url='/semester_freeze',status_code=status.HTTP_303_SEE_OTHER)
     
     except (ValidationError,BusinessRuleError,NotFoundError) as e:
         logging.exception(f"Error during smstr freeze route api: {str(e)}")
@@ -690,10 +705,11 @@ def student_fyp(request:Request,current_user:dict=Depends(get_current_student)):
 
 
 @router.post('/submit_fyp')
-def submit_fyp(request:Request,project_title:str=Form(...),description:str=Form(...),teacher_id:int=Form(None),
+def submit_fyp(request:Request,background_tasks:BackgroundTasks,project_title:str=Form(...),description:str=Form(...),teacher_id:int=Form(None),
                proposal_file:UploadFile=File(None),current_user:dict=Depends(get_current_student)):
     
     student_id=current_user['student_id']
+    user_id=current_user['user_id']
     try:
         check_status=StudentService.check_freeze_student(student_id)
         if check_status:
@@ -702,6 +718,10 @@ def submit_fyp(request:Request,project_title:str=Form(...),description:str=Form(
         
         StudentService.submit_fyp_proposal(student_id,project_title,description,teacher_id,proposal_file)
         request.session['flash_success']="FYP proposal submitted"
+        student_email=StudentService.get_student_email(user_id)
+        if student_email:
+            background_tasks.add_task(send_email,[student_email],"FYP Proposal Send Successfully")
+        
     except (BusinessRuleError,AppValidation,NotFoundError) as ee:
         logging.warning(f"Error during submit fyp route api: {str(ee)}")
         request.session['flash_error']=str(ee)    
@@ -736,10 +756,11 @@ def submit_fyp(request:Request,project_title:str=Form(...),description:str=Form(
 
 
 @router.post('/update_fyp')
-def update_fyp(request:Request,project_title:str=Form(...),
+def update_fyp(request:Request,background_tasks:BackgroundTasks,project_title:str=Form(...),
                proposal_file:UploadFile=File(None),current_user:dict=Depends(get_current_student)):
     
     student_id=current_user['student_id']
+    user_id=current_user['user_id']
     try:
         check_status=StudentService.check_freeze_student(student_id)
         if check_status:
@@ -748,6 +769,9 @@ def update_fyp(request:Request,project_title:str=Form(...),
         
         StudentService.update_fyp(student_id,project_title,proposal_file)
         request.session['flash_success']="FYP updated"
+        student_email=StudentService.get_student_email(user_id)
+        if student_email:
+            background_tasks.add_task(send_email,[student_email],"FYP Updated Successfully")
     except (BusinessRuleError,AppValidation,NotFoundError) as ee:
         logging.warning(f"Error during update fyp route api: {str(ee)}")
         request.session['flash_error']=str(ee)
@@ -820,9 +844,10 @@ def my_submissions(request:Request,current_user:dict=Depends(get_current_student
 
 
 @router.post('/upload_submission')
-def upload_submission(request:Request,course_id:int=Form(...),section_id:int=Form(...),type:str=Form(...),
+def upload_submission(request:Request,background_tasks:BackgroundTasks,course_id:int=Form(...),section_id:int=Form(...),type:str=Form(...),
                       file:UploadFile=File(...), current_user:dict=Depends(get_current_student)):
     student_id=current_user['student_id']
+    user_id=current_user['user_id']
     try:
         check_status=StudentService.check_freeze_student(student_id)
         if check_status:
@@ -830,6 +855,9 @@ def upload_submission(request:Request,course_id:int=Form(...),section_id:int=For
             return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
         
         filename=StudentService.upload_assignment_quiz(student_id,course_id,section_id,type,file)
+        student_email=StudentService.get_student_email(user_id)
+        if student_email:
+            background_tasks.add_task(send_email,[student_email],"Submissions Uploaded Successfully")
         request.session['flash_success']=f"{filename} uploaded successfully!"
     except Exception as e:
         logging.exception(f"Error during upld submissions route api: {str(e)}")

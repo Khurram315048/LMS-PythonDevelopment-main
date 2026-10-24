@@ -12,17 +12,19 @@
     <div class="standalone-header">Student Management System</div>
 
     <div class="container">
-        <h1 class="headings">Reset Your Password</h1>
-        <form action="/reset_password" method="POST">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-            <br>
-            <label for="new_password">New Password:</label>
-            <input type="password" id="new_password" name="new_password" required>
-            <br>
-            <button type="submit" class="login-button">Reset Password</button>
-        </form>
-    </div>
+    <h1 class="headings">Reset Your Password</h1>
+
+    {% if error %}
+    <p class="error-message" style="color:#b91c1c;background:#fee2e2;padding:10px;border-radius:6px;">{{ error }}</p>
+    {% endif %}
+
+    <form action="/send_reset_email" method="POST">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <br>
+        <button type="submit" class="login-button">Send OTP</button>
+    </form>
+</div>
 
     <div class="standalone-footer">&copy; 2023 Student Management System. All rights reserved.</div>
 </body>

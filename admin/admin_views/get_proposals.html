@@ -52,7 +52,7 @@
                     </td>
                     <td>
                         {% if fyp.last_submission %}
-                            <a href="{{ url_for('static', filename=fyp.last_submission) }}" target="_blank" class="btn btn-sm btn-link text-danger">
+                            <a href="{{ url_for('static',path=fyp.last_submission) }}" target="_blank" class="btn btn-sm btn-link text-danger">
                                 <i class="fa-solid fa-file-pdf"></i> View PDF
                             </a>
                         {% else %}
@@ -61,7 +61,8 @@
                     </td>
                     <td>{{ fyp.created_at }}</td>
                     <td>
-                        <form method="POST" action="{{ url_for('admin.assign_supervisor') }}" style="display:inline;">
+                        <form method="POST" action="/assign_supervisor" style="display:inline;">
+                           <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                             <input type="hidden" name="fyp_id" value="{{ fyp.fyp_id }}">
                             <select name="teacher_id" class="form-select form-select-sm d-inline w-auto">
                                 <option value="">Select Supervisor</option>

@@ -31,7 +31,8 @@
                         {% endif %}
                     </td>
                     <td>
-                        <form method="POST" action="{{url_for('admin.edit_settings')}}">
+                        <form method="POST" action="/edit_settings">
+                            <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                             <input type="hidden" name="setting_key" value="{{ setting.setting_key }}">
                             {% if setting.setting_value == '1' %}
                                 <input type="hidden" name="setting_value" value="0">

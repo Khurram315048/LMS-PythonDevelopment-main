@@ -38,7 +38,8 @@
                         <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#registrationsModal{{ sem.summer_semesters_id }}">
                             <i class="fa-solid fa-users"></i> Registrations
                         </button>
-                        <form method="POST" action="{{ url_for('admin.delete_summer_semester') }}" style="display:inline;">
+                        <form method="POST" action="/delete_summer_semester" style="display:inline;">
+                            <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                             <input type="hidden" name="summer_semesters_id" value="{{ sem.summer_semesters_id }}">
                             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this summer semester?')">
                                 <i class="fa-solid fa-trash"></i>
@@ -55,7 +56,6 @@
     </div>
 </div>
 
-<!-- Registration Modals — outside table -->
 {% for sem in summer_semesters %}
 <div class="modal fade" id="registrationsModal{{ sem.summer_semesters_id }}" tabindex="-1">
     <div class="modal-dialog modal-lg">
@@ -91,7 +91,7 @@
 </div>
 {% endfor %}
 
-<!-- Add Summer Semester Modal -->
+
 <div class="modal fade" id="addSummerModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -100,7 +100,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{{ url_for('admin.add_summer_semester') }}">
+                <form method="POST" action="/add_summer_semester">
+                   <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                     <div class="mb-3">
                         <label class="form-label">Name</label>
                         <input type="text" class="form-control" name="name" placeholder="e.g. Summer" required>

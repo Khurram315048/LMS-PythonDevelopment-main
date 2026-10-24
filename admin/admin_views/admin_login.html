@@ -3,29 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/students_module.css') }}">
-    <link rel="icon" type="image/jpg" href="{{ url_for('static', filename='images/logo.jpg') }}">
+    <link rel="stylesheet" href="{{ url_for('static',path='css/students_module.css') }}">
+    <link rel="icon" type="image/jpg" href="{{ url_for('static',path='images/logo.jpg') }}">
     <title>Admin Login</title>
 </head>
 <body>
-    <div class="login-container"> 
+    <div class="login-container">
         <h1 class="headings">Admin Login</h1>
-        <form class="login-form" action="{{ url_for('admin.admin_login') }}" method="POST">
+
+        {% if error %}
+        <p class="error-message" style="color:#c0392b;margin-bottom:10px;">{{ error }}</p>
+        {% endif %}
+
+        <form class="login-form" action="/admin_login" method="POST">
+            <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
             <input type="email" name="email" placeholder="Email" required>
             <input type="password" name="password" placeholder="Password" required>
 
             <div class="login-options">
-            <label>
-            <input type="checkbox" name="remember"> Remember Me
-        </label>
-            <p> <a href="/reset_password">Reset Password</a></p>
-        </div>
-    
+                <label>
+                    <input type="checkbox" name="remember_me"> Remember Me
+                </label>
+                <p><a href="/send_reset_email">Reset Password</a></p>
+            </div>
 
-    <button type="submit" class="login-button" >Login</button>
-</form>
-</div>
-
-    
+            <button type="submit" class="login-button">Login</button>
+        </form>
+    </div>
 </body>
 </html>

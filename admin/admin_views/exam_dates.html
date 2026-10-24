@@ -45,7 +45,8 @@
                         <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editExamModal{{ exam.exam_id }}">
                             <i class="fa-solid fa-pen"></i>
                         </button>
-                        <form method="POST" action="{{url_for('admin.delete_exams')}}" style="display:inline;">
+                        <form method="POST" action="/delete_exams" style="display:inline;">
+                           <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                             <input type="hidden" name="exam_id" value="{{ exam.exam_id }}">
                             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this exam date?')">
                                 <i class="fa-solid fa-trash"></i>
@@ -69,7 +70,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{{url_for('admin.update_exams')}}">
+                <form method="POST" action="/update_exams">
+                    <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                     <input type="hidden" name="exam_id" value="{{ exam.exam_id }}">
  
                       <div class="mb-3">
@@ -139,7 +141,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{{url_for('admin.add_exams')}}">
+                <form method="POST" action="/add_exams">
+                     <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                     <div class="mb-3">
                         <label class="form-label">Program</label>
                         <select class="form-select" name="program_id" required>

@@ -32,7 +32,8 @@
                     <td>{{ assignment.credit_hours }}</td>
                     <td>{{ assignment.program_name }}</td>
                     <td>
-                        <form method="POST" action="{{url_for('admin.delete_course')}}" style="display:inline;">
+                        <form method="POST" action="/delete_course" style="display:inline;">
+                            <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                             <input type="hidden" name="teacher_course_id" value="{{ assignment.teacher_course_id }}">
                             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Remove this assignment?')">
                                 <i class="fa-solid fa-trash"></i> Remove
@@ -54,7 +55,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{{url_for('admin.assign_course')}}">
+                <form method="POST" action="/assign_course">
+                    <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                     <div class="mb-3">
                         <label class="form-label">Teacher</label>
                         <select class="form-select" name="teacher_id" required>

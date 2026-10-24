@@ -42,7 +42,8 @@
                         {% endif %}
                     </td>
                     <td style="white-space: nowrap;">
-                        <form method="POST" action="{{url_for('admin.solve_complaint')}}" style="display:inline;">
+                        <form method="POST" action="/solve_complaint" style="display:inline;">
+                            <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                             <input type="hidden" name="complt_sugst_id" value="{{ complaint.complt_sugst_id }}">
                             <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Mark as solved?')">
                                 <i class="fa-solid fa-circle-check"></i> Solved

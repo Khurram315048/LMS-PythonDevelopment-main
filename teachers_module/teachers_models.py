@@ -34,6 +34,22 @@ class TeacherModel:
 
 
     @staticmethod
+    def get_email_by_user_id(user_id:int):
+        try:
+            conn=mysql.get_dict_connection()
+            with conn.cursor() as cursor:
+                cursor.execute('SELECT email FROM users WHERE user_id=%s AND is_deleted=0',(user_id,))
+                row=cursor.fetchone()
+                return row['email'] if row else None
+        except Exception as e:
+            logging.exception(f"Error during get email by user id(models): {str(e)}")
+            return None
+        finally:
+            conn.close()
+
+
+
+    @staticmethod
     def get_by_user_id(user_id:int):
         try:
             conn=mysql.get_dict_connection()

@@ -41,7 +41,8 @@
                         {% endif %}
                     </td>
                     <td>
-                        <form method="POST" action="{{ url_for('admin.update_attendance') }}" style="display:inline;">
+                        <form method="POST" action="/update_attendance" style="display:inline;">
+                           <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                             <input type="hidden" name="attendance_id" value="{{ record.attendance_id }}">
                             <select name="attendance_status" class="form-select form-select-sm d-inline w-auto">
                                 <option value="Present" {% if record.attendance_status == 'Present' %}selected{% endif %}>Present</option>

@@ -1,7 +1,7 @@
 from utils.db import mysql
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
-
+import logging
 class MainModel:
 
     @staticmethod
@@ -91,9 +91,61 @@ class MainModel:
             print(f"Error during updt passwrd: {str(e)}")
             conn.rollback()
         finally:
-            conn.close()            
-       
+            conn.close()      
 
 
+    @staticmethod
+    def insert_otp(user_id,otp,expire_at):
+        try:
+            conn=mysql.get_connection()
+            with conn.cursor() as cursor:
+                cursor.execute('DELETE FROM reset_otps WHERE user_id=%s',(user_id,))
+                cursor.execute('INSERT INTO reset_otps(otp_num,user_id,otp_expire) VALUES(%s,%s,%s)',(otp,user_id,expire_at))
+                conn.commit()
+        except Exception as e:
+            logging.exception(f"during insrt otp(main): {str(e)}")
+            conn.rollback()
+            raise
+        finally:
+            conn.close()
 
+
+    @staticmethod
+    def get_otp(user_id):
+        try:
+            conn=mysql.get_dict_connection()
+            with conn.cursor() as cursor:
+                cursor.execute('SELECT * FROM reset_otps WHERE user_id=%s ORDER BY otp_id DESC LIMIT 1',(user_id,))
+                return cursor.fetchone()
+        except Exception as e:
+            logging.exception(f"during get otp(main): {str(e)}")
+            raise
+        finally:
+            conn.close()
+
+
+    @staticmethod
+    def increment_otp_attempts(otp_id):
+        try:
+            conn=mysql.get_connection()
+            with conn.cursor() as cursor:
+                cursor.execute('UPDATE reset_otps SET otp_attempts=otp_attempts+1 WHERE otp_id=%s',(otp_id,))
+                conn.commit()
+        finally:
+            conn.close()
+
+
+    @staticmethod
+    def mark_otp_used(otp_id):
+        try:
+            conn=mysql.get_connection()
+            with conn.cursor() as cursor:
+                cursor.execute('UPDATE reset_otps SET otp_used=1 WHERE otp_id=%s',(otp_id,))
+                conn.commit()
+        except Exception as e:
+            logging.exception(f"during mark otp used(main): {str(e)}")
+            conn.rollback()
+            raise
+        finally:
+            conn.close()
 

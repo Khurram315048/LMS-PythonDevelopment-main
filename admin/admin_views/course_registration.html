@@ -37,7 +37,8 @@
                     <td>{{ enrollment.course_name }}</td>
                     <td>{{ enrollment.program_name }}</td>
                     <td>
-                        <form method="POST" action="{{url_for('admin.remove_enrollment')}}" style="display:inline;">
+                        <form method="POST" action="/remove_enrollment" style="display:inline;">
+                            <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                             <input type="hidden" name="student_course_id" value="{{ enrollment.student_course_id }}">
                             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Remove this enrollment?')">
                                 <i class="fa-solid fa-trash"></i> Remove
@@ -59,7 +60,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{{url_for('admin.enroll_student')}}">
+                <form method="POST" action="/enroll_student">
+                    <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                     <div class="mb-3">
                         <label class="form-label">Student</label>
                         <select class="form-select" name="student_id" required>

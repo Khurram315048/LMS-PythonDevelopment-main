@@ -42,7 +42,8 @@
                             data-end="{{ sem.end_date }}">
                             <i class="fa-solid fa-pen"></i> Edit
                         </button>
-                        <form method="POST" action="{{url_for('admin.delete_semester')}}" style="display:inline;">
+                        <form method="POST" action="/delete_semester" style="display:inline;">
+                            <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                             <input type="hidden" name="semester_id" value="{{ sem.semester_id }}">
                             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this semester?')">
                                 <i class="fa-solid fa-trash"></i> Delete
@@ -68,7 +69,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{{url_for('admin.add_semester')}}">
+                <form method="POST" action="/add_semester">
+                    <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                     <div class="mb-3">
                         <label class="form-label">Semester Name</label>
                         <select class="form-select" name="name" required>
@@ -105,7 +107,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{{url_for('admin.edit_semester')}}">
+                <form method="POST" action="/edit_semester">
+                    <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                     <input type="hidden" name="semester_id" id="edit_semester_id">
                     <div class="mb-3">
                         <label class="form-label">Semester Name</label>

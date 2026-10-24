@@ -3,7 +3,7 @@
 {% block title %}Admin Dashboard{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',path='css/admin_css/dashboard.css') }}">
 
 <div class="dash-body">
     <div class="dash-header">
@@ -52,7 +52,7 @@
             </div>
             <div class="pending-card-right">
                 <span class="pending-count">{{ freeze_count }}</span>
-                <a href="{{url_for('admin.stSemester_freeze')}}" class="pending-link">View All <i class="fa-solid fa-arrow-right"></i></a>
+                <a href="/stSemester_freeze" class="pending-link">View All <i class="fa-solid fa-arrow-right"></i></a>
             </div>
         </div>
 
@@ -66,7 +66,7 @@
             </div>
             <div class="pending-card-right">
                 <span class="pending-count">{{ pending_fees_count }}</span>
-                <a href="{{url_for('admin.fee_management')}}" class="pending-link">View All <i class="fa-solid fa-arrow-right"></i></a>
+                <a href="/fee_management" class="pending-link">View All <i class="fa-solid fa-arrow-right"></i></a>
             </div>
         </div>
 
@@ -80,7 +80,7 @@
             </div>
             <div class="pending-card-right">
                 <span class="pending-count">{{ exam_count }}</span>
-                <a href="{{url_for('admin.exam_dates')}}" class="pending-link">View All <i class="fa-solid fa-arrow-right"></i></a>
+                <a href="/exam_dates" class="pending-link">View All <i class="fa-solid fa-arrow-right"></i></a>
             </div>
         </div>
 
@@ -94,7 +94,7 @@
             </div>
             <div class="pending-card-right">
                 <span class="pending-count">{{ complaints_count }}</span>
-                <a href="{{url_for('admin.complaints')}}" class="pending-link">View All <i class="fa-solid fa-arrow-right"></i></a>
+                <a href="/complaints" class="pending-link">View All <i class="fa-solid fa-arrow-right"></i></a>
             </div>
         </div>
 
@@ -108,7 +108,7 @@
             </div>
             <div class="pending-card-right">
                 <span class="pending-count">{{ fyp_count }}</span>
-                <a href="{{url_for('admin.fyp_proposals')}}" class="pending-link">View All <i class="fa-solid fa-arrow-right"></i></a>
+                <a href="/fyp_proposals" class="pending-link">View All <i class="fa-solid fa-arrow-right"></i></a>
             </div>
         </div>
 

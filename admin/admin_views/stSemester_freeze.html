@@ -33,12 +33,14 @@
                     <td>{{ req.applied_date }}</td>
                     <td><span class="badge bg-warning text-dark">{{ req.status }}</span></td>
                     <td>
-                        <form method="POST" action="{{ url_for('admin.approve_request', freeze_id=req.freeze_id) }}" style="display:inline;">
+                        <form method="POST" action="{{ url_for('approve_request',freeze_id=req.freeze_id) }}" style="display:inline;">
+                           <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                             <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Approve this request?')">
                                 <i class="fa-solid fa-check"></i> Approve
                             </button>
                         </form>
-                        <form method="POST" action="{{ url_for('admin.reject_request', freeze_id=req.freeze_id) }}" style="display:inline;">
+                        <form method="POST" action="{{ url_for('reject_request',freeze_id=req.freeze_id) }}" style="display:inline;">
+                           <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                             <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Reject this request?')">
                                 <i class="fa-solid fa-check"></i> Reject
                             </button>

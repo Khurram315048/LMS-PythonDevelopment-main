@@ -14,6 +14,8 @@ from utils.csrf import verify_csrf,get_csrf_token
 from jwt import create_token,refresh_token
 from jose import jwt,JWTError
 from config import SECRET_KEY
+from utils.send_mail import send_email
+from fastapi import BackgroundTasks
 
 
 router=APIRouter(dependencies=[Depends(verify_csrf)])
@@ -471,10 +473,9 @@ def set_submission_status(request:Request,submission_id:int=Path(...,gt=0),statu
 
 @router.get('/teacher_complaint')
 @router.post('/teacher_complaint')
-def teacher_complaint(request:Request,title:str=Form(None),description:str=Form(None),current_user:dict=Depends(get_current_teacher)):
+def teacher_complaint(request:Request,background_tasks:BackgroundTasks,title:str=Form(None),description:str=Form(None),current_user:dict=Depends(get_current_teacher)):
     user_id=current_user['user_id']
 
-    
     if request.method=='GET':
         flash_success=request.session.pop('flash_success',None)
         flash_error=request.session.pop('flash_error',None)
@@ -491,10 +492,15 @@ def teacher_complaint(request:Request,title:str=Form(None),description:str=Form(
         )
         TeacherService.submit_complaint(user_id,take_inputs.title,take_inputs.description)
         request.session['flash_success']="Complaint/Suggestion submitted successfully."
+        teacher_email=TeacherModel.get_email_by_user_id(user_id)
+        if teacher_email:
+            background_tasks.add_task(send_email,[teacher_email],"Complaint sent successfully")
+
         return RedirectResponse(url='/teacher_complaint',status_code=status.HTTP_303_SEE_OTHER)
     except PydanticValidationError as ve:
         logging.error(f"Error during tchr cpmlnt route api: {str(ve)}")
-        request.session['flash_error']=str(ve)    
+        request.session['flash_error']=str(ve)  
+        return RedirectResponse(url='/teacher_complaint',status_code=status.HTTP_303_SEE_OTHER)  
     except ValidationError as v:
         logging.warning(f"Validation error on complnt submson: {str(v)}")
         return templates.TemplateResponse(request=request,name="teacher_complaint.html",

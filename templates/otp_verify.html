@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static',path='css/global_style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',path='css/students_module.css') }}">
+    <link rel="icon" type="image/jpg" href="{{ url_for('static',path='images/logo.jpg') }}">
+    <title>Verify OTP</title>
+</head>
+<body>
+    <div class="standalone-header">Student Management System</div>
+
+   <div class="container">
+    <h1 class="headings">Enter OTP</h1>
+
+    {% if flash_success %}
+    <p class="success-message" style="color:#166534;background:#dcfce7;padding:10px;border-radius:6px;">{{ flash_success }}</p>
+    {% endif %}
+    {% if error %}
+    <p class="error-message" style="color:#b91c1c;background:#fee2e2;padding:10px;border-radius:6px;">{{ error }}</p>
+    {% endif %}
+
+    <form action="/otp_verify" method="POST">
+        <label for="otp">OTP:</label>
+        <input type="text" id="otp" name="otp" required
+               inputmode="numeric" maxlength="6" pattern="\d{6}"
+               title="Enter the 6 digit code" autocomplete="one-time-code">
+        <br>
+        <button type="submit" class="login-button">Verify</button>
+    </form>
+    <div class="form-links">
+            <p>New Email? <a href="/send_reset_email">Email</a></p>
+        </div>
+</div>
+
+    <div class="standalone-footer">&copy; 2023 Student Management System. All rights reserved.</div>
+</body>
+</html>

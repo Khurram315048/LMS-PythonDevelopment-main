@@ -38,7 +38,8 @@
                         <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editScheduleModal{{ schedule.course_schedule_id }}">
                             <i class="fa-solid fa-pen"></i>
                         </button>
-                        <form method="POST" action="{{url_for('admin.delete_schedule')}}" style="display:inline;">
+                        <form method="POST" action="/delete_schedule" style="display:inline;">
+                            <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                             <input type="hidden" name="course_schedule_id" value="{{ schedule.course_schedule_id }}">
                             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this schedule?')">
                                 <i class="fa-solid fa-trash"></i>
@@ -55,7 +56,8 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                             <div class="modal-body">
-                                <form method="POST" action="{{url_for('admin.update_schedule')}}">
+                                <form method="POST" action="/update_schedule">
+                                    <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                                     <input type="hidden" name="course_schedule_id" value="{{ schedule.course_schedule_id }}">
                                     <div class="mb-3">
                                         <label class="form-label">Day</label>
@@ -97,7 +99,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{{url_for('admin.add_schedule')}}">
+                <form method="POST" action="/add_schedule">
+                    <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                     <div class="mb-3">
                         <label class="form-label">Course</label>
                         <select class="form-select" name="course_id" required>

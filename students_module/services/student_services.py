@@ -46,11 +46,25 @@ class FileService:
 class StudentService:
 
     @staticmethod
+    def get_student_email(user_id:int):
+        try:
+            row=StudentModel.get_student_by_user_id(user_id)
+            if not row:
+                return None
+            
+            return row.get('email')
+        except Exception as e:
+            logging.exception(f"Err during st email: {str(e)}")
+            return None
+
+
+    @staticmethod
     def check_freeze_student(student_id:int):
         try:
             freeze_student=CheckFreezeStatus.confirm_freeze_status(student_id)
             if freeze_student and freeze_student.get('status') == 'Approved':
                 return True
+            
             
         except Exception as e:
             logging.exception(f"Error during chck frz stndt service: {e}")    

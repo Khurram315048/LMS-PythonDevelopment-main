@@ -48,17 +48,18 @@
                     <td>{{ fee.update_date }}</td>
                     <td>
                         {% if fee.voucher_front_pic %}
-                            <a href="{{ url_for('static', filename=fee.voucher_front_pic) }}" target="_blank" class="btn btn-sm btn-info">Front</a>
+                            <a href="{{ url_for('static',path=fee.voucher_front_pic) }}" target="_blank" class="btn btn-sm btn-info">Front</a>
                         {% endif %}
                         {% if fee.voucher_back_pic %}
-                            <a href="{{ url_for('static', filename=fee.voucher_back_pic) }}" target="_blank" class="btn btn-sm btn-secondary">Back</a>
+                            <a href="{{ url_for('static',path=fee.voucher_back_pic) }}" target="_blank" class="btn btn-sm btn-secondary">Back</a>
                         {% endif %}
                         {% if not fee.voucher_front_pic and not fee.voucher_back_pic %}
                             <span class="text-muted">None</span>
                         {% endif %}
                     </td>
                     <td>
-                        <form method="POST" action="{{ url_for('admin.update_fee_status') }}" style="display:inline;">
+                        <form method="POST" action="/update_fee_status" style="display:inline;">
+                          <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                             <input type="hidden" name="student_fees_id" value="{{ fee.student_fees_id }}">
                             <select name="fee_status" class="form-select form-select-sm d-inline w-auto">
                                 <option value="paid" {% if fee.fee_status == 'paid' %}selected{% endif %}>Paid</option>
@@ -85,7 +86,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{{ url_for('admin.add_fee_record') }}">
+                <form method="POST" action="/add_fee_record">
+                    <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                     <div class="mb-3">
                         <label class="form-label">Student</label>
                         <select class="form-select" name="student_id" required>

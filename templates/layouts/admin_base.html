@@ -21,11 +21,11 @@
             <h1 class="tchr_text">Admin Management System</h1>
         </div>
         <div class="header-right" style="display: flex; align-items: center; gap: 20px;">
-            <a href="{{url_for('admin.admin_profile')}}" class="login-btn" style="text-decoration: none; color: white; display: flex; align-items: center; gap: 8px;">
+            <a href="/admin_profile" class="login-btn" style="text-decoration: none; color: white; display: flex; align-items: center; gap: 8px;">
                 <i class="fa-solid fa-circle-user" style="font-size: 1.3rem;"></i>
                 <span>Profile</span>
             </a>
-            <a href="{{url_for('logout')}}" class="logout-btn" style="text-decoration: none; color: white; display: flex; align-items: center; gap: 8px;">
+            <a href="/logout" class="logout-btn" style="text-decoration: none; color: white; display: flex; align-items: center; gap: 8px;">
                 <i class="fa-solid fa-right-from-bracket"></i>
                 <span>Logout</span>
             </a>
@@ -34,62 +34,62 @@
     <div class="main-wrapper">
         <nav class="sidebar">
             <ul>
-                <li><a href="{{url_for('admin.admin_profile')}}"><i class="fa-solid fa-user"></i> <span>Profile</span></a></li>
-                <li><a href="{{url_for('admin.admin_dashboard')}}"><i class="fa-solid fa-chart-line"></i> <span>Dashboard</span></a></li>
+                <li><a href="/admin_profile"><i class="fa-solid fa-user"></i> <span>Profile</span></a></li>
+                <li><a href="/admin_dashboard"><i class="fa-solid fa-chart-line"></i> <span>Dashboard</span></a></li>
                 <li class="has-submenu">
                     <a href="#"><i class="fa-solid fa-gear"></i> <span>System Management</span> </a>
                     <ul class="submenu">
-                        <li><a href="{{url_for('admin.system_settings')}}"><i class="fa-solid fa-toggle-on"></i> Settings</a></li>
-                        <li><a href="{{url_for('admin.system_controls')}}"><i class="fa-solid fa-sliders"></i> Controls</a></li>
+                        <li><a href="/system_settings"><i class="fa-solid fa-toggle-on"></i> Settings</a></li>
+                        <li><a href="/system_controls"><i class="fa-solid fa-sliders"></i> Controls</a></li>
                     </ul>
                 </li>
                 <li class="has-submenu">
                     <a href="#"><i class="fas fa-network-wired"></i> <span>Activity Log</span></a>
                     <ul class="submenu">
-                        <li><a href="{{url_for('admin.student_log')}}"><i class="fas fa-user-clock"></i>Student Log</a></li>
-                        <li><a href="{{url_for('admin.teacher_log')}}"><i class="fas fa-person-chalkboard"></i>Teacher Log</a></li>
+                        <li><a href="/student_log"><i class="fas fa-user-clock"></i>Student Log</a></li>
+                        <li><a href="/teacher_log"><i class="fas fa-person-chalkboard"></i>Teacher Log</a></li>
                         
                     </ul>
                 </li>
                 <li class="has-submenu">
                     <a href="#"><i class="fa-solid fa-user-graduate"></i> <span>Student Management</span></a>
                     <ul class="submenu">
-                        <li><a href="{{url_for('admin.register_student')}}"><i class="fa-solid fa-user-plus"></i> Register Student</a></li>
-                        <li><a href="{{url_for('admin.manage_attendance')}}"><i class="fa-solid fa-calendar-check"></i> Maintain Attendance</a></li>
-                        <li><a href="{{url_for('admin.manage_grades')}}"><i class="fa-solid fa-graduation-cap"></i> Maintain Grades</a></li>
-                        <li><a href="{{url_for('admin.fee_management')}}"><i class="fa-solid fa-dollar-sign"></i> Fee Management</a></li>
-                        <li><a href="{{url_for('admin.course_registration')}}"><i class="fa-solid fa-book-open"></i> Course Registration</a></li>
-                        <li><a href="{{url_for('admin.stSemester_freeze')}}"><i class="fa-solid fa-snowflake"></i> Semester Freeze</a></li>
-                        <li><a href="{{ url_for('admin.promote_students') }}"><i class="fa-solid fa-circle-arrow-up"></i> Promote Students</a></li>
-                        <li><a href="{{url_for('admin.stSummer_semester')}}"><i class="fa-solid fa-sun"></i> Summer Semester</a></li>
+                        <li><a href="/register_student"><i class="fa-solid fa-user-plus"></i> Register Student</a></li>
+                        <li><a href="/manage_attendance"><i class="fa-solid fa-calendar-check"></i> Maintain Attendance</a></li>
+                        <li><a href="/manage_grades"><i class="fa-solid fa-graduation-cap"></i> Maintain Grades</a></li>
+                        <li><a href="/fee_management"><i class="fa-solid fa-dollar-sign"></i> Fee Management</a></li>
+                        <li><a href="/course_registration"><i class="fa-solid fa-book-open"></i> Course Registration</a></li>
+                        <li><a href="/stSemester_freeze"><i class="fa-solid fa-snowflake"></i> Semester Freeze</a></li>
+                        <li><a href="/promote_students"><i class="fa-solid fa-circle-arrow-up"></i> Promote Students</a></li>
+                        <li><a href="/stSummer_semester"><i class="fa-solid fa-sun"></i> Summer Semester</a></li>
                     </ul>
                 </li>
                 <li class="has-submenu">
                     <a href="#"><i class="fa-solid fa-chalkboard-user"></i> <span>Teacher Management</span></a>
                     <ul class="submenu">
-                        <li><a href="{{url_for('admin.view_teachers')}}"><i class="fa-solid fa-users"></i> View Teachers</a></li>
-                        <li><a href="{{url_for('admin.assign_classes')}}"><i class="fa-solid fa-chalkboard"></i> Assign Classes</a></li>
-                        <li><a href="{{url_for('admin.course_attendance')}}"><i class="fa-solid fa-clipboard-user"></i> Course Attendance</a></li>
-                        <li><a href="{{url_for('admin.salary_record')}}"><i class="fa-solid fa-money-bill-wave"></i> Salary Records</a></li>
+                        <li><a href="/view_teachers"><i class="fa-solid fa-users"></i> View Teachers</a></li>
+                        <li><a href="/assign_classes"><i class="fa-solid fa-chalkboard"></i> Assign Classes</a></li>
+                        <li><a href="/course_attendance"><i class="fa-solid fa-clipboard-user"></i> Course Attendance</a></li>
+                        <li><a href="/salary_record"><i class="fa-solid fa-money-bill-wave"></i> Salary Records</a></li>
                     </ul>
                 </li>
                 <li class="has-submenu">
                     <a href="#"><i class="fa-solid fa-calendar-days"></i> <span>Schedule Management</span></a>
                     <ul class="submenu">
-                        <li><a href="{{url_for('admin.class_timetable')}}"><i class="fa-solid fa-table-cells"></i> Class Timetable</a></li>
-                        <li><a href="{{url_for('admin.exam_dates')}}"><i class="fa-solid fa-file-pen"></i> Exam Dates</a></li>
+                        <li><a href="/class_timetable"><i class="fa-solid fa-table-cells"></i> Class Timetable</a></li>
+                        <li><a href="/exam_dates"><i class="fa-solid fa-file-pen"></i> Exam Dates</a></li>
                     </ul>
                 </li>
                 <li class="has-submenu">
                     <a href="#"><i class="fa-solid fa-diagram-project"></i> <span>FYP Management</span> </a>
                     <ul class="submenu">
-                        <li><a href="{{url_for('admin.get_proposals')}}"><i class="fa-solid fa-file-circle-plus"></i> Assign Supervisor</a></li>
-                        <li><a href="{{url_for('admin.fyp_proposals')}}"><i class="fa-solid fa-file-circle-plus"></i> FYP Proposals</a></li>
+                        <li><a href="/get_proposals"><i class="fa-solid fa-file-circle-plus"></i> Assign Supervisor</a></li>
+                        <li><a href="/fyp_proposals"><i class="fa-solid fa-file-circle-plus"></i> FYP Proposals</a></li>
                     </ul>
                 </li>
-                <li><a href="{{url_for('admin.complaints')}}"><i class="fa-solid fa-comment-dots"></i> <span>Complaints</span></a></li>
-                <li><a href="{{url_for('admin.admin_notifications')}}"><i class="fa-solid fa-bell"></i> <span>Notifications</span></a></li>
-                <li><a href="{{url_for('logout')}}" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span></a></li>
+                <li><a href="/complaints"><i class="fa-solid fa-comment-dots"></i> <span>Complaints</span></a></li>
+                <li><a href="/admin_notifications"><i class="fa-solid fa-bell"></i> <span>Notifications</span></a></li>
+                <li><a href="/logout" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span></a></li>
             </ul>
         </nav>
         <main class="content-area">

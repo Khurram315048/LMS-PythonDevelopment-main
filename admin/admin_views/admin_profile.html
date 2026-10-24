@@ -34,6 +34,7 @@
         <br>
         <div class="edit-profile-section">
             <form method="POST">
+                 <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                 <button type="submit" name="edit_request" value="true" class="edit-btn">
                     Click Here If Anything Is Wrong 😊
                 </button>

@@ -186,12 +186,19 @@ def get_current_teacher(request:Request)->dict:
 
 
 def get_current_admin(request:Request)->dict:
-    admin_id=request.session.get('admin_id')
-    user_id=request.session.get('user_id')
-    role=request.session.get('role')
+    token=request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,headers={"location":"/admin_login"})
     
-    if role != 'admin' or not admin_id or not user_id:
-        raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,
-                                    headers={"location": "/admin_login"})
-
-    return {"admin_id":admin_id,"user_id":user_id,"role":role}  
+    try:
+        payload=jwt.decode(token,SECRET_KEY,algorithms=[ALGORITHM])
+        if payload.get("role") != "admin":
+            raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,headers={"location":"/admin_login"})
+    
+        return payload
+    except jwt.ExpiredSignatureError as ese:
+        logging.exception(f"JWT Token expiration: {str(ese)}")
+        raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,headers={"location":"/refresh"})
+    except jwt.JWTError as je:
+        logging.exception(f"JWT Token : {str(je)}")
+        raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,headers={"location":"/admin_login"})
