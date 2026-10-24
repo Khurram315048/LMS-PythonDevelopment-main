@@ -4,34 +4,36 @@ LMS-PythonDevelopment-main
 ├─ admin
 │  ├─ admin_models.py
 │  ├─ admin_routes.py
-│  └─ admin_views
-│     ├─ admin_dashboard.html
-│     ├─ admin_edit.html
-│     ├─ admin_login.html
-│     ├─ admin_notifications.html
-│     ├─ admin_profile.html
-│     ├─ assign_classes.html
-│     ├─ class_timetable.html
-│     ├─ complaints.html
-│     ├─ course_attendance.html
-│     ├─ course_registration.html
-│     ├─ exam_dates.html
-│     ├─ fee_management.html
-│     ├─ fyp_proposals.html
-│     ├─ get_proposals.html
-│     ├─ help_desk.html
-│     ├─ manage_attendance.html
-│     ├─ manage_grades.html
-│     ├─ promote_students.html
-│     ├─ register_student.html
-│     ├─ salary_record.html
-│     ├─ stSemester_freeze.html
-│     ├─ stSummer_semester.html
-│     ├─ student_log.html
-│     ├─ system_controls.html
-│     ├─ system_settings.html
-│     ├─ teacher_log.html
-│     └─ view_teachers.html
+│  ├─ admin_views
+│  │  ├─ admin_dashboard.html
+│  │  ├─ admin_edit.html
+│  │  ├─ admin_login.html
+│  │  ├─ admin_notifications.html
+│  │  ├─ admin_profile.html
+│  │  ├─ assign_classes.html
+│  │  ├─ class_timetable.html
+│  │  ├─ complaints.html
+│  │  ├─ course_attendance.html
+│  │  ├─ course_registration.html
+│  │  ├─ exam_dates.html
+│  │  ├─ fee_management.html
+│  │  ├─ fyp_proposals.html
+│  │  ├─ get_proposals.html
+│  │  ├─ help_desk.html
+│  │  ├─ manage_attendance.html
+│  │  ├─ manage_grades.html
+│  │  ├─ promote_students.html
+│  │  ├─ register_student.html
+│  │  ├─ salary_record.html
+│  │  ├─ stSemester_freeze.html
+│  │  ├─ stSummer_semester.html
+│  │  ├─ student_log.html
+│  │  ├─ system_controls.html
+│  │  ├─ system_settings.html
+│  │  ├─ teacher_log.html
+│  │  └─ view_teachers.html
+│  └─ services
+│     └─ admin_services.py
 ├─ auto_export_db.py
 ├─ config.py
 ├─ jwt.py
@@ -41,6 +43,7 @@ LMS-PythonDevelopment-main
 ├─ README.md
 ├─ requirements.txt
 ├─ routes
+│  ├─ updates_routes.py
 │  └─ websocket_routes.py
 ├─ static
 │  ├─ css
@@ -105,6 +108,8 @@ LMS-PythonDevelopment-main
 │        └─ voucher_pics
 │           ├─ student_100_back_Screenshot_from_2026-08-27_17-15-29.png
 │           ├─ student_100_front_Screenshot_from_2026-08-27_17-01-24.png
+│           ├─ student_13_back_analyze_api_response.png
+│           ├─ student_13_front_project_tree.png
 │           ├─ student_2_back_2026-02-26-152910.jpg
 │           ├─ student_2_back_2026-02-26-152934.jpg
 │           ├─ student_2_back_analyze_api_response.png
@@ -114,6 +119,7 @@ LMS-PythonDevelopment-main
 │           ├─ student_2_back_project_tree.png
 │           ├─ student_2_back_Screenshot_2026-09-14_184408.png
 │           ├─ student_2_back_Screenshot_2026-09-16_175806.png
+│           ├─ student_2_back_Screenshot_2026-09-16_181442.png
 │           ├─ student_2_back_Screenshot_from_2026-08-26_14-01-26.png
 │           ├─ student_2_back_test5.jpg
 │           ├─ student_2_back_test6.jpg
@@ -184,7 +190,9 @@ LMS-PythonDevelopment-main
 │  │  ├─ student_base.html
 │  │  └─ teacher_base.html
 │  ├─ main_view.html
-│  ├─ reset_password.html
+│  ├─ otp_verify.html
+│  ├─ send_reset_email.html
+│  ├─ update_password.html
 │  └─ user_signup.html
 ├─ updated_lms.sql
 └─ utils
@@ -193,7 +201,9 @@ LMS-PythonDevelopment-main
    ├─ db.py
    ├─ exceptions.py
    ├─ logger.py
+   ├─ send_mail.py
    ├─ websocket_manager.py
+   ├─ ws_auth.py
    └─ __init__.py
 
 ```
