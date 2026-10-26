@@ -1,7 +1,7 @@
 import logging
 from utils.db import mysql
 from datetime import datetime
-
+import pymysql.cursors
 
 class UserModel:
 
@@ -1436,82 +1436,8 @@ class CourseModel:
             conn.close()
 
 
-class StudentLogModel:
-
-    @staticmethod
-    def get_student_log():
-        try:
-            conn = mysql.get_dict_connection()
-            with conn.cursor() as cursor:
-                cursor.execute('''SELECT DISTINCT s.student_id,s.first_name,s.last_name,
-                           COUNT(sl.log_id) AS total_visits,
-                           MAX(sl.entered_at) AS last_seen,
-                           SUM(sl.time_spent_seconds) AS total_time
-                           FROM student_activity_log sl
-                           JOIN students s ON s.student_id=sl.student_id
-                           GROUP BY s.student_id,s.first_name,s.last_name
-                           ORDER BY last_seen DESC''')
-                return cursor.fetchall()
-        except Exception as e:
-            logging.exception(f"Error during get_student_log(admin_models): {str(e)}")
-            raise
-        finally:
-            conn.close()
-
-    @staticmethod
-    def acivity_log_student():  
-        try:
-            conn = mysql.get_dict_connection()
-            with conn.cursor() as cursor:
-                cursor.execute('''SELECT sl.*,s.first_name,s.last_name
-                           FROM student_activity_log sl
-                           JOIN students s ON s.student_id=sl.student_id
-                           ORDER BY sl.entered_at DESC''')
-                return cursor.fetchall()  
-        except Exception as e:
-            logging.exception(f"Error during acivity_log_student(admin_models): {str(e)}")
-            raise
-        finally:
-            conn.close()
 
 
-class TeacherLogModel:
-
-    @staticmethod
-    def get_teacher_log():
-        try:
-            conn = mysql.get_dict_connection()
-            with conn.cursor() as cursor:
-                cursor.execute('''SELECT DISTINCT t.teacher_id,t.first_name,t.last_name,
-                           COUNT(tl.log_id) AS total_visits,
-                           MAX(tl.entered_at) AS last_seen,
-                           SUM(tl.time_spent_seconds) AS total_time
-                           FROM teacher_activity_log tl
-                           JOIN teachers t ON t.teacher_id=tl.teacher_id
-                           GROUP BY t.teacher_id,t.first_name,t.last_name
-                           ORDER BY last_seen DESC''')
-                return cursor.fetchall()
-        except Exception as e:
-            logging.exception(f"Error during get_teacher_log(admin_models): {str(e)}")
-            raise
-        finally:
-            conn.close()
-    
-    @staticmethod
-    def activity_log_teacher():
-        try:
-            conn = mysql.get_dict_connection()
-            with conn.cursor() as cursor:
-                cursor.execute('''SELECT tl.*,t.first_name,t.last_name
-                           FROM teacher_activity_log tl
-                           JOIN teachers t ON t.teacher_id=tl.teacher_id
-                           ORDER BY tl.entered_at DESC''')
-                return cursor.fetchall()
-        except Exception as e:
-            logging.exception(f"Error during activity_log_teacher(admin_models): {str(e)}")
-            raise
-        finally:
-            conn.close()
 
 
 
@@ -1551,3 +1477,5 @@ class EmailLookup:
         return EmailLookup._one('''SELECT u.email FROM complaint_suggestion c
             JOIN users u ON c.user_id=u.user_id
             WHERE c.complt_sugst_id=%s''',(complaint_id,))
+
+

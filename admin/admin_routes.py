@@ -1,12 +1,12 @@
-from fastapi import APIRouter, Depends, Request, Form, status
-from fastapi.responses import RedirectResponse, HTMLResponse
+from fastapi import APIRouter,Depends,Request,Form,status
+from fastapi.responses import RedirectResponse,HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
 import logging
 from admin.services.admin_services import AdminService
 from admin.admin_models import *
 from utils.auth import get_current_admin
-from utils.exceptions import BusinessRuleError, ValidationError as AppValidation, NotFoundError
+from utils.exceptions import BusinessRuleError, ValidationError as AppValidation,NotFoundError
 from utils.csrf import verify_csrf, get_csrf_token
 from jwt import create_token, refresh_token
 from jose import jwt, JWTError
@@ -14,6 +14,7 @@ from config import SECRET_KEY
 from pydantic import BaseModel,Field,EmailStr,ConfigDict,field_validator
 from fastapi import BackgroundTasks
 from utils.send_mail import send_email
+
 
 
 router=APIRouter(dependencies=[Depends(verify_csrf)])
@@ -812,15 +813,6 @@ def promote_student(request: Request, student_id: int, current_user: dict = Depe
     return RedirectResponse(url='/promote_students', status_code=status.HTTP_303_SEE_OTHER)
 
 
-@router.get('/student_log')
-def student_log(request: Request, current_user: dict = Depends(get_current_admin)):
-    students = StudentLogModel.get_student_log()
-    all_logs = StudentLogModel.acivity_log_student()
-    return templates.TemplateResponse(request=request, name="student_log.html", context={"students": students, "all_logs": all_logs})
 
 
-@router.get('/teacher_log')
-def teacher_log(request: Request, current_user: dict = Depends(get_current_admin)):
-    teachers = TeacherLogModel.get_teacher_log()
-    all_logs = TeacherLogModel.activity_log_teacher()    
-    return templates.TemplateResponse(request=request, name="teacher_log.html", context={"teachers": teachers, "all_logs": all_logs})
+

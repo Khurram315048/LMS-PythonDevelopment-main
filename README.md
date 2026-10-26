@@ -27,10 +27,8 @@ LMS-PythonDevelopment-main
 │  │  ├─ salary_record.html
 │  │  ├─ stSemester_freeze.html
 │  │  ├─ stSummer_semester.html
-│  │  ├─ student_log.html
 │  │  ├─ system_controls.html
 │  │  ├─ system_settings.html
-│  │  ├─ teacher_log.html
 │  │  └─ view_teachers.html
 │  └─ services
 │     └─ admin_services.py

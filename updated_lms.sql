@@ -363,6 +363,39 @@ INSERT INTO `notifications` VALUES (1,8,'admin',NULL,'student','Notification che
 UNLOCK TABLES;
 
 --
+-- Table structure for table `pdf_configurations`
+--
+
+DROP TABLE IF EXISTS `pdf_configurations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pdf_configurations` (
+  `pdf_id` int NOT NULL AUTO_INCREMENT,
+  `pdf_name` varchar(100) NOT NULL,
+  `pdf_type` enum('exam','fee') DEFAULT NULL,
+  `pdf_status` enum('active','not_active') DEFAULT 'active',
+  `total_no` int DEFAULT NULL,
+  `program_id` int DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `expire_at` timestamp NULL DEFAULT NULL,
+  `is_deleted` int DEFAULT '0',
+  PRIMARY KEY (`pdf_id`),
+  KEY `program_id` (`program_id`),
+  CONSTRAINT `pdf_configurations_ibfk_1` FOREIGN KEY (`program_id`) REFERENCES `programs` (`program_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pdf_configurations`
+--
+
+LOCK TABLES `pdf_configurations` WRITE;
+/*!40000 ALTER TABLE `pdf_configurations` DISABLE KEYS */;
+INSERT INTO `pdf_configurations` VALUES (1,'Mids Fall 2026','exam','active',0,1,'2026-10-25 09:37:11','2026-11-15 18:59:00',0),(2,'Fee Voucher November 2026','fee','active',0,1,'2026-10-25 09:37:11','2026-11-10 07:00:00',0),(3,'Mids November 2026','exam','active',NULL,1,'2026-10-25 05:00:00','2026-10-31 07:00:00',0);
+/*!40000 ALTER TABLE `pdf_configurations` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `programs`
 --
 
@@ -1086,4 +1119,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-10-24 18:08:26
+-- Dump completed on 2026-10-26 14:49:15
