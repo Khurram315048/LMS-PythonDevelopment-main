@@ -28,14 +28,14 @@ templates.env.globals["csrf_token"]=get_csrf_token
 
 @router.get('/refresh')
 def refresh_session(request:Request):
-    refresh_token=request.cookies.get("refresh_token")
+    old_refresh_token=request.cookies.get("refresh_token")
     
-    if not refresh_token:
+    if not old_refresh_token:
         request.session['flash_error']="Session expired. Please login again."
         return RedirectResponse(url='/teacher_login',status_code=status.HTTP_303_SEE_OTHER)
 
     try:
-        payload=jwt.decode(refresh_token,SECRET_KEY,algorithms=["HS256"])
+        payload=jwt.decode(old_refresh_token,SECRET_KEY,algorithms=["HS256"])
         new_payload={
             'user_id':payload['user_id'],
             'role':payload['role'],
@@ -108,6 +108,8 @@ def teacher_login(request:Request,email:str=Form(None),password:str=Form(None),r
         # return RedirectResponse(url='/teacher_dashboard',status_code=status.HTTP_303_SEE_OTHER)
     except JWTError as je:
         logging.exception(f"JWT route : {str(je)}")
+        return templates.TemplateResponse(request=request,name="teacher_login.html",
+                                          context={"error":"Try again"})
     except PydanticValidationError as ve:
         logging.error(f"Error during pydntvl tchr lgn route api: {str(ve)}")
         return templates.TemplateResponse(request=request,name="teacher_login.html",
@@ -366,7 +368,7 @@ def fyp_management(request:Request,current_user:dict=Depends(get_current_teacher
         return RedirectResponse(url='/teacher_dashboard',status_code=status.HTTP_303_SEE_OTHER)
 
 
-@router.get('/approve_fyp/{fyp_id}/{status_val}')
+@router.post('/approve_fyp/{fyp_id}/{status_val}')
 def approve_fyp(request:Request,fyp_id:int=Path(...,gt=0),status_val:FypStatus=Path(...),current_user:dict=Depends(get_current_teacher)):
     teacher_id=current_user['teacher_id']
     try:

@@ -32,14 +32,14 @@ class AdminLoginRequest(BaseModel):
 
 @router.get('/refresh')
 def refresh_session(request:Request):
-    refresh_token=request.cookies.get("refresh_token")
+    old_refresh_token=request.cookies.get("refresh_token")
     
-    if not refresh_token:
+    if not old_refresh_token:
         request.session['flash_error']="Session expired. Please login again."
         return RedirectResponse(url='/admin_login',status_code=status.HTTP_303_SEE_OTHER)
 
     try:
-        payload=jwt.decode(refresh_token,SECRET_KEY,algorithms=["HS256"])
+        payload=jwt.decode(old_refresh_token,SECRET_KEY,algorithms=["HS256"])
         new_payload={
             'user_id':payload['user_id'],
             'role':payload['role'],
@@ -87,7 +87,10 @@ def admin_login(request:Request,email:str=Form(None),password:str=Form(None),rem
         response.set_cookie(key="access_token",value=access_token,httponly=True,max_age=1800,samesite="lax")
         response.set_cookie(key="refresh_token",value=new_token,httponly=True,max_age=7*24*60*60,samesite="lax")
         return response
-
+    except JWTError as je:
+            logging.exception(f"JWT route : {str(je)}")
+            return templates.TemplateResponse(request=request,name="admin_login.html",
+                                              context={"error":"Try again"})
     except (BusinessRuleError, AppValidation) as e:
         logging.warning(f"Login error: {str(e)}")
         return templates.TemplateResponse(request=request,name="admin_login.html",context={"error":str(e)})

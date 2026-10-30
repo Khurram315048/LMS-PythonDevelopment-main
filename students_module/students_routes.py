@@ -27,14 +27,14 @@ templates.env.globals["csrf_token"]=get_csrf_token
 
 @router.get('/refresh')
 def refresh_session(request:Request):
-    refresh_token=request.cookies.get("refresh_token")
+    old_refresh_token=request.cookies.get("refresh_token")
     
-    if not refresh_token:
+    if not old_refresh_token:
         request.session['flash_error']="Session expired. Please login again."
         return RedirectResponse(url='/student_login',status_code=status.HTTP_303_SEE_OTHER)
 
     try:
-        payload=jwt.decode(refresh_token,SECRET_KEY,algorithms=["HS256"])
+        payload=jwt.decode(old_refresh_token,SECRET_KEY,algorithms=["HS256"])
         new_payload={
             'user_id':payload['user_id'],
             'role':payload['role'],
@@ -100,8 +100,10 @@ def student_login(request:Request,email:str=Form(None),password:str=Form(None),r
         #     'remember':inputs.remember_me
         # })
         # return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
-    except JWTError  as je:
-        logging.exception(f"JWT fastapi route: {str(je)}")
+    except JWTError as je:
+            logging.exception(f"JWT route : {str(je)}")
+            return templates.TemplateResponse(request=request,name="student_login.html",
+                                              context={"error":"Try again"})
     except (ValidationError,BusinessRuleError,NotFoundError) as e:
         logging.warning(f"Validation/Business error during login route api: {str(e)}")
         return templates.TemplateResponse(request=request,name="student_login.html",

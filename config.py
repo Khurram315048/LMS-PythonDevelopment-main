@@ -1,15 +1,23 @@
 
 import secrets
 import os
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
 TEMPLATES_AUTO_RELOAD=True
 
-MYSQL_HOST='localhost'
-MYSQL_USER='root'
-MYSQL_PASSWORD='root123'
-MYSQL_DB='lms'
-MYSQL_PORT=3306
-SECRET_KEY=secrets.token_hex(16)
+MYSQL_HOST=os.getenv('MYSQL_HOST','localhost')
+MYSQL_USER=os.getenv('MYSQL_USER','root')
+MYSQL_PASSWORD=os.getenv('MYSQL_PASSWORD', '')
+MYSQL_DB=os.getenv('MYSQL_DB', 'lms')
+MYSQL_PORT=int(os.getenv('MYSQL_PORT', 3306))
+SECRET_KEY=os.getenv('SECRET_KEY') 
 MYSQL_CURSORCLASS='DictCursor'
 BASE_DIR=os.path.abspath(os.path.dirname(__file__))
 FEE_UPLOAD_FOLDER=os.path.join(BASE_DIR, "static", "uploads", "students_uploads", "voucher_pics")
 os.makedirs(FEE_UPLOAD_FOLDER, exist_ok=True)
+
+
+
