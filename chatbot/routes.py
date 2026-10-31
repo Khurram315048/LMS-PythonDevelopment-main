@@ -36,16 +36,14 @@ class ChatIn(BaseModel):
 
 @router.post("/chat")
 def chat(body:ChatIn,user:dict=Depends(get_chat_user)):
-    if user["role"]!="student":
+    if user["role"] not in("student","teacher"):
         return {
-            "reply":"Only for students"
+            "reply":"Unauthorized Access"
             }
     
     if not _rate_ok(user["user_id"]):
         raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS,detail="Wait to request")
     
-    if StudentService.check_freeze_student(user["student_id"]):
-        return {"reply":"Your semester has been freezed. Kindly contact to the office"}
     try:
         reply=run_chat(user,body.message,[m.model_dump() for m in body.history])
     except ChatError as e:

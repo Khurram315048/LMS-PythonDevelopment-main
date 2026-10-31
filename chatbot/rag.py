@@ -49,13 +49,28 @@ def ingest():
     files=sorted(DOCS.glob("*.md"))
     points=[]
     for f in files:
-        raw=f.read_text(encoding="utf-8").strip()
-        role="all"
-        if raw.lower().startswith("role:"):
-            first,_,raw=raw.partition("\n")
-            role=first.split(":",1)[1].strip().lower() or "all"
+        raw=f.read_text(encoding="utf-8-sig").strip()
+        if not raw.lower().startswith("role:"):
+            print(f"SKIP {f.name}: pehli line 'role: student' ya 'role: teacher' ya 'role: all' honi chahiye")
+            continue
+        first,_,raw=raw.partition("\n")
+        role=first.split(":",1)[1].strip().lower()
+        if role not in ("student","teacher","all"):
+            print(f"SKIP {f.name}: ghalat role '{role}'")
+            continue
+        print(f"{f.name} -> {role}")
         for i,ch in enumerate(_chunks(raw)):
             points.append((f.stem,role,i,ch))
+    # for f in files:
+    #     raw=f.read_text(encoding="utf-8").strip()
+    #     print(f"SKIP {f.name}: pehli line 'role: student' ya 'role: teacher' ya 'role: all' honi chahiye")
+    #     # role="all"
+    #     pass
+    #     if raw.lower().startswith("role:"):
+    #         first,_,raw=raw.partition("\n")
+    #         role=first.split(":",1)[1].strip().lower() or "all"
+    #     for i,ch in enumerate(_chunks(raw)):
+    #         points.append((f.stem,role,i,ch))
     if not points:
         print("Koi document nahi mila")
         return
@@ -83,7 +98,7 @@ def search_policies(user:dict,question=None):
         with_payload=True).points
     passages=[{"source":p.payload["source"],"text":p.payload["text"]} for p in res if p.score>=MIN_SCORE]
     if not passages:
-        return {"passages":[],"note":"No matching document found. Say you do not have this information and tell the student to ask the office."}
+        return {"passages":[],"note":"No matching document found. Say you do not have this information and tell the user to ask the office."}
     return {"passages":passages}
 
 

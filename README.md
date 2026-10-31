@@ -42,14 +42,17 @@ LMS-PythonDevelopment-main
 │  │  ├─ exams_results.md
 │  │  ├─ fee_rules.md
 │  │  ├─ helpdesk.md
+│  │  ├─ hiring_policy.md
 │  │  ├─ improvement_retake.md
 │  │  ├─ semester_freeze.md
-│  │  └─ summer_semester.md
+│  │  ├─ summer_semester.md
+│  │  └─ teacher_salary_policies.md
 │  ├─ rag.py
 │  ├─ registry.py
 │  ├─ routes.py
 │  ├─ tools_sql.py
-│  └─ tools_student.py
+│  ├─ tools_student.py
+│  └─ tools_teacher.py
 ├─ config.py
 ├─ jwt.py
 ├─ logs

@@ -8,8 +8,15 @@ VIEWS={"v_my_profile","v_my_courses","v_my_schedule","v_my_attendance","v_my_sub
        "v_my_exams","v_my_requests","v_my_notifications"}
 _BAD_CHARS=re.compile(r"[;@`\\#]|--|/\*|\*/")
 _BAD_WORDS=re.compile(r"\b(into|outfile|dumpfile|load_file|sleep|benchmark|information_schema|"
-                      r"performance_schema|mysql|sys|lock|handler|call|set|my_student_id|my_user_id)\b|for\s+update",re.I)
+                     r"performance_schema|mysql|sys|lock|handler|call|set|my_student_id|my_user_id|my_teacher_id)\b|for\s+update",re.I)
+
+
+
+
+_FROM_COMMA=re.compile(r"\b(?:from|join)\s+[a-z_][a-z0-9_]*(?:\s+(?:as\s+)?[a-z_][a-z0-9_]*)?\s*,",re.I)
 _SOURCES=re.compile(r"\b(?:from|join)\s+([a-z_][a-z0-9_]*)",re.I)
+
+
 
 SCHEMA="""Run ONE read-only MySQL SELECT on the logged-in student's own data. Use it for any question about the student's own data that the other tools do not answer exactly, or when you need a filter, count, sum, average, comparison or sort.
 The views already contain only this student's rows, so NEVER filter by student id. Use only these views and columns:
@@ -31,7 +38,11 @@ Examples: overall attendance = SELECT ROUND(100*SUM(attended)/SUM(total_lectures
 courses below 75 percent = SELECT course_name,percentage FROM v_my_attendance WHERE percentage<75"""
 
 
-def check_sql(sql):
+
+
+
+
+def check_sql(sql,views=VIEWS):
     s=str(sql or "").strip().rstrip(";").strip()
     if not s or len(s)>600:
         raise ValueError("empty or too long")
@@ -39,11 +50,13 @@ def check_sql(sql):
         raise ValueError("only a SELECT is allowed")
     if _BAD_CHARS.search(s) or _BAD_WORDS.search(s):
         raise ValueError("query contains something that is not allowed")
+    if _FROM_COMMA.search(s):
+        raise ValueError("use JOIN, not comma between tables")
     sources=_SOURCES.findall(s)
     if not sources:
-        raise ValueError("select from one of the v_my_* views")
+        raise ValueError("select from one of the allowed views")
     for t in sources:
-        if t.lower() not in VIEWS:
+        if t.lower() not in views:
             raise ValueError(f"unknown view {t}")
     return s
 
@@ -67,3 +80,5 @@ def query_my_data(user:dict,sql=None):
         "row_count":len(rows),
         "truncated":len(rows)>MAX_ROWS
         }
+
+

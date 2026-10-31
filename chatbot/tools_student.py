@@ -23,7 +23,10 @@ def today_schedule(user:dict):
         JOIN student_course sc ON sc.student_id=ss.student_id AND sc.course_id=cs.course_id AND sc.is_deleted=0
         WHERE ss.student_id=%s AND ss.is_deleted=0 AND cs.day_of_week=%s
         ORDER BY cs.start_time""",(user["student_id"],day))
-    return {"day":day,"classes":rows}
+    return {
+        "day":day,
+        "classes":rows
+        }
 
 
 def my_attendance(user:dict):
@@ -43,7 +46,9 @@ def my_attendance(user:dict):
         r["total_lectures"]=total
         r["attended"]=present
         r["percentage"]=round(present*100/total,1) if total else 0
-    return {"courses":rows}
+    return {
+        "courses":rows
+        }
 
 
 def my_submissions(user:dict):
@@ -80,15 +85,10 @@ def my_complaints(user:dict):
         SELECT title,is_status AS status FROM complaint_suggestion
         WHERE user_id=%s AND is_deleted=0
         ORDER BY complt_sugst_id DESC LIMIT %s""",(user["user_id"],MAX_ROWS))
-    return {"complaints":rows}
+    return {
+        "complaints":rows
+        }
 
-
-# def my_fee(user:dict):
-#     rows=query("""
-#         SELECT fee_month,fee_amount,fee_status,update_date FROM student_fees
-#         WHERE student_id=%s AND is_deleted=0
-#         ORDER BY student_fees_id DESC LIMIT 6""",(user["student_id"],))
-#     return {"fee_records":rows}
 
 
 def my_fyp(user:dict):
@@ -100,6 +100,7 @@ def my_fyp(user:dict):
         WHERE f.student_id=%s AND f.is_deleted=0
         ORDER BY f.fyp_id DESC LIMIT 1""",(user["student_id"],))
     return {"fyp":rows[0] if rows else None}
+
 
 
 def my_fee(user:dict):
@@ -114,6 +115,7 @@ def my_fee(user:dict):
         r["voucher_uploaded"]=bool(r["voucher_uploaded"])
     return {"fee_records":rows,
             "note":"fee_status 'due' with voucher_uploaded true usually means the voucher is uploaded and waiting for the office to mark it paid."}
+
 
 
 def my_results(user:dict):

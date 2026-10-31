@@ -1315,6 +1315,169 @@ SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = @saved_cs_client;
 
 --
+-- Temporary view structure for view `v_t_attendance_log`
+--
+
+DROP TABLE IF EXISTS `v_t_attendance_log`;
+/*!50001 DROP VIEW IF EXISTS `v_t_attendance_log`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `v_t_attendance_log` AS SELECT 
+ 1 AS `course_name`,
+ 1 AS `attendance_date`,
+ 1 AS `day_of_week`,
+ 1 AS `total_students`,
+ 1 AS `total_present`,
+ 1 AS `total_absent`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `v_t_complaints`
+--
+
+DROP TABLE IF EXISTS `v_t_complaints`;
+/*!50001 DROP VIEW IF EXISTS `v_t_complaints`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `v_t_complaints` AS SELECT 
+ 1 AS `title`,
+ 1 AS `status`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `v_t_courses`
+--
+
+DROP TABLE IF EXISTS `v_t_courses`;
+/*!50001 DROP VIEW IF EXISTS `v_t_courses`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `v_t_courses` AS SELECT 
+ 1 AS `course_name`,
+ 1 AS `program_name`,
+ 1 AS `credit_hours`,
+ 1 AS `no_of_lectures`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `v_t_fyp`
+--
+
+DROP TABLE IF EXISTS `v_t_fyp`;
+/*!50001 DROP VIEW IF EXISTS `v_t_fyp`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `v_t_fyp` AS SELECT 
+ 1 AS `student_name`,
+ 1 AS `project_title`,
+ 1 AS `status`,
+ 1 AS `progress`,
+ 1 AS `created_at`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `v_t_notifications`
+--
+
+DROP TABLE IF EXISTS `v_t_notifications`;
+/*!50001 DROP VIEW IF EXISTS `v_t_notifications`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `v_t_notifications` AS SELECT 
+ 1 AS `title`,
+ 1 AS `description`,
+ 1 AS `status`,
+ 1 AS `created_at`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `v_t_profile`
+--
+
+DROP TABLE IF EXISTS `v_t_profile`;
+/*!50001 DROP VIEW IF EXISTS `v_t_profile`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `v_t_profile` AS SELECT 
+ 1 AS `teacher_id`,
+ 1 AS `first_name`,
+ 1 AS `last_name`,
+ 1 AS `email`,
+ 1 AS `contact`,
+ 1 AS `qualification`,
+ 1 AS `joining_date`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `v_t_salary`
+--
+
+DROP TABLE IF EXISTS `v_t_salary`;
+/*!50001 DROP VIEW IF EXISTS `v_t_salary`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `v_t_salary` AS SELECT 
+ 1 AS `month`,
+ 1 AS `year`,
+ 1 AS `basic_salary`,
+ 1 AS `bonus`,
+ 1 AS `deductions`,
+ 1 AS `net_salary`,
+ 1 AS `status`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `v_t_schedule`
+--
+
+DROP TABLE IF EXISTS `v_t_schedule`;
+/*!50001 DROP VIEW IF EXISTS `v_t_schedule`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `v_t_schedule` AS SELECT 
+ 1 AS `day_of_week`,
+ 1 AS `course_name`,
+ 1 AS `section_name`,
+ 1 AS `start_time`,
+ 1 AS `end_time`,
+ 1 AS `location`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `v_t_student_attendance`
+--
+
+DROP TABLE IF EXISTS `v_t_student_attendance`;
+/*!50001 DROP VIEW IF EXISTS `v_t_student_attendance`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `v_t_student_attendance` AS SELECT 
+ 1 AS `course_name`,
+ 1 AS `first_name`,
+ 1 AS `last_name`,
+ 1 AS `total_lectures`,
+ 1 AS `attended`,
+ 1 AS `absent`,
+ 1 AS `percentage`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `v_t_students`
+--
+
+DROP TABLE IF EXISTS `v_t_students`;
+/*!50001 DROP VIEW IF EXISTS `v_t_students`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `v_t_students` AS SELECT 
+ 1 AS `course_name`,
+ 1 AS `section_name`,
+ 1 AS `first_name`,
+ 1 AS `last_name`,
+ 1 AS `current_semester`*/;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Dumping routines for database 'lms'
 --
 /*!50003 DROP FUNCTION IF EXISTS `my_student_id` */;
@@ -1331,6 +1494,25 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `my_student_id`() RETURNS int
     NO SQL
     DETERMINISTIC
 RETURN @current_student_id ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `my_teacher_id` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `my_teacher_id`() RETURNS int
+    NO SQL
+    DETERMINISTIC
+RETURN @current_teacher_id ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -1589,6 +1771,186 @@ DELIMITER ;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `v_t_attendance_log`
+--
+
+/*!50001 DROP VIEW IF EXISTS `v_t_attendance_log`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `v_t_attendance_log` AS select `c`.`course_name` AS `course_name`,`l`.`attendance_date` AS `attendance_date`,`cs`.`day_of_week` AS `day_of_week`,`l`.`total_students` AS `total_students`,`l`.`total_present` AS `total_present`,`l`.`total_absent` AS `total_absent` from ((`course_attendance_log` `l` join `courses` `c` on((`c`.`course_id` = `l`.`course_id`))) join `course_schedule` `cs` on((`cs`.`course_schedule_id` = `l`.`course_schedule_id`))) where ((`l`.`teacher_id` = `my_teacher_id`()) and (`l`.`is_deleted` = 0)) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `v_t_complaints`
+--
+
+/*!50001 DROP VIEW IF EXISTS `v_t_complaints`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `v_t_complaints` AS select `complaint_suggestion`.`title` AS `title`,`complaint_suggestion`.`is_status` AS `status` from `complaint_suggestion` where ((`complaint_suggestion`.`user_id` = `my_user_id`()) and (`complaint_suggestion`.`is_deleted` = 0)) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `v_t_courses`
+--
+
+/*!50001 DROP VIEW IF EXISTS `v_t_courses`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `v_t_courses` AS select `c`.`course_name` AS `course_name`,`p`.`program_name` AS `program_name`,`c`.`credit_hours` AS `credit_hours`,`c`.`no_of_lectures` AS `no_of_lectures` from ((`teacher_course` `tc` join `courses` `c` on(((`c`.`course_id` = `tc`.`course_id`) and (`c`.`is_deleted` = 0)))) join `programs` `p` on(((`p`.`program_id` = `c`.`program_id`) and (`p`.`is_deleted` = 0)))) where ((`tc`.`teacher_id` = `my_teacher_id`()) and (`tc`.`is_deleted` = 0)) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `v_t_fyp`
+--
+
+/*!50001 DROP VIEW IF EXISTS `v_t_fyp`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `v_t_fyp` AS select concat(`s`.`first_name`,' ',`s`.`last_name`) AS `student_name`,`f`.`project_title` AS `project_title`,`f`.`status` AS `status`,`f`.`progress` AS `progress`,`f`.`created_at` AS `created_at` from (`fyp_groups` `f` join `students` `s` on(((`s`.`student_id` = `f`.`student_id`) and (`s`.`is_deleted` = 0)))) where ((`f`.`teacher_id` = `my_teacher_id`()) and (`f`.`is_deleted` = 0)) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `v_t_notifications`
+--
+
+/*!50001 DROP VIEW IF EXISTS `v_t_notifications`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `v_t_notifications` AS select `notifications`.`title` AS `title`,`notifications`.`description` AS `description`,`notifications`.`status` AS `status`,`notifications`.`created_at` AS `created_at` from `notifications` where ((`notifications`.`receiver_role` = 'teacher') and (`notifications`.`is_deleted` = 0) and ((`notifications`.`receiver_id` = `my_user_id`()) or (`notifications`.`receiver_id` is null))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `v_t_profile`
+--
+
+/*!50001 DROP VIEW IF EXISTS `v_t_profile`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `v_t_profile` AS select `t`.`teacher_id` AS `teacher_id`,`t`.`first_name` AS `first_name`,`t`.`last_name` AS `last_name`,`t`.`email` AS `email`,`t`.`contact_num` AS `contact`,`t`.`qualification` AS `qualification`,`t`.`joining_date` AS `joining_date` from `teachers` `t` where ((`t`.`teacher_id` = `my_teacher_id`()) and (`t`.`is_deleted` = 0)) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `v_t_salary`
+--
+
+/*!50001 DROP VIEW IF EXISTS `v_t_salary`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `v_t_salary` AS select `teacher_salary`.`month` AS `month`,`teacher_salary`.`year` AS `year`,`teacher_salary`.`basic_salary` AS `basic_salary`,`teacher_salary`.`bonus` AS `bonus`,`teacher_salary`.`deductions` AS `deductions`,((`teacher_salary`.`basic_salary` + coalesce(`teacher_salary`.`bonus`,0)) - coalesce(`teacher_salary`.`deductions`,0)) AS `net_salary`,`teacher_salary`.`status` AS `status` from `teacher_salary` where ((`teacher_salary`.`teacher_id` = `my_teacher_id`()) and (`teacher_salary`.`is_deleted` = 0)) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `v_t_schedule`
+--
+
+/*!50001 DROP VIEW IF EXISTS `v_t_schedule`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `v_t_schedule` AS select distinct `cs`.`day_of_week` AS `day_of_week`,`c`.`course_name` AS `course_name`,`se`.`section_name` AS `section_name`,`cs`.`start_time` AS `start_time`,`cs`.`end_time` AS `end_time`,`cs`.`location` AS `location` from (((`teacher_course` `tc` join `courses` `c` on(((`c`.`course_id` = `tc`.`course_id`) and (`c`.`is_deleted` = 0)))) join `course_schedule` `cs` on(((`cs`.`course_id` = `c`.`course_id`) and (`cs`.`is_deleted` = 0)))) join `sections` `se` on(((`se`.`section_id` = `cs`.`section_id`) and (`se`.`is_deleted` = 0)))) where ((`tc`.`teacher_id` = `my_teacher_id`()) and (`tc`.`is_deleted` = 0)) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `v_t_student_attendance`
+--
+
+/*!50001 DROP VIEW IF EXISTS `v_t_student_attendance`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `v_t_student_attendance` AS select `c`.`course_name` AS `course_name`,`s`.`first_name` AS `first_name`,`s`.`last_name` AS `last_name`,count(`a`.`attendance_id`) AS `total_lectures`,cast(coalesce(sum((`a`.`attendance_status` = 'Present')),0) as signed) AS `attended`,cast((count(`a`.`attendance_id`) - coalesce(sum((`a`.`attendance_status` = 'Present')),0)) as signed) AS `absent`,round(((100 * coalesce(sum((`a`.`attendance_status` = 'Present')),0)) / nullif(count(`a`.`attendance_id`),0)),1) AS `percentage` from ((((`teacher_course` `tc` join `courses` `c` on(((`c`.`course_id` = `tc`.`course_id`) and (`c`.`is_deleted` = 0)))) join `student_course` `sc` on(((`sc`.`course_id` = `c`.`course_id`) and (`sc`.`is_deleted` = 0)))) join `students` `s` on(((`s`.`student_id` = `sc`.`student_id`) and (`s`.`is_deleted` = 0)))) left join `attendance` `a` on(((`a`.`student_course_id` = `sc`.`student_course_id`) and (`a`.`is_deleted` = 0)))) where ((`tc`.`teacher_id` = `my_teacher_id`()) and (`tc`.`is_deleted` = 0)) group by `sc`.`student_course_id`,`c`.`course_name`,`s`.`first_name`,`s`.`last_name` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `v_t_students`
+--
+
+/*!50001 DROP VIEW IF EXISTS `v_t_students`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `v_t_students` AS select distinct `c`.`course_name` AS `course_name`,`se`.`section_name` AS `section_name`,`s`.`first_name` AS `first_name`,`s`.`last_name` AS `last_name`,`s`.`current_semester` AS `current_semester` from (((((`teacher_course` `tc` join `courses` `c` on(((`c`.`course_id` = `tc`.`course_id`) and (`c`.`is_deleted` = 0)))) join `sections` `se` on(((`se`.`course_id` = `c`.`course_id`) and (`se`.`is_deleted` = 0)))) join `student_section` `ss` on(((`ss`.`section_id` = `se`.`section_id`) and (`ss`.`is_deleted` = 0)))) join `student_course` `sc` on(((`sc`.`student_id` = `ss`.`student_id`) and (`sc`.`course_id` = `c`.`course_id`) and (`sc`.`is_deleted` = 0)))) join `students` `s` on(((`s`.`student_id` = `ss`.`student_id`) and (`s`.`is_deleted` = 0)))) where ((`tc`.`teacher_id` = `my_teacher_id`()) and (`tc`.`is_deleted` = 0)) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -1599,4 +1961,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-10-31 12:27:45
+-- Dump completed on 2026-10-31 15:23:19
