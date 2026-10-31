@@ -33,6 +33,23 @@ LMS-PythonDevelopment-main
 │  └─ services
 │     └─ admin_services.py
 ├─ auto_export_db.py
+├─ chatbot
+│  ├─ agent.py
+│  ├─ db.py
+│  ├─ docs
+│  │  ├─ attendance_policy.md
+│  │  ├─ course_registration.md
+│  │  ├─ exams_results.md
+│  │  ├─ fee_rules.md
+│  │  ├─ helpdesk.md
+│  │  ├─ improvement_retake.md
+│  │  ├─ semester_freeze.md
+│  │  └─ summer_semester.md
+│  ├─ rag.py
+│  ├─ registry.py
+│  ├─ routes.py
+│  ├─ tools_sql.py
+│  └─ tools_student.py
 ├─ config.py
 ├─ jwt.py
 ├─ logs
@@ -183,6 +200,7 @@ LMS-PythonDevelopment-main
 │  │  └─ view_submissions.html
 │  └─ __init__.py
 ├─ templates
+│  ├─ chat_widget.html
 │  ├─ layouts
 │  │  ├─ admin_base.html
 │  │  ├─ student_base.html

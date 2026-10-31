@@ -19,6 +19,7 @@ from routes.websocket_routes import router as websocket_router
 from students_module.students_routes import router as student_router
 from teachers_module.teachers_routes import router as teacher_router
 from admin.admin_routes import router as admin_router
+from chatbot.routes import router as chat_router
 import secrets
 
 def generate_otp()->str:
@@ -41,6 +42,7 @@ app.include_router(student_router)
 app.include_router(teacher_router)
 app.include_router(admin_router)
 app.include_router(websocket_router)
+app.include_router(chat_router)
 
 EMAIL_PATTERN=r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]\.[a-zA-Z]{2,}$'
 
@@ -120,41 +122,7 @@ async def user_signup(request:Request,first_name:str=Form(...),last_name=Form(..
 
 
 
-
-    
-    
-
-
-
-# @app.get("/reset_password",response_class=HTMLResponse)
-# @app.post("/reset_password",response_class=HTMLResponse)
-# def reset_password(request:Request,email:str=Form(None),new_password:str=Form(None)):
-#     error=None
-#     if request.method=='POST':
-#         user=MainModel.get_user_by_email(email)
-#         if not user:
-#             logging.error(f"rst psswrd route api")
-#             return RedirectResponse(url='/user_signup',status_code=status.HTTP_303_SEE_OTHER)
-
-#         MainModel.update_password(email,new_password)
-#         role=request.session.get('role')
-#         if role=='student':
-#             return RedirectResponse(url='/student_login',status_code=status.HTTP_303_SEE_OTHER)
-#         elif role=='teacher':
-#             return RedirectResponse(url='/teacher_login',status_code=status.HTTP_303_SEE_OTHER)
-#         elif role=='admin':
-#             return RedirectResponse(url='/admin_login',status_code=status.HTTP_303_SEE_OTHER)
-#         else:
-#             user_data=MainModel.get_user_by_email(email)
-#             if user_data:
-#                 if user_data['role_id']==2:
-#                     return RedirectResponse(url='/student_login',status_code=status.HTTP_303_SEE_OTHER)
-#                 elif user_data['role_id']==1:
-#                     return RedirectResponse(url='/teacher_login',status_code=status.HTTP_303_SEE_OTHER)
-#                 elif user_data['role_id']==3:
-#                      return RedirectResponse(url='/admin_login',status_code=status.HTTP_303_SEE_OTHER)
-
-#     return templates.TemplateResponse(request=request,name="reset_password.html",context={"error":error})         
+   
 
 
 @app.get('/send_reset_email',response_class=HTMLResponse)
