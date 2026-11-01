@@ -1,0 +1,34 @@
+[
+  {"question":"what happens if my attendance is below 75 percent",
+  "source":"attendance_policy",
+  "role":"student"
+},
+  {"question":"how do I upload my fee voucher",
+  "source":"fee_rules",
+  "role":"student"
+},
+  {"question":"how many semesters can I freeze",
+  "source":"semester_freeze",
+  "role":"student"
+},
+  {"question":"how many improvement courses are allowed",
+  "source":"improvement_retake",
+  "role":"student"
+},
+  {"question":"how many courses can I take in summer semester",
+  "source":"summer_semester",
+  "role":"student"
+},
+  {"question":"what is the grading scale",
+  "source":"exams_results",
+  "role":"student"
+},
+  {"question":"what are the office hours",
+  "source":"helpdesk",
+  "role":"student"
+},
+  {"question":"minimum and maximum courses in a semester",
+  "source":"course_registration",
+  "role":"student"
+}
+]

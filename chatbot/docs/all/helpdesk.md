@@ -1,5 +1,3 @@
-role: all
-
 # Help Desk
 
 The Help Desk is the first place to go when you have a problem with the LMS portal or with an office service.

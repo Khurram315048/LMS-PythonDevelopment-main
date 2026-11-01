@@ -1,0 +1,99 @@
+{% extends "layouts/student_base.html" %}
+
+{% block title %}Student Help Desk{% endblock %}
+
+{% block content %}
+
+<head>
+    <title>Student-Help-Desk</title>
+  </head>
+<section class="content">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header border-0 shadow bg-gradient-dark">
+        <h3 class="card-title">ISP Help Desk / Guidelines</h3>
+      </div>
+      <div class="card-body table-responsive p-2">
+        <br>
+        <div>
+          <h1 style="text-align:center;">
+            کسی بھی مسئلے کے حل و رہنمائی / معلومات کے لیے متعلقہ دفاتر دئیے لنک کلک کریں۔
+          </h1>
+          <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-dark">
+              Reception
+              <span class="badge badge-warning badge-pill" onclick="display()">Click To Open</span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-dark">
+              Admission Office / Registration Office
+              <span class="badge badge-warning badge-pill"  onclick="display()">Click To Open</span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-dark">
+              Accounts Office
+              <span class="badge badge-warning badge-pill" onclick="display()">Click To Open</span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-dark">
+              Degree Section
+              <span class="badge badge-warning badge-pill" onclick="display()">Click To Open</span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-dark">
+              Head of Department (HOD)
+              <span class="badge badge-warning badge-pill" onclick="display()">Click To Open</span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-dark">
+              Pro-Rector (Academic Office)
+              <span class="badge badge-warning badge-pill" onclick="display()">Click To Open</span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-dark">
+               
+              Southern Executive Development Centre (SEDC)
+              <span class="badge badge-warning badge-pill" onclick="display()">Click To Open</span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-dark">
+              Sports Office
+              <span class="badge badge-warning badge-pill" onclick="display()">Click To Open</span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-dark">
+              Transport Office
+              <span class="badge badge-warning badge-pill" onclick="display()">Click To Open</span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-dark">
+               
+              Cafeteria
+              <span class="badge badge-warning badge-pill" onclick="display()">Click To Open</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<aside class="control-sidebar control-sidebar-dark"></aside>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="/Template/js/adminlte.min.js"></script>
+<script src="/Template/js/demo.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9.17.1/dist/sweetalert2.min.js"></script>
+
+
+<div class="modal fade" id="modal-lg-general" style="display: none;" aria-hidden="true"></div>
+
+<script>
+  function display(){
+
+    alert("Kindly contact on 923150484043 for Information.")
+  }
+</script>
+
+{% endblock %}

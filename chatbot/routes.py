@@ -36,7 +36,7 @@ class ChatIn(BaseModel):
 
 @router.post("/chat")
 def chat(body:ChatIn,user:dict=Depends(get_chat_user)):
-    if user["role"] not in("student","teacher"):
+    if user["role"] not in("student","teacher","admin"):
         return {
             "reply":"Unauthorized Access"
             }

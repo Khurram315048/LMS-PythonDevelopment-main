@@ -26,7 +26,11 @@ pymysql==1.2.3
 bleach==6.4.0
 python-jose
 python-jose[cryptography]==3.3.0
-python-dotenv==1.0.0
 tzdata
-fastembed
 qdrant_client
+fastembed==0.9.1
+httpx==0.28.1
+PyMySQL==1.2.3
+python-dotenv==1.2.4
+qdrant-client==1.20.0
+pypdf

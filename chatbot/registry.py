@@ -55,10 +55,17 @@ STUDENT_TOOLS=[
           {"sql":{"type":"string","description":"One MySQL SELECT over the v_my_* views."}}),
 ]
 
+
+ADMIN_TOOLS=[
+    _tool("search_policies","University rules, policies and procedures (account management, admissions, fee collection, attendance, exams, how something works).",
+          rag.search_policies,
+          {"question":{"type":"string","description":"The question rewritten in English, short and specific."}}),
+]
+
 TOOLS={
     "student":STUDENT_TOOLS,
     "teacher":TEACHER_TOOLS,
-    "admin":[]
+    "admin":ADMIN_TOOLS
     }
 
 

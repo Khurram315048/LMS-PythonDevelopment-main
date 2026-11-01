@@ -1,5 +1,3 @@
-role: all
-
 # Exams, Results and Grading
 
 Each semester has two main exam categories: Midterm and Final. The exam date, time, location and mode are shown in the exam schedule of the portal.

@@ -37,23 +37,48 @@ LMS-PythonDevelopment-main
 │  ├─ agent.py
 │  ├─ db.py
 │  ├─ docs
-│  │  ├─ attendance_policy.md
-│  │  ├─ course_registration.md
-│  │  ├─ exams_results.md
-│  │  ├─ fee_rules.md
-│  │  ├─ helpdesk.md
-│  │  ├─ hiring_policy.md
-│  │  ├─ improvement_retake.md
-│  │  ├─ semester_freeze.md
-│  │  ├─ summer_semester.md
-│  │  └─ teacher_salary_policies.md
-│  ├─ rag.py
+│  │  ├─ admin
+│  │  │  ├─ account_management.md
+│  │  │  ├─ admin_help_desk.html
+│  │  │  ├─ admissions_process.md
+│  │  │  └─ fee_collection.md
+│  │  ├─ all
+│  │  │  ├─ attendance_policy.md
+│  │  │  ├─ exams_results.md
+│  │  │  └─ helpdesk.md
+│  │  ├─ student
+│  │  │  ├─ course_registration.md
+│  │  │  ├─ fee_rules.md
+│  │  │  ├─ improvement_retake.md
+│  │  │  ├─ semester_freeze.md
+│  │  │  ├─ student_help_desk.html
+│  │  │  └─ summer_semester.md
+│  │  └─ teacher
+│  │     ├─ attendance_marking.md
+│  │     ├─ fyp_supervision.md
+│  │     ├─ leave_rules.md
+│  │     ├─ marks_and_assignments.md
+│  │     └─ salary_rules.md
+│  ├─ rag
+│  │  ├─ chunker.py
+│  │  ├─ embedder.py
+│  │  ├─ evaluate.py
+│  │  ├─ eval_cases.json
+│  │  ├─ indexer.py
+│  │  ├─ loader.py
+│  │  ├─ retriever.py
+│  │  ├─ settings.py
+│  │  ├─ store.py
+│  │  ├─ __init__.py
+│  │  └─ __main__.py
 │  ├─ registry.py
 │  ├─ routes.py
 │  ├─ tools_sql.py
 │  ├─ tools_student.py
-│  └─ tools_teacher.py
+│  ├─ tools_teacher.py
+│  └─ __init__.py
 ├─ config.py
+├─ help_desk.html
 ├─ jwt.py
 ├─ logs
 ├─ main.py

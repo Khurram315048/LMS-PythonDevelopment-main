@@ -1,5 +1,3 @@
-role: all
-
 # Course Registration
 
 Course registration happens at the start of every semester. It is possible only while the registration window is open. The office announces the dates.

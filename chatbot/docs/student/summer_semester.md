@@ -1,5 +1,3 @@
-role: all
-
 # Summer Semester
 
 The summer semester is a short semester offered after the regular spring semester. It is mainly for retaking failed courses and for improvement.

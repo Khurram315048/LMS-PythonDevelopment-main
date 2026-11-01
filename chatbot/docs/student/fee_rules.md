@@ -1,5 +1,3 @@
-role: all
-
 # Fee Rules
 
 Fee is charged every month. The fee status of each month is either paid or due.

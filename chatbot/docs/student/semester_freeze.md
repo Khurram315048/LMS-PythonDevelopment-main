@@ -1,5 +1,3 @@
-role: all
-
 # Semester Freeze
 
 Semester freeze means pausing your studies for one semester. You keep your admission and continue from the same semester when you return.

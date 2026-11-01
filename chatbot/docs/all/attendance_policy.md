@@ -1,5 +1,3 @@
-role: all
-
 # Attendance Policy
 
 Attendance is marked by the course teacher for every lecture. The status of each lecture is Present or Absent.
