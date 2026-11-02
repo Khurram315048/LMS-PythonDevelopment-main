@@ -1,4 +1,13 @@
+
+---
+title: Account Management
+link: https://admission.usp.edu.pk/
+
+---
+
+
 # User Account Management
+
 
 Every student, teacher and admin has a user account with a role.
 

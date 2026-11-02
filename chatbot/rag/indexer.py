@@ -1,5 +1,14 @@
 import uuid
+import redis
 from . import loader,chunker,embedder,store
+from config import REDIS_URL
+
+
+def _bump_version():
+    try:
+        redis.Redis.from_url(REDIS_URL,socket_connect_timeout=2).incr("docs_version")
+    except Exception as e:
+        print("Redis version bump skipped:",e)
 
 
 def build_points():
@@ -20,13 +29,15 @@ def build_points():
     points=[]
     for i in range(0,len(items),32):
         batch=items[i:i+32]
-        vectors=embedder.embed([f"{h}\n{ch}" for _,_,h,ch in batch])   
+        vectors=embedder.embed([f"{h}\n{ch}" for _,_,h,ch in batch])
         for (d,n,h,ch),v in zip(batch,vectors):
             points.append({
                 "id":str(uuid.uuid5(uuid.NAMESPACE_URL,f"{d.key}#{n}")),
                 "vector":v,
                 "payload":{
-                    "source":d.source,
+                    "source":d.key,
+                    "title":d.title,
+                    "link":d.link,
                     "role":d.role,
                     "heading":h,
                     "text":ch,
@@ -41,4 +52,5 @@ def ingest(rebuild:bool=False):
         print("No documents index.")
         return
     added,removed=store.sync(points,rebuild=rebuild)
-    print(f"{n_docs} files, {added} chunks  are index , {removed} old chunks have been removed")
+    _bump_version()
+    print(f"{n_docs} files, {added} chunks are index, {removed} old chunks have been removed")

@@ -8,5 +8,9 @@ EXTENSIONS={".md",".txt",".html",".htm",".pdf"}
 
 CHUNK_CHARS=700          
 TOP_K=5                  
-MIN_SCORE=0.30           
+MIN_SCORE=0.40           
 MAX_CONTEXT_CHARS=2800   
+RERANK_MODEL="Xenova/ms-marco-MiniLM-L-6-v2"   
+FETCH_K=20          
+RERANK_MIN=-6.5 
+RERANK_MARGIN=3.0

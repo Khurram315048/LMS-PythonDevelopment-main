@@ -1,3 +1,8 @@
+---
+title: Admission Process
+link: https://usp.edu.pk/admissionspolicy/
+---
+
 # Admission Process
 
 Admissions are offered once a year for each program. The office announces the dates, the eligibility and the merit criteria.

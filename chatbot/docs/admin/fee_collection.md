@@ -1,3 +1,9 @@
+
+---
+title: Fee Collection
+link: https://usp.edu.pk/mode-of-payments/
+---
+
 # Fee Collection and Defaulters
 
 Fee vouchers are generated every month and are due by the 10th of the month. Fee paid after the 10th may be charged a late fee.

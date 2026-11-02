@@ -34,3 +34,4 @@ PyMySQL==1.2.3
 python-dotenv==1.2.4
 qdrant-client==1.20.0
 pypdf
+redis

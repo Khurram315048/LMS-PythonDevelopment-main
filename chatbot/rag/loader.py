@@ -5,13 +5,36 @@ from pathlib import Path
 from .settings import DOCS_DIR,ROLES,EXTENSIONS
 
 
+
+_META=re.compile(r"^---\s*\n(.*?)\n---\s*\n",re.S)
+_HTML_META=re.compile(r"<!--\s*(title|link)\s*:\s*(.*?)\s*-->",re.I)
+
+
+def _safe_link(v:str)->str:
+    v=(v or "").strip()
+    return v if v.startswith("/") or v.startswith("https://") else ""
+
+
+def _parse_meta(raw:str):
+    meta={}
+    m=_META.match(raw)
+    if m:
+        for line in m.group(1).splitlines():
+            if ":" in line:
+                k,_,v=line.partition(":")
+                meta[k.strip().lower()]=v.strip()
+        raw=raw[m.end():].strip()
+    return meta,raw
+
+
 @dataclass
 class Document:
     key:str        
     source:str     
     role:str
     title:str
-    pages:list     
+    pages:list  
+    link:str=""   
 
 
 class _HTMLText(HTMLParser):
@@ -76,6 +99,51 @@ def _read_pdf(path:Path):
     return pages
 
 
+# def load_documents():
+#     docs,skipped=[],[]
+#     if not DOCS_DIR.exists():
+#         return docs,[f"{DOCS_DIR} no folder found"]
+#     for path in sorted(DOCS_DIR.rglob("*")):
+#         if not path.is_file() or path.suffix.lower() not in EXTENSIONS or path.name.startswith(("_",".")):
+#             continue
+#         rel=path.relative_to(DOCS_DIR)
+#         key=rel.as_posix()
+#         folder_role=rel.parts[0] if len(rel.parts)>1 and rel.parts[0] in ROLES else None
+#         header_role=None
+#         try:
+#             if path.suffix.lower()==".pdf":
+#                 pages=_read_pdf(path)
+#                 if not pages:
+#                     skipped.append(f"{key}: no text found(scanned PDF? OCR want)")
+#                     continue
+#             else:
+#                 raw=path.read_text(encoding="utf-8-sig",errors="replace").strip()
+#                 if path.suffix.lower() in (".html",".htm"):
+#                     raw=_html_to_text(raw)
+#                 elif raw.lower().startswith("role:"):
+#                     first,_,raw=raw.partition("\n")
+#                     header_role=first.split(":",1)[1].strip().lower()
+#                     raw=raw.strip()
+#                 pages=[(None,raw)] if raw else []
+#                 if not pages:
+#                     skipped.append(f"{key}: empty file")
+#                     continue
+#         except Exception as e:
+#             skipped.append(f"{key}: not readable ({e})")
+#             continue
+#         role=folder_role or header_role
+#         if role not in ROLES:
+#             skipped.append(f"{key}: No role found. File should be in docs/student, docs/teacher, docs/admin or docs/all  "
+#                            f"(ya .md ki first line 'role: all')")
+#             continue
+#         docs.append(Document(key=key,source=path.stem,role=role,
+#                              title=path.stem.replace("_"," ").replace("-"," ").title(),pages=pages))
+#     return docs,skipped
+
+
+
+
+
 def load_documents():
     docs,skipped=[],[]
     if not DOCS_DIR.exists():
@@ -87,6 +155,7 @@ def load_documents():
         key=rel.as_posix()
         folder_role=rel.parts[0] if len(rel.parts)>1 and rel.parts[0] in ROLES else None
         header_role=None
+        meta={}
         try:
             if path.suffix.lower()==".pdf":
                 pages=_read_pdf(path)
@@ -96,11 +165,15 @@ def load_documents():
             else:
                 raw=path.read_text(encoding="utf-8-sig",errors="replace").strip()
                 if path.suffix.lower() in (".html",".htm"):
+                    meta={k.lower():v for k,v in _HTML_META.findall(raw)}
                     raw=_html_to_text(raw)
-                elif raw.lower().startswith("role:"):
-                    first,_,raw=raw.partition("\n")
-                    header_role=first.split(":",1)[1].strip().lower()
-                    raw=raw.strip()
+                else:
+                    meta,raw=_parse_meta(raw)
+                    if raw.lower().startswith("role:"):
+                        first,_,raw=raw.partition("\n")
+                        header_role=first.split(":",1)[1].strip().lower()
+                        raw=raw.strip()
+                header_role=(meta.get("role") or header_role or "").lower() or None
                 pages=[(None,raw)] if raw else []
                 if not pages:
                     skipped.append(f"{key}: empty file")
@@ -114,5 +187,7 @@ def load_documents():
                            f"(ya .md ki first line 'role: all')")
             continue
         docs.append(Document(key=key,source=path.stem,role=role,
-                             title=path.stem.replace("_"," ").replace("-"," ").title(),pages=pages))
+                             title=meta.get("title") or path.stem.replace("_"," ").replace("-"," ").title(),
+                             link=_safe_link(meta.get("link")),
+                             pages=pages))
     return docs,skipped

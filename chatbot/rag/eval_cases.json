@@ -1,34 +1,38 @@
 [
-  {"question":"what happens if my attendance is below 75 percent",
-  "source":"attendance_policy",
-  "role":"student"
-},
-  {"question":"how do I upload my fee voucher",
-  "source":"fee_rules",
-  "role":"student"
-},
-  {"question":"how many semesters can I freeze",
-  "source":"semester_freeze",
-  "role":"student"
-},
-  {"question":"how many improvement courses are allowed",
-  "source":"improvement_retake",
-  "role":"student"
-},
-  {"question":"how many courses can I take in summer semester",
-  "source":"summer_semester",
-  "role":"student"
-},
-  {"question":"what is the grading scale",
-  "source":"exams_results",
-  "role":"student"
-},
-  {"question":"what are the office hours",
-  "source":"helpdesk",
-  "role":"student"
-},
-  {"question":"minimum and maximum courses in a semester",
-  "source":"course_registration",
-  "role":"student"
-}
+  {"question":"what happens if my attendance is below 75 percent","source":"all/attendance_policy.md","role":"student"},
+  {"question":"how do I upload my fee voucher","source":"student/fee_rules.md","role":"student"},
+  {"question":"how many semesters can I freeze","source":"student/semester_freeze.md","role":"student"},
+  {"question":"how many improvement courses are allowed","source":"student/improvement_retake.md","role":"student"},
+  {"question":"how many courses can I take in summer semester","source":"student/summer_semester.md","role":"student"},
+  {"question":"what is the grading scale","source":"all/exams_results.md","role":"student"},
+  {"question":"what are the office hours","source":"all/helpdesk.md","role":"student"},
+  {"question":"minimum and maximum courses in a semester","source":"student/course_registration.md","role":"student"},
+
+  {"question":"can I retake a course I failed","source":"student/improvement_retake.md","role":"student"},
+  {"question":"will unpaid fee stop me from sitting in exams","source":"student/fee_rules.md","role":"student"},
+  {"question":"fee voucher upload kese karte hain","source":"student/fee_rules.md","role":"student"},
+  {"question":"attendance 75 percent se kam ho to kya hota hai","source":"all/attendance_policy.md","role":"student"},
+
+  {"question":"how do I deactivate the account of a user who left","source":"admin/account_management.md","role":"admin"},
+  {"question":"password reset rules","source":"admin/account_management.md","role":"admin"},
+  {"question":"how many days do selected students get to complete registration","source":"admin/admissions_process.md","role":"admin"},
+  {"question":"how long does the accounts office take to verify a voucher","source":"admin/fee_collection.md","role":"admin"},
+
+  {"question":"how is teacher salary calculated","source":"teacher/salary_rules.md","role":"teacher"},
+  {"question":"how do I apply for leave","source":"teacher/leave_rules.md","role":"teacher"},
+  {"question":"how do I mark attendance","source":"teacher/attendance_marking.md","role":"teacher"},
+  {"question":"what are the duties of an FYP supervisor","source":"teacher/fyp_supervision.md","role":"teacher"},
+  {"question":"how are assignment and quiz marks entered","source":"teacher/marks_and_assignments.md","role":"teacher"},
+  {"question":"university hiring process","source":null,"role":"student"},
+{"question":"what is the canteen menu","source":null,"role":"student"},
+{"question":"how to reset my wifi router","source":null,"role":"teacher"},
+{"question":"who won the cricket match yesterday","source":null,"role":"admin"},
+{"question":"what is the due date for the monthly fee","source":"student/fee_rules.md","role":"student"},
+{"question":"how many working days does the status stay due after uploading","source":"student/fee_rules.md","role":"student"},
+{"question":"what is the minimum required attendance percentage","source":"all/attendance_policy.md","role":"student"},
+{"question":"which exam categories are there in a semester","source":"all/exams_results.md","role":"student"},
+{"question":"within how many days must selected students complete registration","source":"admin/admissions_process.md","role":"admin"},
+{"question":"what happens if a candidate does not register in time","source":"admin/admissions_process.md","role":"admin"},
+{"question":"who keeps the list of defaulters","source":"admin/fee_collection.md","role":"admin"},
+{"question":"scholarship application process","source":null,"role":"student"}
 ]
