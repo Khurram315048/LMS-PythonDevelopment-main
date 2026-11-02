@@ -35,13 +35,16 @@ LMS-PythonDevelopment-main
 ├─ auto_export_db.py
 ├─ chatbot
 │  ├─ agent.py
+│  ├─ cache.py
+│  ├─ citations.py
 │  ├─ db.py
 │  ├─ docs
 │  │  ├─ admin
 │  │  │  ├─ account_management.md
 │  │  │  ├─ admin_help_desk.html
 │  │  │  ├─ admissions_process.md
-│  │  │  └─ fee_collection.md
+│  │  │  ├─ fee_collection.md
+│  │  │  └─ fee_rules.md
 │  │  ├─ all
 │  │  │  ├─ attendance_policy.md
 │  │  │  ├─ exams_results.md
@@ -59,6 +62,7 @@ LMS-PythonDevelopment-main
 │  │     ├─ leave_rules.md
 │  │     ├─ marks_and_assignments.md
 │  │     └─ salary_rules.md
+│  ├─ llm.py
 │  ├─ rag
 │  │  ├─ chunker.py
 │  │  ├─ embedder.py
@@ -66,6 +70,7 @@ LMS-PythonDevelopment-main
 │  │  ├─ eval_cases.json
 │  │  ├─ indexer.py
 │  │  ├─ loader.py
+│  │  ├─ reranker.py
 │  │  ├─ retriever.py
 │  │  ├─ settings.py
 │  │  ├─ store.py
