@@ -64,9 +64,10 @@
                     </td>
                     <td>
                         {% if fyp.last_submission %}
-                            <a href="{{ url_for('uploads',path=fyp.last_submission) }}" target="_blank" class="btn btn-sm btn-link text-danger">
-                                <i class="fa-solid fa-file-pdf"></i> View PDF
-                            </a>
+                            <a href="{{ url_for('download_private_file', kind='fyp', record_id=fyp.fyp_id) }}"
+                                class="btn btn-sm btn-link text-danger">
+                                    View PDF
+                                </a>
                         {% else %}
                             <span class="text-muted">None</span>
                         {% endif %}

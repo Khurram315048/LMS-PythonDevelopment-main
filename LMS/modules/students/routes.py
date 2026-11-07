@@ -1,4 +1,4 @@
-from fastapi import APIRouter,Depends,Request,UploadFile,File,Form,status
+from fastapi import APIRouter,Depends,Request,UploadFile,File,Form,status,HTTPException
 from fastapi.responses import RedirectResponse,HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import ValidationError
@@ -11,6 +11,7 @@ from modules.students.repository import StudentModel
 from core.auth import get_current_student
 from core.exceptions import BusinessRuleError,ValidationError as AppValidation,NotFoundError
 import logging
+from fastapi.responses import FileResponse
 from fastapi import BackgroundTasks
 from core.csrf import verify_csrf,get_csrf_token
 from core.security import create_token,refresh_token
@@ -19,13 +20,22 @@ from core.config import SECRET_KEY
 from shared.mail import send_email
 from core.config import BASE_DIR 
 from core.templating import *
-TEMPLATES_DIR=BASE_DIR / "web" / "templates"
+from sqlalchemy import select
 
+from core.config import UPLOAD_DIR
+from db.models.orm import StudentFee
+from db.session import SessionLocal
+
+TEMPLATES_DIR=BASE_DIR / "web" / "templates"
+UPLOAD_BASE=(BASE_DIR / "storage" / "students_uploads").resolve()
 router=APIRouter(dependencies=[Depends(verify_csrf)])
 base_dir=Path(__file__).parent.parent
 templates=get_templates("student")
 # templates=Jinja2Templates(directory=[str(base_dir/"students_module" / "students_views"),str(base_dir/"templates")])
 templates.env.globals["csrf_token"]=get_csrf_token
+
+
+
 
 
 @router.get('/refresh')
@@ -168,16 +178,17 @@ def student_fee(request:Request,current_user:dict=Depends(get_current_student)):
         for row in fee_record:
             records.append(
                 FeeRecordHelper(
-                    program=str(row.get('program')),
-                    month=str(row.get('month')),
-                    fee_amount=float(row.get('fee_amount')),
-                    paid_date=row.get('paid_date'),
-                    status=str(row.get('status')),
-                    front_voucher=str(row.get('front_voucher')),
-                    back_voucher=str(row.get('back_voucher'))
+                        student_fees_id=row.get('student_fees_id'),
+                        program=str(row.get('program')),
+                        month=str(row.get('month')),
+                        fee_amount=float(row.get('fee_amount')),
+                        paid_date=row.get('paid_date'),
+                        status=str(row.get('status')),
+                        front_voucher=row.get('front_voucher') or '',
+                        back_voucher=row.get('back_voucher') or ''
+                    )
                 )
-            )
-        # records=[FeeRecordHelper(program=str(row['program']),month=str(row['month'] or 'N/A'),fee_amount=float(row['fee_amount']),paid_date=row['paid_date'],status=str(row['status']),front_voucher=row['front_voucher'] or '',back_voucher=row['back_voucher'] or '') for row in fee_record]
+       
         return templates.TemplateResponse(request=request,name="student_fee.html",
                                           context={"fee_records":records})
     except Exception as e:

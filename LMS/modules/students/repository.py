@@ -350,17 +350,36 @@ class StudentModel:
     def get_student_fee_records(student_id:int):
         session=SessionLocal()
         try:
-            stmt=(select(Program.program_name.label('program'),
-                         StudentFee.update_date.label('paid_date'),
-                         StudentFee.fee_month.label('month'),
-                         StudentFee.fee_amount.label('fee_amount'),
-                         StudentFee.voucher_front_pic.label('front_voucher'),
-                         StudentFee.voucher_back_pic.label('back_voucher'),
-                         func.date(StudentFee.update_date).label('fee_paid_at'),
-                         StudentFee.fee_status.label('status'))
-                  .select_from(StudentFee)
-                  .join(Program,StudentFee.program_id==Program.program_id)
-                  .where(StudentFee.student_id==student_id,StudentFee.is_deleted.is_(False)))
+            stmt = (
+                select(
+                    StudentFee.student_fees_id.label("student_fees_id"),
+                    Program.program_name.label("program"),
+                    StudentFee.update_date.label("paid_date"),
+                    StudentFee.fee_month.label("month"),
+                    StudentFee.fee_amount.label("fee_amount"),
+                    StudentFee.voucher_front_pic.label("front_voucher"),
+                    StudentFee.voucher_back_pic.label("back_voucher"),
+                    func.date(StudentFee.update_date).label("fee_paid_at"),
+                    StudentFee.fee_status.label("status"),
+                )
+                .select_from(StudentFee)
+                .join(Program, StudentFee.program_id == Program.program_id)
+                .where(
+                    StudentFee.student_id == student_id,
+                    StudentFee.is_deleted.is_(False),
+                )
+            )
+            # stmt=(select(Program.program_name.label('program'),
+            #              StudentFee.update_date.label('paid_date'),
+            #              StudentFee.fee_month.label('month'),
+            #              StudentFee.fee_amount.label('fee_amount'),
+            #              StudentFee.voucher_front_pic.label('front_voucher'),
+            #              StudentFee.voucher_back_pic.label('back_voucher'),
+            #              func.date(StudentFee.update_date).label('fee_paid_at'),
+            #              StudentFee.fee_status.label('status'))
+            #       .select_from(StudentFee)
+            #       .join(Program,StudentFee.program_id==Program.program_id)
+            #       .where(StudentFee.student_id==student_id,StudentFee.is_deleted.is_(False)))
             fee_records=_rows(session.execute(stmt).all())
             if not fee_records:
                 logging.warning(f"Fee record not foud for student {student_id}")

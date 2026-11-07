@@ -48,10 +48,12 @@
                     <td>{{ fee.update_date }}</td>
                     <td>
                         {% if fee.voucher_front_pic %}
-                            <a href="{{ url_for('uploads',path=fee.voucher_front_pic) }}" target="_blank" class="btn btn-sm btn-info">Front</a>
+                           <a href="{{ url_for('download_private_file', kind='voucher', record_id=fee.student_fees_id) ~ '?part=front' }}"
+                                class="btn btn-sm btn-info">Front</a>
                         {% endif %}
                         {% if fee.voucher_back_pic %}
-                            <a href="{{ url_for('uploads',path=fee.voucher_back_pic) }}" target="_blank" class="btn btn-sm btn-secondary">Back</a>
+                            <a href="{{ url_for('download_private_file', kind='voucher', record_id=fee.student_fees_id)~ '?part=back' }}"
+                                class="btn btn-sm btn-secondary">Back</a>
                         {% endif %}
                         {% if not fee.voucher_front_pic and not fee.voucher_back_pic %}
                             <span class="text-muted">None</span>

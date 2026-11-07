@@ -68,8 +68,9 @@
                     </td>
                     
                 <td>
-                    <a href="{{ url_for('uploads',path=sub.file_path) }}" target="_blank" class="btn-submit"
-                        style="padding: 5px 10px; font-size: 12px; text-decoration: none; background-color: #10367D;">
+                   <a href="{{ url_for('download_private_file', kind='submission', record_id=sub.submission_id) }}"
+                    class="btn-submit"
+                    style="padding: 5px 10px; font-size: 12px; text-decoration: none; background-color: #10367D;">
                         View File
                     </a>
                 </td>

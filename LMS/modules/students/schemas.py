@@ -217,6 +217,7 @@ class GradesResponse(BaseModel):
 
 
 class FeeRecordHelper(BaseModel):
+    student_fees_id:int
     program:str
     month:str
     fee_amount:float

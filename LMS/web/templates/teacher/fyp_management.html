@@ -84,7 +84,7 @@
                         </td>
                         <td>
                             {% if group.last_submission %}
-                            <a href="{{ url_for('uploads',path=group.last_submission) }}" target="_blank" class="btn btn-sm btn-link text-danger">
+                           <a href="{{ url_for('download_private_file', kind='fyp', record_id=group.fyp_id) }}" target="_blank" class="btn btn-sm btn-link text-danger">
                                 <i class="fa-solid fa-file-pdf"></i> View PDF
                             </a>
                             {% endif %}
