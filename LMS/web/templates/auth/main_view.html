@@ -12,6 +12,7 @@
 <body>
     <div class="container center-content">
         <form action="/main_view" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
             <div class="form-buttons">
                 <button type="submit" name="student">
                 <i class="fa-solid fa-user-graduate"></i> Student Portal

@@ -22,6 +22,7 @@
     {% endif %}
 
     <form action="/otp_verify" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
         <label for="otp">OTP:</label>
         <input type="text" id="otp" name="otp" required
                inputmode="numeric" maxlength="6" pattern="\d{6}"

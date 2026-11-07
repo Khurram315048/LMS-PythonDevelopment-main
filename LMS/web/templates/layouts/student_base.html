@@ -22,9 +22,16 @@
             <img src="{{ url_for('static',path='images/logo.jpg') }}" alt="ISP Logo" class="logo">
             <h1>Student Management System</h1>
         </div>
-        <a href="/logout" class="logout-btn">
+       <form id="logout-form" action="/logout" method="POST" hidden>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
+</form>
+<a href="#" class="logout-btn"
+   onclick="document.getElementById('logout-form').submit(); return false;">
+    <i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span>
+</a>
+        <!-- <a href="/logout" class="logout-btn">
             <i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span>
-        </a>
+        </a> -->
     </header>
     {% if get_flashed_messages is defined %}
     {% with messages=get_flashed_messages(with_categories=true) %}
@@ -72,9 +79,16 @@
                 <li><a href="/student_fyp"><i class="fa-solid fa-diagram-project"></i> <span>FYP</span></a></li>
                 <li><a href="/help_desk"><i class="fa-solid fa-headset"></i> <span>HelpDesk</span></a></li>
                 <li>
-                    <a href="/logout" class="logout-btn">
+                    <form id="logout-form" action="/logout" method="POST" hidden>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
+</form>
+<a href="#" class="logout-btn"
+   onclick="document.getElementById('logout-form').submit(); return false;">
+    <i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span>
+</a>
+                    <!-- <a href="/logout" class="logout-btn">
                         <i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span>
-                    </a>
+                    </a> -->
                 </li>
             </ul>
         </nav>

@@ -25,9 +25,12 @@
                 <i class="fa-solid fa-circle-user" style="font-size: 1.3rem;"></i>
                 <span>Profile</span>
             </a>
-            <a href="/logout" class="logout-btn" style="text-decoration: none; color: white; display: flex; align-items: center; gap: 8px;">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                <span>Logout</span>
+           <form id="logout-form" action="/logout" method="POST" hidden>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
+            </form>
+            <a href="#" class="logout-btn"
+            onclick="document.getElementById('logout-form').submit(); return false;">
+                <i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span>
             </a>
         </div>
     </header>
@@ -82,7 +85,14 @@
                 <li><a href="/complaints"><i class="fa-solid fa-comment-dots"></i> <span>Complaints</span></a></li>
                 <li><a href="/admin_notifications"><i class="fa-solid fa-bell"></i> <span>Notifications</span></a></li>
                 <li>
-                <li><a href="/logout" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span></a></li>
+                    <form id="logout-form" action="/logout" method="POST" hidden>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
+                    </form>
+                    <a href="#" class="logout-btn"
+                    onclick="document.getElementById('logout-form').submit(); return false;">
+                        <i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span>
+                    </a>
+                
             </ul>
         </nav>
         <main class="content-area">

@@ -16,6 +16,7 @@
             <p style="color:red;">{{ error }}</p>
         {% endif %}
         <form action="/user_signup" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
             <label for="first_name">First Name: </label>
             <input type="text" id="first_name" name="first_name" placeholder="Enter your first name" required><br>
             <label for="last_name">Last Name: </label>

@@ -19,6 +19,7 @@
     {% endif %}
 
     <form action="/send_reset_email" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required>
         <br>

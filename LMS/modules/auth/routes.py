@@ -5,14 +5,17 @@ from datetime import datetime, timedelta
 from fastapi import APIRouter, Request, Form, status, BackgroundTasks
 from fastapi.responses import RedirectResponse, HTMLResponse
 from pydantic import ValidationError
-
+from fastapi import APIRouter, BackgroundTasks, Depends, Form, Request, status
+from core.csrf import get_csrf_token, verify_csrf
 from core.templating import get_templates
 from shared.mail import send_email
 from modules.auth.repository import MainModel
 from modules.auth.schema import SignupUser
 
-router = APIRouter()
-templates = get_templates("auth")
+router=APIRouter(dependencies=[Depends(verify_csrf)])
+templates=get_templates("auth")
+templates.env.globals["csrf_token"]=get_csrf_token
+
 
 
 def generate_otp()->str:
@@ -178,9 +181,10 @@ def update_password(request:Request,new_password:str=Form(None),confirm_password
         return templates.TemplateResponse(request=request,name="update_password.html",context={"error":"Try again"})
 
 
-@router.get("/logout")
+@router.post("/logout")
 def logout(request:Request):
     request.session.clear()
-    response=RedirectResponse(url='/main_view',status_code=status.HTTP_303_SEE_OTHER)
+    response=RedirectResponse(url="/main_view",status_code=status.HTTP_303_SEE_OTHER,)
     response.delete_cookie("access_token")
+    response.delete_cookie("refresh_token")
     return response
