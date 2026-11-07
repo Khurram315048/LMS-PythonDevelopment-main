@@ -107,7 +107,7 @@ def send_reset_email(request:Request,background_tasks:BackgroundTasks,email:str=
             MainModel.insert_otp(user['user_id'],otp,otp_expiry(10))
             background_tasks.add_task(send_email,[email],"Password Reset Code",otp)
         request.session['reset_email']=email
-        request.session['flash_success']="If the email is registered, a code has been sent"
+        request.session['flash_success']="Code has been sent on registered email"
         return RedirectResponse(url='/otp_verify',status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         logging.exception(f"during snd rst email(main): {str(e)}")

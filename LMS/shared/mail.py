@@ -4,12 +4,13 @@ from fastapi_mail import ConnectionConfig,FastMail,MessageSchema,MessageType,Nam
 from pydantic import BaseModel
 from starlette.responses import JSONResponse
 import logging
+from core.config import MAIL_USERNAME, MAIL_PASSWORD, MAIL_FROM
 
 
 conf=ConnectionConfig(
-    MAIL_USERNAME="saleemkhurram1234@gmail.com",
-    MAIL_PASSWORD="zzlx ivfz gzad izzp",
-    MAIL_FROM="saleemkhurran1234@gmail.com",
+    MAIL_USERNAME=MAIL_USERNAME,
+    MAIL_PASSWORD=MAIL_PASSWORD,
+    MAIL_FROM=MAIL_FROM,
     MAIL_PORT=587,
     MAIL_SERVER="smtp.gmail.com",
     MAIL_FROM_NAME="LMS-PYTHON-DEVELOPMENT",
