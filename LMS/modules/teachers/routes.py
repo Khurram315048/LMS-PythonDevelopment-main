@@ -18,6 +18,7 @@ from shared.mail import send_email
 from fastapi import BackgroundTasks
 from core.config import BASE_DIR   
 from core.templating import *
+from core.rate_limiter import guarded_authenticate, TooManyAttempts, client_ip
 
 TEMPLATES_DIR=BASE_DIR / "web" / "templates"
 
@@ -77,7 +78,9 @@ def teacher_login(request:Request,email:str=Form(None),password:str=Form(None),r
             password=password,
             remember_me=remember_me
         )   
-        user,teacher_obj=TeacherService.authenticate_teacher(inputs.email,inputs.password)
+        user,teacher_obj=guarded_authenticate("admin",inputs.email,inputs.password,
+                                                              client_ip(request),TeacherService.authenticate_teacher)
+        # user,teacher_obj=TeacherService.authenticate_teacher(inputs.email,inputs.password)
         token_payload={
             'user_id':user['user_id'],
             'role':'teacher',
@@ -111,6 +114,10 @@ def teacher_login(request:Request,email:str=Form(None),password:str=Form(None),r
         #     'remember':remember_me
         # })
         # return RedirectResponse(url='/teacher_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+    except TooManyAttempts as t:
+                    return templates.TemplateResponse(request=request,name="teacher_login.html",
+                                context={"error":f"Too many failed attempts. Try again in {t.minutes} minutes."},
+                                                    status_code=429)
     except JWTError as je:
         logging.exception(f"JWT route : {str(je)}")
         return templates.TemplateResponse(request=request,name="teacher_login.html",

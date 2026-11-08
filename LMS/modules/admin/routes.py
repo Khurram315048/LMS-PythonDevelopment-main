@@ -16,6 +16,10 @@ from fastapi import BackgroundTasks
 from shared.mail import send_email
 from core.templating import *
 from core.config import BASE_DIR 
+from core.rate_limiter import guarded_authenticate, TooManyAttempts, client_ip
+
+
+
 TEMPLATES_DIR=BASE_DIR / "web" / "templates"
 
 router=APIRouter(dependencies=[Depends(verify_csrf)])
@@ -76,7 +80,9 @@ def admin_login(request:Request,email:str=Form(None),password:str=Form(None),rem
             password=password,
             remember_me=remember_me
         )
-        user, admin_obj=AdminService.authenticate_admin(inputs.email,inputs.password)
+        user,admin_obj=guarded_authenticate("admin",inputs.email,inputs.password,
+                                                      client_ip(request),AdminService.authenticate_admin)
+        # user,admin_obj=AdminService.authenticate_admin(inputs.email,inputs.password)
         token_payload={
             'user_id':user['user_id'],
             'role':'admin',
@@ -89,6 +95,10 @@ def admin_login(request:Request,email:str=Form(None),password:str=Form(None),rem
         response.set_cookie(key="access_token",value=access_token,httponly=True,max_age=1800,samesite="lax")
         response.set_cookie(key="refresh_token",value=new_token,httponly=True,max_age=7*24*60*60,samesite="lax")
         return response
+    except TooManyAttempts as t:
+                return templates.TemplateResponse(request=request,name="admin_login.html",
+                            context={"error":f"Too many failed attempts. Try again in {t.minutes} minutes."},
+                                                status_code=429)
     except JWTError as je:
             logging.exception(f"JWT route : {str(je)}")
             return templates.TemplateResponse(request=request,name="admin_login.html",

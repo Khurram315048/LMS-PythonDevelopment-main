@@ -11,6 +11,7 @@ from core.templating import get_templates
 from shared.mail import send_email
 from modules.auth.repository import MainModel
 from modules.auth.schema import SignupUser
+from core.rate_limiter import check_otp_send, TooManyAttempts, client_ip
 
 router=APIRouter(dependencies=[Depends(verify_csrf)])
 templates=get_templates("auth")
@@ -101,7 +102,9 @@ def send_reset_email(request:Request,background_tasks:BackgroundTasks,email:str=
         return templates.TemplateResponse(request=request,name="send_reset_email.html")
     try:
         email=(email or '').strip()
+        check_otp_send(email,client_ip(request))
         user=MainModel.get_user_by_email(email)
+
         if not user:
             request.session['flash_error']="Kindly register"
             return RedirectResponse(url='/user_signup',status_code=status.HTTP_303_SEE_OTHER)
@@ -112,6 +115,9 @@ def send_reset_email(request:Request,background_tasks:BackgroundTasks,email:str=
         request.session['reset_email']=email
         request.session['flash_success']="Code has been sent on registered email"
         return RedirectResponse(url='/otp_verify',status_code=status.HTTP_303_SEE_OTHER)
+    except TooManyAttempts as t:
+            return templates.TemplateResponse(request=request,name="send_reset_email.html",
+                                context={"error":f"Too many requests. Try again in {t.minutes} minutes."},status_code=429)
     except Exception as e:
         logging.exception(f"during snd rst email(main): {str(e)}")
         return templates.TemplateResponse(request=request,name="send_reset_email.html",

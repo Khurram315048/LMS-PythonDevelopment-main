@@ -21,7 +21,7 @@ from shared.mail import send_email
 from core.config import BASE_DIR 
 from core.templating import *
 from sqlalchemy import select
-
+from core.rate_limiter import guarded_authenticate, TooManyAttempts, client_ip
 from core.config import UPLOAD_DIR
 from db.models.orm import StudentFee
 from db.session import SessionLocal
@@ -80,7 +80,9 @@ def student_login(request:Request,email:str=Form(None),password:str=Form(None),r
             password=password,
             remember_me=remember_me
         )
-        user,student_obj=StudentService.authenticate_student(inputs.email,inputs.password)
+        user,student_obj=guarded_authenticate("student",inputs.email,inputs.password,
+                                              client_ip(request),StudentService.authenticate_student)
+        # user,student_obj=StudentService.authenticate_student(inputs.email,inputs.password)
         token_payload={
             'user_id':user['user_id'],
             'role':'student',
@@ -113,6 +115,10 @@ def student_login(request:Request,email:str=Form(None),password:str=Form(None),r
         #     'remember':inputs.remember_me
         # })
         # return RedirectResponse(url='/student_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+    except TooManyAttempts as t:
+            return templates.TemplateResponse(request=request,name="student_login.html",
+                        context={"error":f"Too many failed attempts. Try again in {t.minutes} minutes."},
+                                            status_code=429)
     except JWTError as je:
             logging.exception(f"JWT route : {str(je)}")
             return templates.TemplateResponse(request=request,name="student_login.html",
