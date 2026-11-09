@@ -1,8 +1,5 @@
 from typing import List
-from fastapi import FastAPI
 from fastapi_mail import ConnectionConfig,FastMail,MessageSchema,MessageType,NameEmail
-from pydantic import BaseModel
-from starlette.responses import JSONResponse
 import logging
 from core.config import MAIL_USERNAME, MAIL_PASSWORD, MAIL_FROM
 

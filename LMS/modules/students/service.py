@@ -59,16 +59,18 @@ class StudentService:
 
 
     @staticmethod
-    def check_freeze_student(student_id:int):
+    def check_freeze_student(student_id:int)->bool:
         try:
             freeze_student=CheckFreezeStatus.confirm_freeze_status(student_id)
-            if freeze_student and freeze_student.get('status') == 'Approved':
-                return True
+            return bool(freeze_student and freeze_student.get("status")=="Approved")
+        except Exception as e :
+            logging.exception(f"error during freeze chk(service): {str(e)}")
+            raise
             
             
-        except Exception as e:
-            logging.exception(f"Error during chck frz stndt service: {e}")    
+           
 
+       
 
 
 

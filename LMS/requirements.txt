@@ -36,3 +36,4 @@ qdrant-client==1.20.0
 pypdf
 redis
 SQLAlchemy>=2.0,<3.0
+fastapi_mail

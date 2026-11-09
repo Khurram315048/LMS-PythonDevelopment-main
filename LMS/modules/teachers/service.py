@@ -5,9 +5,10 @@ from datetime import datetime,timedelta
 from core.exceptions import *
 from werkzeug.security import check_password_hash
 from modules.teachers.repository import *
-# from teachers_module.teachers_models import *
 import logging
-
+from sqlalchemy import update
+from db.models.orm import StudentSubmission
+from db.session import SessionLocal
 
 
 
@@ -300,18 +301,25 @@ class TeacherService:
 
 
     @staticmethod
-    def set_submission_status(teacher_id:int,section_id:int,sub_id:int,status:str):
+    def set_submission_status(teacher_id:int,section_id:int,sub_id:int,status:str,sub_type:str):
         session=SessionLocal()
+       
+        if not TeacherModel.is_section_owned_by_teacher(section_id,teacher_id):
+            raise BusinessRuleError("Unauthorized status attempt")
+            
+        valid=['Best','Average','Worst']
+        if status not in valid:
+            raise ValidationError("Invalid status")
         try:
-            if not TeacherModel.is_section_owned_by_teacher(section_id,teacher_id):
-                raise BusinessRuleError("Unauthorized status attempt")
-            valid = ['Best','Average','Worst']
-            if status not in valid:
-                raise ValidationError("Invalid status")
-
-            session.execute(update(StudentSubmission)
-                            .where(StudentSubmission.submission_id==sub_id)
+            result=session.execute(update(StudentSubmission)
+                            .where(StudentSubmission.submission_id==sub_id,
+                                StudentSubmission.section_id==section_id,
+                                StudentSubmission.submission_type==sub_type,
+                                StudentSubmission.is_deleted.is_(False),)
                             .values(submission_status=status))
+            if result.rowcount==0:
+                raise NotFoundError("Submission not found for this section")
+
             session.commit()
         except (BusinessRuleError,ValidationError):
             session.rollback()
@@ -324,6 +332,8 @@ class TeacherService:
             session.close()
 
 
+
+    
 
 
     @staticmethod

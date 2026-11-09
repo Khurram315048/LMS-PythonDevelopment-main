@@ -451,7 +451,7 @@ def set_submission_status(request:Request,submission_id:int=Path(...,gt=0),statu
                           section_id:int=Form(...),sub_type:subType=Form(...),current_user:dict=Depends(get_current_teacher)):
     teacher_id=current_user['teacher_id']
     try:
-        TeacherService.set_submission_status(teacher_id,section_id,submission_id,status_val)
+        TeacherService.set_submission_status(teacher_id,section_id,submission_id,status_val,sub_type)
         request.session['flash_success']=f"Status set to {status_val}"
     except (BusinessRuleError,ValidationError) as bv:
         logging.warning(f"Error during st sbmsn route api: {str(bv)}")
