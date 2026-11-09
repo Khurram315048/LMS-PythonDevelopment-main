@@ -118,7 +118,6 @@ def download_private_file(
             ).scalar_one_or_none()
 
             if record:
-                # A fee record can contain two separately saved voucher paths.
                 requested_part = request.query_params.get("part", "front")
                 if requested_part == "front":
                     file_path = record.voucher_front_pic
@@ -147,8 +146,6 @@ def download_private_file(
             detail="You are not allowed to access this file",
         )
 
-    # Resolve the database-stored relative path under the uploads directory.
-    # This rejects traversal and symlinks that point outside the upload root.
     try:
         resolved_path = (UPLOAD_ROOT / file_path).resolve(strict=True)
         resolved_path.relative_to(UPLOAD_ROOT)

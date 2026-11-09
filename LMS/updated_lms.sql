@@ -71,7 +71,7 @@ CREATE TABLE `attendance` (
   CONSTRAINT `attendance_ibfk_1` FOREIGN KEY (`student_course_id`) REFERENCES `student_course` (`student_course_id`),
   CONSTRAINT `attendance_ibfk_2` FOREIGN KEY (`course_schedule_id`) REFERENCES `course_schedule` (`course_schedule_id`),
   CONSTRAINT `fk_attendance_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -80,7 +80,7 @@ CREATE TABLE `attendance` (
 
 LOCK TABLES `attendance` WRITE;
 /*!40000 ALTER TABLE `attendance` DISABLE KEYS */;
-INSERT INTO `attendance` VALUES (1,2,3,'2025-12-31','Absent',3,0),(2,3,4,'2025-12-31','Absent',4,0),(4,2,3,'2026-02-04','Present',3,0),(5,3,4,'2026-02-04','Present',4,0),(6,2,3,'2026-03-04','Present',3,0),(7,3,4,'2026-03-04','Present',4,0),(10,2,3,'2026-03-11','Present',3,0),(11,3,4,'2026-03-11','Present',4,0),(12,2,3,'2026-03-13','Present',3,0),(13,3,4,'2026-03-19','Present',4,0),(14,2,3,'2026-09-17','Present',3,0),(15,1,4,'2026-09-16','Absent',2,0),(16,3,4,'2026-09-16','Absent',4,0),(17,1,4,'2026-09-17','Present',2,0),(18,3,4,'2026-09-17','Present',4,0),(19,4,2,'2026-09-18','Present',5,0),(20,4,2,'2026-09-17','Present',5,0),(21,1,1,'2026-10-06','Absent',2,0),(22,1,1,'2026-10-05','Absent',2,0),(23,2,3,'2026-10-05','Absent',3,0),(24,2,3,'2026-10-08','Present',3,0),(25,4,2,'2026-10-08','Present',5,0),(26,2,3,'2026-10-16','Present',3,0),(27,2,3,'2026-10-19','Present',3,0),(28,2,3,'2026-10-23','Present',3,0),(29,2,3,'2026-11-06','Present',3,0);
+INSERT INTO `attendance` VALUES (1,2,3,'2025-12-31','Absent',3,0),(2,3,4,'2025-12-31','Absent',4,0),(4,2,3,'2026-02-04','Present',3,0),(5,3,4,'2026-02-04','Present',4,0),(6,2,3,'2026-03-04','Present',3,0),(7,3,4,'2026-03-04','Present',4,0),(10,2,3,'2026-03-11','Present',3,0),(11,3,4,'2026-03-11','Present',4,0),(12,2,3,'2026-03-13','Present',3,0),(13,3,4,'2026-03-19','Present',4,0),(14,2,3,'2026-09-17','Present',3,0),(15,1,4,'2026-09-16','Absent',2,0),(16,3,4,'2026-09-16','Absent',4,0),(17,1,4,'2026-09-17','Present',2,0),(18,3,4,'2026-09-17','Present',4,0),(19,4,2,'2026-09-18','Present',5,0),(20,4,2,'2026-09-17','Present',5,0),(21,1,1,'2026-10-06','Absent',2,0),(22,1,1,'2026-10-05','Absent',2,0),(23,2,3,'2026-10-05','Absent',3,0),(24,2,3,'2026-10-08','Present',3,0),(25,4,2,'2026-10-08','Present',5,0),(26,2,3,'2026-10-16','Present',3,0),(27,2,3,'2026-10-19','Present',3,0),(28,2,3,'2026-10-23','Present',3,0),(29,2,3,'2026-11-06','Present',3,0),(30,1,1,'2026-11-09','Present',2,0),(31,2,3,'2026-11-09','Present',3,0);
 /*!40000 ALTER TABLE `attendance` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -141,7 +141,7 @@ CREATE TABLE `course_attendance_log` (
   CONSTRAINT `cal_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `teachers` (`teacher_id`),
   CONSTRAINT `cal_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `courses` (`course_id`),
   CONSTRAINT `cal_ibfk_3` FOREIGN KEY (`course_schedule_id`) REFERENCES `course_schedule` (`course_schedule_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -150,7 +150,7 @@ CREATE TABLE `course_attendance_log` (
 
 LOCK TABLES `course_attendance_log` WRITE;
 /*!40000 ALTER TABLE `course_attendance_log` DISABLE KEYS */;
-INSERT INTO `course_attendance_log` VALUES (3,1,1,3,'2026-03-11',91,41,50,'2026-03-11 07:37:21',0,5),(4,1,1,4,'2026-03-11',1,1,0,'2026-03-11 07:37:26',0,5),(5,1,1,3,'2026-03-13',1,1,0,'2026-03-13 06:38:50',0,5),(6,1,1,4,'2026-03-19',1,1,0,'2026-03-19 05:57:07',0,5),(7,5,6,4,'2026-03-26',15,10,5,'2026-03-25 13:34:10',0,5),(8,1,1,4,'2026-09-16',2,0,2,'2026-09-17 17:59:38',0,5),(9,1,1,4,'2026-09-17',2,0,2,'2026-09-17 18:04:13',0,5),(10,1,1,2,'2026-09-18',1,1,0,'2026-09-17 18:08:00',0,5),(11,1,1,2,'2026-09-17',1,1,0,'2026-09-17 18:28:14',0,5),(12,1,1,1,'2026-10-06',1,0,1,'2026-10-05 15:07:04',0,5),(13,1,1,1,'2026-10-05',1,1,0,'2026-10-05 15:07:50',0,5),(14,1,1,3,'2026-10-05',1,0,1,'2026-10-05 15:08:01',0,5),(15,1,1,3,'2026-10-08',1,1,0,'2026-10-08 11:15:12',0,5),(16,1,1,2,'2026-10-08',1,1,0,'2026-10-08 11:15:27',0,5),(17,1,1,3,'2026-10-16',1,1,0,'2026-10-16 06:33:43',0,5),(18,1,1,3,'2026-10-19',1,1,0,'2026-10-19 12:11:22',0,5),(19,1,1,3,'2026-10-23',1,1,0,'2026-10-23 06:18:07',0,5),(20,1,1,3,'2026-11-06',1,1,0,'2026-11-06 13:10:04',0,5);
+INSERT INTO `course_attendance_log` VALUES (3,1,1,3,'2026-03-11',91,41,50,'2026-03-11 07:37:21',0,5),(4,1,1,4,'2026-03-11',1,1,0,'2026-03-11 07:37:26',0,5),(5,1,1,3,'2026-03-13',1,1,0,'2026-03-13 06:38:50',0,5),(6,1,1,4,'2026-03-19',1,1,0,'2026-03-19 05:57:07',0,5),(7,5,6,4,'2026-03-26',15,10,5,'2026-03-25 13:34:10',0,5),(8,1,1,4,'2026-09-16',2,0,2,'2026-09-17 17:59:38',0,5),(9,1,1,4,'2026-09-17',2,0,2,'2026-09-17 18:04:13',0,5),(10,1,1,2,'2026-09-18',1,1,0,'2026-09-17 18:08:00',0,5),(11,1,1,2,'2026-09-17',1,1,0,'2026-09-17 18:28:14',0,5),(12,1,1,1,'2026-10-06',1,0,1,'2026-10-05 15:07:04',0,5),(13,1,1,1,'2026-10-05',1,1,0,'2026-10-05 15:07:50',0,5),(14,1,1,3,'2026-10-05',1,0,1,'2026-10-05 15:08:01',0,5),(15,1,1,3,'2026-10-08',1,1,0,'2026-10-08 11:15:12',0,5),(16,1,1,2,'2026-10-08',1,1,0,'2026-10-08 11:15:27',0,5),(17,1,1,3,'2026-10-16',1,1,0,'2026-10-16 06:33:43',0,5),(18,1,1,3,'2026-10-19',1,1,0,'2026-10-19 12:11:22',0,5),(19,1,1,3,'2026-10-23',1,1,0,'2026-10-23 06:18:07',0,5),(20,1,1,3,'2026-11-06',1,1,0,'2026-11-06 13:10:04',0,5),(21,1,1,1,'2026-11-09',1,1,0,'2026-11-09 06:08:05',0,5),(22,1,1,3,'2026-11-09',1,1,0,'2026-11-09 06:08:10',0,5);
 /*!40000 ALTER TABLE `course_attendance_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -440,7 +440,7 @@ CREATE TABLE `reset_otps` (
   PRIMARY KEY (`otp_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `reset_otps_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -449,7 +449,7 @@ CREATE TABLE `reset_otps` (
 
 LOCK TABLES `reset_otps` WRITE;
 /*!40000 ALTER TABLE `reset_otps` DISABLE KEYS */;
-INSERT INTO `reset_otps` VALUES (6,379576,4,'2026-10-24 15:54:21',0,1,'2026-10-24 15:44:21'),(8,229937,3,'2026-11-07 14:00:37',0,1,'2026-11-07 13:50:36');
+INSERT INTO `reset_otps` VALUES (6,379576,4,'2026-10-24 15:54:21',0,1,'2026-10-24 15:44:21'),(10,215706,3,'2026-11-08 19:20:45',0,0,'2026-11-08 19:10:44');
 /*!40000 ALTER TABLE `reset_otps` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -633,7 +633,7 @@ CREATE TABLE `student_fees` (
   KEY `student_id` (`student_id`),
   CONSTRAINT `student_fees_ibfk_1` FOREIGN KEY (`program_id`) REFERENCES `programs` (`program_id`),
   CONSTRAINT `student_fees_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -642,7 +642,7 @@ CREATE TABLE `student_fees` (
 
 LOCK TABLES `student_fees` WRITE;
 /*!40000 ALTER TABLE `student_fees` DISABLE KEYS */;
-INSERT INTO `student_fees` VALUES (1,18708.00,'paid','2026-11-07 08:03:35','voucher_pics/student_4_front_contact.PNG','voucher_pics/student_4_back_prj.PNG',1,'December',4,0),(2,68102.00,'paid','2026-11-07 08:03:35','voucher_pics/student_2_front_dep_view.PNG','voucher_pics/student_2_back_students_view.PNG',1,'January',2,0),(3,18708.00,'due','2026-03-25 13:21:57',NULL,NULL,4,'December',5,0),(4,19644.00,'paid','2026-03-19 10:25:10',NULL,NULL,4,'December',9,0),(5,12000.00,'due','2026-03-25 13:22:22',NULL,NULL,3,'December',8,0),(6,12345.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_Screenshot_2026-09-14_184408.png','voucher_pics/student_2_back_Screenshot_2026-09-14_184408.png',1,'February',2,0),(7,19000.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_Screenshot_2026-09-16_175618.png','voucher_pics/student_2_back_Screenshot_2026-09-16_175806.png',1,'September',2,0),(8,12345.00,'paid','2026-11-07 08:03:35','voucher_pics/student_2_front_map_visualization.png','voucher_pics/student_2_back_project_tree.png',1,'July',2,0),(9,30000.00,'paid','2026-11-07 08:03:35','voucher_pics/student_2_front_test4.jpg','voucher_pics/student_2_back_test5.jpg',1,'October',2,0),(10,123455.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_test8.jpg','voucher_pics/student_2_back_test6.jpg',1,'July',2,0),(11,30000.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_map_visualization.png','voucher_pics/student_2_back_analyze_api_response.png',1,'August',2,0),(12,87655.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_Screenshot_2026-09-14_190312.png','voucher_pics/student_2_back_Screenshot_2026-09-14_184408.png',1,'February',2,0),(13,1267.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_Screenshot_2026-09-16_175618.png','voucher_pics/student_2_back_Screenshot_2026-09-16_175806.png',1,'February',2,0),(14,12453.00,'paid','2026-10-24 06:48:40',NULL,NULL,1,'November',8,0),(15,1248953.00,'paid','2026-11-07 08:03:35','voucher_pics/student_13_front_project_tree.png','voucher_pics/student_13_back_analyze_api_response.png',3,'October',13,0),(16,1090933.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_Screenshot_2026-09-16_175618.png','voucher_pics/student_2_back_Screenshot_2026-09-16_181442.png',1,'November',2,0),(17,456.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_analyze_api_response.png','voucher_pics/student_2_back_geojson_api_response.png',1,'May',2,0),(18,465902.00,'paid','2026-11-07 05:05:37',NULL,NULL,3,'November',12,0),(19,1255.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_Screenshot_2026-09-17_203316.png','voucher_pics/student_2_back_Screenshot_2026-09-16_181159.png',1,'March',2,0),(20,19999.00,'due','2026-11-07 08:05:24','voucher_pics/student_2_front_Screenshot_2026-09-18_190813.png','voucher_pics/student_2_back_Screenshot_2026-09-16_181442.png',1,'June',2,0),(21,1111.00,'paid','2026-11-07 08:14:23','voucher_pics/student_2_front_Capture001.png','voucher_pics/student_2_back_Capture001.png',1,'December',2,0);
+INSERT INTO `student_fees` VALUES (1,18708.00,'paid','2026-11-07 08:03:35','voucher_pics/student_4_front_contact.PNG','voucher_pics/student_4_back_prj.PNG',1,'December',4,0),(2,68102.00,'paid','2026-11-07 08:03:35','voucher_pics/student_2_front_dep_view.PNG','voucher_pics/student_2_back_students_view.PNG',1,'January',2,0),(3,18708.00,'due','2026-03-25 13:21:57',NULL,NULL,4,'December',5,0),(4,19644.00,'paid','2026-03-19 10:25:10',NULL,NULL,4,'December',9,0),(5,12000.00,'due','2026-03-25 13:22:22',NULL,NULL,3,'December',8,0),(6,12345.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_Screenshot_2026-09-14_184408.png','voucher_pics/student_2_back_Screenshot_2026-09-14_184408.png',1,'February',2,0),(7,19000.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_Screenshot_2026-09-16_175618.png','voucher_pics/student_2_back_Screenshot_2026-09-16_175806.png',1,'September',2,0),(8,12345.00,'paid','2026-11-07 08:03:35','voucher_pics/student_2_front_map_visualization.png','voucher_pics/student_2_back_project_tree.png',1,'July',2,0),(9,30000.00,'paid','2026-11-07 08:03:35','voucher_pics/student_2_front_test4.jpg','voucher_pics/student_2_back_test5.jpg',1,'October',2,0),(10,123455.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_test8.jpg','voucher_pics/student_2_back_test6.jpg',1,'July',2,0),(11,30000.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_map_visualization.png','voucher_pics/student_2_back_analyze_api_response.png',1,'August',2,0),(12,87655.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_Screenshot_2026-09-14_190312.png','voucher_pics/student_2_back_Screenshot_2026-09-14_184408.png',1,'February',2,0),(13,1267.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_Screenshot_2026-09-16_175618.png','voucher_pics/student_2_back_Screenshot_2026-09-16_175806.png',1,'February',2,0),(14,12453.00,'paid','2026-10-24 06:48:40',NULL,NULL,1,'November',8,0),(15,1248953.00,'paid','2026-11-07 08:03:35','voucher_pics/student_13_front_project_tree.png','voucher_pics/student_13_back_analyze_api_response.png',3,'October',13,0),(16,1090933.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_Screenshot_2026-09-16_175618.png','voucher_pics/student_2_back_Screenshot_2026-09-16_181442.png',1,'November',2,0),(17,456.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_analyze_api_response.png','voucher_pics/student_2_back_geojson_api_response.png',1,'May',2,0),(18,465902.00,'paid','2026-11-07 05:05:37',NULL,NULL,3,'November',12,0),(19,1255.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_Screenshot_2026-09-17_203316.png','voucher_pics/student_2_back_Screenshot_2026-09-16_181159.png',1,'March',2,0),(20,19999.00,'due','2026-11-07 08:05:24','voucher_pics/student_2_front_Screenshot_2026-09-18_190813.png','voucher_pics/student_2_back_Screenshot_2026-09-16_181442.png',1,'June',2,0),(21,1111.00,'paid','2026-11-07 08:14:23','voucher_pics/student_2_front_Capture001.png','voucher_pics/student_2_back_Capture001.png',1,'December',2,0),(22,12345.00,'due','2026-11-07 15:03:39','voucher_pics/student_2_front_Screenshot_2026-09-18_190813.png','voucher_pics/student_2_back_map_visualization.png',1,'July',2,0),(23,766.00,'due','2026-11-07 15:10:49','voucher_pics/student_2_front_Screenshot_2026-09-20_130413.png','voucher_pics/student_2_back_Screenshot_2026-09-19_203515.png',1,'July',2,0);
 /*!40000 ALTER TABLE `student_fees` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1961,4 +1961,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-11-07 13:52:12
+-- Dump completed on 2026-11-09 11:19:14
