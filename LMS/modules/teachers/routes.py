@@ -19,6 +19,8 @@ from fastapi import BackgroundTasks
 from core.config import BASE_DIR   
 from core.templating import *
 from core.rate_limiter import guarded_authenticate, TooManyAttempts, client_ip
+from core.cookies import set_auth_cookies
+
 
 TEMPLATES_DIR=BASE_DIR / "web" / "templates"
 
@@ -32,34 +34,6 @@ templates.env.globals["csrf_token"]=get_csrf_token
 
 
 
-@router.get('/refresh')
-def refresh_session(request:Request):
-    old_refresh_token=request.cookies.get("refresh_token")
-    
-    if not old_refresh_token:
-        request.session['flash_error']="Session expired. Please login again."
-        return RedirectResponse(url='/teacher_login',status_code=status.HTTP_303_SEE_OTHER)
-
-    try:
-        payload=jwt.decode(old_refresh_token,SECRET_KEY,algorithms=["HS256"])
-        new_payload={
-            'user_id':payload['user_id'],
-            'role':payload['role'],
-            'teacher_id':payload['teacher_id']
-        }
-        access_token=create_token(new_payload)
-        new_token=refresh_token(new_payload)
-        response=RedirectResponse(url='/teacher_dashboard',status_code=status.HTTP_303_SEE_OTHER)
-        response.set_cookie(key="access_token",value=access_token,httponly=True,max_age=1800,samesite="lax")
-        response.set_cookie(key="refresh_token",value=new_token,httponly=True,max_age=7*24*60*60,samesite="lax")
-        return response
-        
-    except JWTError as je:
-        logging.exception(f"JWT Refresh get route: {str(je)}")
-        response=RedirectResponse(url='/teacher_login',status_code=status.HTTP_303_SEE_OTHER)
-        response.delete_cookie("access_token")
-        response.delete_cookie("refresh_token")
-        return response
 
 
 
@@ -88,23 +62,26 @@ def teacher_login(request:Request,email:str=Form(None),password:str=Form(None),r
             }
         token=create_token(token_payload)
         new_token=refresh_token(token_payload)
-        
         response=RedirectResponse(url='/teacher_dashboard',status_code=status.HTTP_303_SEE_OTHER)
-        response.set_cookie(
-            key="access_token",
-            value=token,
-            httponly=True,
-            max_age=1800,
-            samesite="lax"
-            )
-        response.set_cookie(
-            key="refresh_token",
-            value=new_token,
-            httponly=True,
-            max_age=7*24*60*60,
-            samesite="lax"
-            )
+        set_auth_cookies(response,token,new_token)
         return response
+                
+        # response=RedirectResponse(url='/teacher_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        # response.set_cookie(
+        #     key="access_token",
+        #     value=token,
+        #     httponly=True,
+        #     max_age=1800,
+        #     samesite="lax"
+        #     )
+        # response.set_cookie(
+        #     key="refresh_token",
+        #     value=new_token,
+        #     httponly=True,
+        #     max_age=7*24*60*60,
+        #     samesite="lax"
+        #     )
+        # return response
         
         # request.session.update({
         #     'user_id':user['user_id'],

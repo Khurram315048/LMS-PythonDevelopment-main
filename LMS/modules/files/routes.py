@@ -5,9 +5,10 @@ from fastapi import APIRouter, HTTPException, Request, status
 from fastapi.responses import FileResponse
 from jose import JWTError, jwt
 from sqlalchemy import select
-
+from core.security import ACCESS, TokenError, decode_token
+from core.config import BASE_DIR
 from core.auth import ALGORITHM
-from core.config import BASE_DIR, SECRET_KEY
+from core.config import SECRET_KEY
 from db.models.orm import FypGroup, StudentFee, StudentSubmission, TeacherCourse
 from db.session import SessionLocal
 
@@ -17,29 +18,40 @@ UPLOAD_ROOT=(BASE_DIR / "storage" / "students_uploads").resolve()
 ALLOWED_ROLES={"student","teacher","admin"}
 
 
+# def get_file_user(request:Request) -> dict:
+#     token=request.cookies.get("access_token")
+#     if not token:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="Authentication required",
+#         )
+
+#     try:
+#         user = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+#     except JWTError:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="Invalid or expired token",
+#         )
+
+#     if user.get("role") not in ALLOWED_ROLES:
+#         raise HTTPException(
+#             status_code=status.HTTP_403_FORBIDDEN,
+#             detail="Access denied",
+#         )
+
+#     return user
+
+
 def get_file_user(request:Request) -> dict:
     token=request.cookies.get("access_token")
     if not token:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Authentication required",
-        )
-
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Authentication required")
     try:
-        user = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    except JWTError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token",
-        )
+        return decode_token(token,ACCESS)
+    except TokenError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Invalid or expired token")
 
-    if user.get("role") not in ALLOWED_ROLES:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Access denied",
-        )
-
-    return user
 
 
 @router.get("/files/{kind}/{record_id}",name="download_private_file")

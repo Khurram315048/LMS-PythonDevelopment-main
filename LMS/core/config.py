@@ -7,12 +7,24 @@ load_dotenv(BASE_DIR / ".env")
 
 TEMPLATES_AUTO_RELOAD=True
 
+
+
+
+
 MYSQL_HOST=os.getenv('MYSQL_HOST','localhost')
 MYSQL_USER=os.getenv('MYSQL_USER','root')
 MYSQL_PASSWORD=os.getenv('MYSQL_PASSWORD','')
 MYSQL_DB=os.getenv('MYSQL_DB','lms')
 MYSQL_PORT=int(os.getenv('MYSQL_PORT',3306))
 SECRET_KEY=os.getenv('SECRET_KEY')
+APP_ENV=os.getenv("APP_ENV","development").lower()
+COOKIE_SECURE=os.getenv("COOKIE_SECURE","true" if APP_ENV=="production" else "false").lower()=="true"
+COOKIE_SAMESITE=os.getenv("COOKIE_SAMESITE","lax").lower()
+ACCESS_TOKEN_MINUTES=int(os.getenv("ACCESS_TOKEN_MINUTES","1"))
+REFRESH_TOKEN_DAYS=int(os.getenv("REFRESH_TOKEN_DAYS","7"))
+
+if not SECRET_KEY or len(SECRET_KEY)<32:
+    raise RuntimeError("SECRET_KEY must be set and at least 32 characters long")
 MYSQL_CURSORCLASS='DictCursor'
 GROQ_API_KEY=os.getenv("GROQ_API_KEY")
 GROQ_MODEL=os.getenv("GROQ_MODEL","llama-3.3-70b-versatile")

@@ -11,14 +11,23 @@ from modules.teachers.routes import router as teacher_router
 from modules.admin.routes import router as admin_router
 from modules.chatbot.routes import router as chat_router
 from modules.files.routes import router as files_router
+from core.config import SECRET_KEY, BASE_DIR, COOKIE_SECURE, COOKIE_SAMESITE
+from modules.auth.refresh import router as refresh_router
+
+
 
 app=FastAPI()
-app.add_middleware(SessionMiddleware,secret_key=SECRET_KEY,max_age=3600)
+
+
+app.add_middleware(SessionMiddleware,secret_key=SECRET_KEY,max_age=3600,
+                   https_only=COOKIE_SECURE,same_site=COOKIE_SAMESITE)
+# app.add_middleware(SessionMiddleware,secret_key=SECRET_KEY,max_age=3600)
 app.mount("/static",StaticFiles(directory=str(BASE_DIR / "web" / "static")),name="static")
 
 # app.mount("/uploads",StaticFiles(directory=str(BASE_DIR / "storage" / "students_uploads")),name="uploads")
 
 app.include_router(auth_router)
+app.include_router(refresh_router) 
 app.include_router(student_router)
 app.include_router(teacher_router)
 app.include_router(admin_router)

@@ -12,6 +12,8 @@ from shared.mail import send_email
 from modules.auth.repository import MainModel
 from modules.auth.schema import SignupUser
 from core.rate_limiter import check_otp_send, TooManyAttempts, client_ip
+from core.cookies import clear_auth_cookies
+
 
 router=APIRouter(dependencies=[Depends(verify_csrf)])
 templates=get_templates("auth")
@@ -191,6 +193,5 @@ def update_password(request:Request,new_password:str=Form(None),confirm_password
 def logout(request:Request):
     request.session.clear()
     response=RedirectResponse(url="/main_view",status_code=status.HTTP_303_SEE_OTHER,)
-    response.delete_cookie("access_token")
-    response.delete_cookie("refresh_token")
+    clear_auth_cookies(response)
     return response

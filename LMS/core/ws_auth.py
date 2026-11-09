@@ -1,12 +1,9 @@
 import logging
 from urllib.parse import urlparse
 from fastapi import WebSocket
-from jose import jwt, JWTError
-from core.config import SECRET_KEY
-from core.auth import ALGORITHM
 from db.session import mysql
 from modules.students.service import StudentService
-
+from core.security import ACCESS, TokenError, decode_token
 
 def _origin_ok(websocket: WebSocket)->bool:
     origin=websocket.headers.get("origin")
@@ -25,8 +22,8 @@ def authorize_ws_user(websocket:WebSocket,fyp_id:int,url_user_type:str,url_user_
         return None
 
     try:
-        payload=jwt.decode(token,SECRET_KEY,algorithms=[ALGORITHM])
-    except JWTError:
+        payload=decode_token(token,ACCESS)
+    except TokenError:
         return None
 
     role=payload.get("role")

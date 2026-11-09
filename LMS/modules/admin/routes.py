@@ -17,7 +17,7 @@ from shared.mail import send_email
 from core.templating import *
 from core.config import BASE_DIR 
 from core.rate_limiter import guarded_authenticate, TooManyAttempts, client_ip
-
+from core.cookies import set_auth_cookies
 
 
 TEMPLATES_DIR=BASE_DIR / "web" / "templates"
@@ -36,34 +36,7 @@ class AdminLoginRequest(BaseModel):
 
 
 
-@router.get('/refresh')
-def refresh_session(request:Request):
-    old_refresh_token=request.cookies.get("refresh_token")
-    
-    if not old_refresh_token:
-        request.session['flash_error']="Session expired. Please login again."
-        return RedirectResponse(url='/admin_login',status_code=status.HTTP_303_SEE_OTHER)
 
-    try:
-        payload=jwt.decode(old_refresh_token,SECRET_KEY,algorithms=["HS256"])
-        new_payload={
-            'user_id':payload['user_id'],
-            'role':payload['role'],
-            'admin_id':payload['admin_id']
-        }
-        access_token=create_token(new_payload)
-        new_token=refresh_token(new_payload)
-        response=RedirectResponse(url='/admin_dashboard',status_code=status.HTTP_303_SEE_OTHER)
-        response.set_cookie(key="access_token",value=access_token,httponly=True,max_age=1800,samesite="lax")
-        response.set_cookie(key="refresh_token",value=new_token,httponly=True,max_age=7*24*60*60,samesite="lax")
-        return response
-        
-    except JWTError as je:
-        logging.exception(f"JWT Refresh get route: {str(je)}")
-        response=RedirectResponse(url='/admin_login',status_code=status.HTTP_303_SEE_OTHER)
-        response.delete_cookie("access_token")
-        response.delete_cookie("refresh_token")
-        return response
 
 
 
@@ -90,11 +63,13 @@ def admin_login(request:Request,email:str=Form(None),password:str=Form(None),rem
         }
         access_token=create_token(token_payload)
         new_token=refresh_token(token_payload)
-
         response=RedirectResponse(url='/admin_dashboard',status_code=status.HTTP_303_SEE_OTHER)
-        response.set_cookie(key="access_token",value=access_token,httponly=True,max_age=1800,samesite="lax")
-        response.set_cookie(key="refresh_token",value=new_token,httponly=True,max_age=7*24*60*60,samesite="lax")
+        set_auth_cookies(response,access_token,new_token)
         return response
+        # response=RedirectResponse(url='/admin_dashboard',status_code=status.HTTP_303_SEE_OTHER)
+        # response.set_cookie(key="access_token",value=access_token,httponly=True,max_age=1800,samesite="lax")
+        # response.set_cookie(key="refresh_token",value=new_token,httponly=True,max_age=7*24*60*60,samesite="lax")
+        # return response
     except TooManyAttempts as t:
                 return templates.TemplateResponse(request=request,name="admin_login.html",
                             context={"error":f"Too many failed attempts. Try again in {t.minutes} minutes."},
@@ -115,7 +90,6 @@ def admin_login(request:Request,email:str=Form(None),password:str=Form(None),rem
 def admin_dashboard(request:Request,current_user:dict=Depends(get_current_admin)):
     try:
         dashboard_data=AdminService.get_dashboard_data()
-        print(dashboard_data)
         dashboard_data['flash_success']=request.session.pop('flash_success', None)
         dashboard_data['flash_error']=request.session.pop('flash_error', None)
         return templates.TemplateResponse(request=request,name="admin_dashboard.html",context=dashboard_data)
