@@ -1,5 +1,3 @@
-
-
 from sqlalchemy import (
     Column,Integer,SmallInteger,String,Text,Boolean,Date,Time,DateTime,
     TIMESTAMP,Numeric,Enum,ForeignKey,UniqueConstraint,CheckConstraint,
