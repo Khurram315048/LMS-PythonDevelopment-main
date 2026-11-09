@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime,time,timedelta
-
+from core.exceptions import BusinessRuleError, NotFoundError, ValidationError
 from sqlalchemy import select,update,delete,func,and_,or_
 from sqlalchemy.orm import aliased
 
@@ -720,6 +720,83 @@ class SalaryModel:
 
 class EnrollmentModel:
 
+
+    @staticmethod
+    def enroll_with_section(student_id:int,course_id:int,section_id:int) -> None:
+        session=SessionLocal()
+        try:
+            student_exists=session.execute(select(Student.student_id)
+                .where(Student.student_id==student_id,
+                    Student.is_deleted.is_(False),)
+                .with_for_update()
+            ).first()
+
+            if not student_exists:
+                raise NotFoundError("Student not found.")
+
+            course_exists=session.execute(
+                select(Course.course_id).where(
+                    Course.course_id==course_id,
+                    Course.is_deleted.is_(False),
+                )
+            ).first()
+
+            if not course_exists:
+                raise NotFoundError("Course not found.")
+
+            section_exists=session.execute(
+                select(Section.section_id).where(
+                    Section.section_id==section_id,
+                    Section.course_id==course_id,
+                    Section.is_deleted.is_(False),
+                )
+            ).first()
+
+            if not section_exists:
+                raise ValidationError(
+                    "Selected section does not belong to this course."
+                )
+
+            enrollment=session.execute(
+                select(StudentCourse)
+                .where(
+                    StudentCourse.student_id==student_id,
+                    StudentCourse.course_id==course_id,
+                )
+                .with_for_update()
+            ).scalars().first()
+
+            if enrollment and not enrollment.is_deleted:
+                raise BusinessRuleError(
+                    "Student is already enrolled in this course."
+                )
+
+            if enrollment:
+                enrollment.is_deleted = False
+            else:
+                session.add(StudentCourse(student_id=student_id,course_id=course_id))
+
+            section_enrollment=session.execute(
+                select(StudentSection)
+                .where(StudentSection.student_id==student_id,
+                    StudentSection.section_id==section_id,)
+                .with_for_update()
+            ).scalars().first()
+
+            if section_enrollment:
+                section_enrollment.is_deleted = False
+            else:
+                session.add(StudentSection(student_id=student_id,section_id=section_id,))
+
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            logging.exception(f"error during enrl sec: {str(e)}")
+            raise
+        finally:
+            session.close()
+
+
     @staticmethod
     def get_all():
         session=SessionLocal()
@@ -753,7 +830,7 @@ class EnrollmentModel:
             session.close()
 
     @staticmethod
-    def enroll(student_id, course_id):
+    def enroll(student_id,course_id):
         session=SessionLocal()
         try:
             session.add(StudentCourse(student_id=student_id,course_id=course_id))
@@ -791,7 +868,7 @@ class EnrollmentModel:
             session.close()
 
     @staticmethod
-    def get_section(student_id, section_id, is_deleted=0):
+    def get_section(student_id,section_id,is_deleted=0):
         session=SessionLocal()
         try:
             stmt=select(StudentSection).where(StudentSection.student_id==student_id,

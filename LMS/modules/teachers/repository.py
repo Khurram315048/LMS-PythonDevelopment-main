@@ -432,14 +432,17 @@ class TeacherModel:
             session.close()
 
 
+
     @staticmethod
-    def is_section_owned_by_teacher(section_id:int,teacher_id:int):
+    def is_section_owned_by_teacher(section_id:int,teacher_id:int)->bool:
         session=SessionLocal()
         try:
             stmt=(select(TeacherCourse.teacher_course_id)
-                  .select_from(TeacherCourse)
-                  .join(Section,TeacherCourse.course_id==Section.course_id)
-                  .where(Section.section_id==section_id,TeacherCourse.teacher_id==teacher_id))
+                .select_from(TeacherCourse)
+                .join(Section,TeacherCourse.course_id==Section.course_id)
+                .where(Section.section_id==section_id,
+                TeacherCourse.teacher_id==teacher_id,
+                TeacherCourse.is_deleted.is_(False),))
             return session.execute(stmt).first() is not None
         except Exception as e:
             logging.exception(f"Error during is sct owned(models): {str(e)}")

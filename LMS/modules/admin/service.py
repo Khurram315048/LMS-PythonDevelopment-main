@@ -72,15 +72,27 @@ class AdminService:
 
 
     @staticmethod
-    def enroll_student_in_course(student_id:int,course_id:int,section_id:int):
-        if not section_id:
-            raise ValidationError("Please select a section.")
+    def enroll_student_in_course(student_id:int,course_id:int,section_id: int):
+        if not section_id or section_id <= 0:
+            raise ValidationError("Please select a valid section.")
+
+        EnrollmentModel.enroll_with_section(
+            student_id=student_id,
+            course_id=course_id,
+            section_id=section_id,
+        )
+    # @staticmethod
+    # def enroll_student_in_course(student_id:int,course_id:int):
+    #     if not section_id or section_id<=0:
+    #         raise ValidationError("Please select a section.")
             
-        if EnrollmentModel.exists(student_id,course_id):
-            raise BusinessRuleError("Student is already enrolled in this course.")
+    #     if EnrollmentModel.exists(student_id,course_id):
+    #         raise BusinessRuleError("Student is already enrolled in this course.")
             
-        EnrollmentModel.enroll(student_id,course_id)
-        EnrollmentModel.add_or_restore_section(student_id,section_id)
+    #     EnrollmentModel.enroll(student_id=student_id,
+    #         course_id=course_id,
+    #         section_id=section_id,)
+    #     EnrollmentModel.add_or_restore_section(student_id,section_id)
 
 
     @staticmethod
