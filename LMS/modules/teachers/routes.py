@@ -78,7 +78,7 @@ def teacher_login(request:Request,email:str=Form(None),password:str=Form(None),r
             password=password,
             remember_me=remember_me
         )   
-        user,teacher_obj=guarded_authenticate("admin",inputs.email,inputs.password,
+        user,teacher_obj=guarded_authenticate("teacher",inputs.email,inputs.password,
                                                               client_ip(request),TeacherService.authenticate_teacher)
         # user,teacher_obj=TeacherService.authenticate_teacher(inputs.email,inputs.password)
         token_payload={
