@@ -372,7 +372,7 @@ class TeacherService:
     @staticmethod
     def submit_bulk_results(teacher_id:int,section_id:int,form_data:dict):
         try:
-            if not TeacherModel.is_section_owned_by_teacher(section_id, teacher_id):
+            if not TeacherModel.is_section_owned_by_teacher(section_id,teacher_id):
                 raise BusinessRuleError("Unauthorized attempt to save grade")
 
             meta=TeacherModel.get_attendance_meta(section_id)
