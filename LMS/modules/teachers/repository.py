@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime, time, timedelta
 
-from sqlalchemy import select, update, func, and_, or_, text, distinct, literal_column
+from sqlalchemy import select, update, func, and_, or_, text, distinct, literal_column,case
 from sqlalchemy.dialects.mysql import insert as mysql_insert
 
 from db.session import SessionLocal
@@ -455,48 +455,158 @@ class TeacherModel:
             session.close()
 
 
+
     @staticmethod
-    def process_student_result(sid:int,section_id:int,course_id:int,semester:int,data:str):
+    def process_student_result(sid:int,section_id:int,course_id: int,semester:int,data: dict):
         session=SessionLocal()
         try:
             sc_record=_row(session.execute(
                 select(StudentCourse.student_course_id)
-                .where(StudentCourse.student_id==sid,StudentCourse.course_id==course_id)).first())
+                .where(
+                    StudentCourse.student_id==sid,
+                    StudentCourse.course_id==course_id,
+                    StudentCourse.is_deleted.is_(False),)).first())
+
             if not sc_record:
-                logging.error(f"Error during stnd crs id(models) for student id: {sid}")
-                return
+                raise NotFoundError("Student course enrollment not found")
 
             res_parent=_row(session.execute(
                 select(StudentResult.student_result_id)
-                .where(StudentResult.student_id==sid,
-                       StudentResult.student_semester==semester)).first())
-            res_id=res_parent['student_result_id'] if res_parent else None
+                .where(
+                    StudentResult.student_id==sid,
+                    StudentResult.student_semester==semester,)).first())
 
-            if not res_id:
-                new_result=StudentResult(student_id=sid,student_semester=semester,
-                                         result_status=data['status'],overall_gpa=data['gpa'])
+            if res_parent:
+                res_id=res_parent["student_result_id"]
+            else:
+                new_result=StudentResult(
+                    student_id=sid,
+                    student_semester=semester,
+                    result_status=data["status"],
+                    overall_gpa=data["gpa"],)
                 session.add(new_result)
                 session.flush()
                 res_id=new_result.student_result_id
 
-
             stmt=mysql_insert(StudentResultMarks).values(
-                student_course_id=sc_record['student_course_id'],student_result_id=res_id,
-                total_marks=data['total'],student_grade=data['grade'],status=data['status'],
-                student_semester=semester,sessional_marks=data['sessional'],
-                mid_marks=data['mids'],final_marks=data['final'],subject_gpa=data['gpa'])
+                student_course_id=sc_record["student_course_id"],
+                student_result_id=res_id,
+                total_marks=data["total"],
+                student_grade=data["grade"],
+                status=data["status"],
+                student_semester=semester,
+                sessional_marks=data["sessional"],
+                mid_marks=data["mids"],
+                final_marks=data["final"],
+                subject_gpa=data["gpa"],
+            )
             stmt=stmt.on_duplicate_key_update(
-                total_marks=data['total'],student_grade=data['grade'],status=data['status'],
-                sessional_marks=data['sessional'],mid_marks=data['mids'],
-                final_marks=data['final'],subject_gpa=data['gpa'])
+                total_marks=data["total"],
+                student_grade=data["grade"],
+                status=data["status"],
+                sessional_marks=data["sessional"],
+                mid_marks=data["mids"],
+                final_marks=data["final"],
+                subject_gpa=data["gpa"],
+            )
             session.execute(stmt)
+
+            # Recalculate the semester GPA as a credit-hour-weighted average.
+            # If course credit hours are missing or zero, fall back to a
+            # regular average of the subject GPAs.
+            aggregate=_row(session.execute(select(func.coalesce(
+                        func.sum(
+                            StudentResultMarks.subject_gpa
+                            * func.coalesce(Course.credit_hours, 0)
+                        )
+                        / func.nullif(
+                            func.sum(func.coalesce(Course.credit_hours, 0)), 0
+                        ),
+                        func.avg(StudentResultMarks.subject_gpa),
+                    ).label("overall_gpa"),
+                    func.sum(
+                        case(
+                            (StudentResultMarks.status=="Fail", 1),
+                            else_=0,
+                        )
+                    ).label("failed_count"),
+                )
+                .select_from(StudentResultMarks)
+                .join(
+                    StudentCourse,
+                    StudentResultMarks.student_course_id
+                    == StudentCourse.student_course_id,
+                )
+                .join(Course, StudentCourse.course_id == Course.course_id)
+                .where(
+                    StudentResultMarks.student_result_id == res_id,
+                    StudentResultMarks.is_deleted.is_(False),
+                )
+            ).first())
+
+            session.execute(
+                update(StudentResult)
+                .where(StudentResult.student_result_id == res_id)
+                .values(
+                    overall_gpa=round(float(aggregate["overall_gpa"] or 0), 2),
+                    result_status=(
+                        "Fail" if aggregate["failed_count"] else "Pass"
+                    ),
+                )
+            )
+
             session.commit()
         except Exception as e:
-            logging.exception(f"Error during prcs stnd res(models): {str(e)}")
             session.rollback()
+            logging.exception(
+                f"Error during processing student result: {str(e)}"
+            )
             raise
         finally:
             session.close()
+
+    # @staticmethod
+    # def process_student_result(sid:int,section_id:int,course_id:int,semester:int,data:str):
+    #     session=SessionLocal()
+    #     try:
+    #         sc_record=_row(session.execute(
+    #             select(StudentCourse.student_course_id)
+    #             .where(StudentCourse.student_id==sid,StudentCourse.course_id==course_id)).first())
+    #         if not sc_record:
+    #             logging.error(f"Error during stnd crs id(models) for student id: {sid}")
+    #             return
+
+    #         res_parent=_row(session.execute(
+    #             select(StudentResult.student_result_id)
+    #             .where(StudentResult.student_id==sid,
+    #                    StudentResult.student_semester==semester)).first())
+    #         res_id=res_parent['student_result_id'] if res_parent else None
+
+    #         if not res_id:
+    #             new_result=StudentResult(student_id=sid,student_semester=semester,
+    #                                      result_status=data['status'],overall_gpa=data['gpa'])
+    #             session.add(new_result)
+    #             session.flush()
+    #             res_id=new_result.student_result_id
+
+
+    #         stmt=mysql_insert(StudentResultMarks).values(
+    #             student_course_id=sc_record['student_course_id'],student_result_id=res_id,
+    #             total_marks=data['total'],student_grade=data['grade'],status=data['status'],
+    #             student_semester=semester,sessional_marks=data['sessional'],
+    #             mid_marks=data['mids'],final_marks=data['final'],subject_gpa=data['gpa'])
+    #         stmt=stmt.on_duplicate_key_update(
+    #             total_marks=data['total'],student_grade=data['grade'],status=data['status'],
+    #             sessional_marks=data['sessional'],mid_marks=data['mids'],
+    #             final_marks=data['final'],subject_gpa=data['gpa'])
+    #         session.execute(stmt)
+    #         session.commit()
+    #     except Exception as e:
+    #         logging.exception(f"Error during prcs stnd res(models): {str(e)}")
+    #         session.rollback()
+    #         raise
+    #     finally:
+    #         session.close()
 
 
     @staticmethod
