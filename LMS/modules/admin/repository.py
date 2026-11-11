@@ -288,8 +288,6 @@ class StudentModel:
     def get_all():
         session=SessionLocal()
         try:
-            # ss.*, p.program_name, u.email  (original me u.email, students.email ko override karta tha,
-            # isliye students ka email column star se nikal ke users ka email rakha hai)
             student_cols=[c for c in Student.__table__.columns if c.name!='email']
             stmt=(select(*student_cols,Program.program_name,User.email)
                   .select_from(Student)
@@ -1365,7 +1363,7 @@ class FYPModel:
                          Teacher.contact_num.label('teacher_contact'))
                   .select_from(FypGroup)
                   .join(Student,FypGroup.student_id==Student.student_id)
-                  .join(Teacher,FypGroup.teacher_id==Teacher.teacher_id)
+                  .outerjoin(Teacher,FypGroup.teacher_id==Teacher.teacher_id)
                   .join(Program,Student.program_id==Program.program_id)
                   .outerjoin(StudentSection,and_(Student.student_id==StudentSection.student_id,
                                                  StudentSection.is_deleted==0))
