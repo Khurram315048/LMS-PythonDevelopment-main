@@ -12,11 +12,12 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from starlette.middleware.sessions import SessionMiddleware
-
+from fastapi.staticfiles import StaticFiles
+from core.config import BASE_DIR
 
 @pytest.fixture
 def app():
-    # Keep chatbot excluded from the test application.
+    
     from modules.admin.routes import router as admin_router
     from modules.auth.refresh import router as refresh_router
     from modules.auth.routes import router as auth_router
@@ -32,8 +33,13 @@ def app():
         https_only=False,
         same_site="lax",
     )
+    test_app.mount(
+        "/static",
+        StaticFiles(directory=str(BASE_DIR / "web" / "static")),
+        name="static",
+    )
 
-    test_app.include_router(auth_router)  # Add this
+    test_app.include_router(auth_router)  
     test_app.include_router(refresh_router)
     test_app.include_router(student_router)
     test_app.include_router(teacher_router)
