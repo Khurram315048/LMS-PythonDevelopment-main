@@ -436,7 +436,7 @@ def mark_submission(request:Request,submission_id:int=Path(...,gt=0),section_id:
         request.session['flash_success']="Grades updated successfully."
     except PydanticValidationError as ve:
         request.session['flash_error']=str(ve)    
-    except (BusinessRuleError,ValidationError) as bv:
+    except (BusinessRuleError,ValidationError,NotFoundError) as bv:
         logging.warning(f"Error during mrk submsn route: {str(bv)}")
         request.session['flash_error']=str(bv)
     except Exception as e:

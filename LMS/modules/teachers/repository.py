@@ -369,11 +369,15 @@ class TeacherModel:
     def update_submission_marks(sub_id:int,marks:int,section_id:int,total:int,sub_type:str):
         session=SessionLocal()
         try:
-            session.execute(update(StudentSubmission)
+            result=session.execute(update(StudentSubmission)
                             .where(StudentSubmission.submission_id==sub_id,
                                    StudentSubmission.section_id==section_id,
-                                   StudentSubmission.submission_type==sub_type)
+                                   StudentSubmission.submission_type==sub_type,
+                                   StudentSubmission.is_deleted.is_(False))
                             .values(marks=marks,total_marks=total))
+            if result.rowcount==0:
+                raise NotFoundError("Submission not found for this section and type")
+            
             session.commit()
         except Exception as e:
             logging.exception(f"Error during updt submssn(models): {str(e)}")
