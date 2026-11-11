@@ -289,6 +289,9 @@ class StudentService:
             if not summer:
                 logging.warning(f"Summer registeration handle by student: {student_id}")
                 raise NotFoundError("No summer semester available")
+
+            if summer.get('status') !='open':
+                raise BusinessRuleError("Summer Semester is closed for Registeration")
             
             StudentModel.add_summer_subject(student_id,subject_id,summer['summer_semesters_id'])
         except NotFoundError:

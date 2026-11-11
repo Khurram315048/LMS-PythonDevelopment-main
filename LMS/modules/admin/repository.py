@@ -435,7 +435,7 @@ class StudentModel:
         try:
             stmt=(select(StudentResult.result_status,StudentResult.student_semester)
                   .where(StudentResult.student_id==student_id)
-                  .order_by(StudentResult.student_semester.asc())
+                  .order_by(StudentResult.student_semester.desc())
                   .limit(1))
             return _row(session.execute(stmt).first())
         except Exception as e:

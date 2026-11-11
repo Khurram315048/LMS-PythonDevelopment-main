@@ -947,7 +947,8 @@ class StudentModel:
         session=SessionLocal()
         try:
             stmt=(select(SummerSemester)
-                  .order_by(SummerSemester.summer_semesters_id.asc())
+                  .where(SummerSemester.is_deleted.is_(False),SummerSemester.status=='open')
+                  .order_by(SummerSemester.summer_semesters_id.desc())
                   .limit(1))
             semester=_obj(session.execute(stmt).scalars().first())
             return semester
