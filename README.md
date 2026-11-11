@@ -3,6 +3,13 @@
 LMS-PythonDevelopment-main
 ├─ LMS
 │  ├─ .env
+│  ├─ .pytest_cache
+│  │  ├─ CACHEDIR.TAG
+│  │  ├─ README.md
+│  │  └─ v
+│  │     └─ cache
+│  │        ├─ lastfailed
+│  │        └─ nodeids
 │  ├─ app
 │  │  ├─ main.py
 │  │  ├─ __init__.py
@@ -12,29 +19,44 @@ LMS-PythonDevelopment-main
 │  ├─ core
 │  │  ├─ auth.py
 │  │  ├─ config.py
+│  │  ├─ cookies.py
 │  │  ├─ csrf.py
 │  │  ├─ exceptions.py
 │  │  ├─ logger.py
+│  │  ├─ rate_limiter.py
 │  │  ├─ security.py
 │  │  ├─ templating.py
 │  │  ├─ ws_auth.py
 │  │  └─ __pycache__
+│  │     ├─ auth.cpython-312.pyc
 │  │     ├─ auth.cpython-313.pyc
+│  │     ├─ config.cpython-312.pyc
 │  │     ├─ config.cpython-313.pyc
+│  │     ├─ cookies.cpython-312.pyc
+│  │     ├─ cookies.cpython-313.pyc
+│  │     ├─ csrf.cpython-312.pyc
 │  │     ├─ csrf.cpython-313.pyc
+│  │     ├─ exceptions.cpython-312.pyc
 │  │     ├─ exceptions.cpython-313.pyc
+│  │     ├─ logger.cpython-312.pyc
 │  │     ├─ logger.cpython-313.pyc
 │  │     ├─ logging.cpython-313.pyc
+│  │     ├─ rate_limiter.cpython-312.pyc
+│  │     ├─ rate_limiter.cpython-313.pyc
+│  │     ├─ security.cpython-312.pyc
 │  │     ├─ security.cpython-313.pyc
+│  │     ├─ templating.cpython-312.pyc
 │  │     ├─ templating.cpython-313.pyc
 │  │     └─ ws_auth.cpython-313.pyc
 │  ├─ db
 │  │  ├─ models
 │  │  │  ├─ orm.py
 │  │  │  └─ __pycache__
+│  │  │     ├─ orm.cpython-312.pyc
 │  │  │     └─ orm.cpython-313.pyc
 │  │  ├─ session.py
 │  │  └─ __pycache__
+│  │     ├─ session.cpython-312.pyc
 │  │     └─ session.cpython-313.pyc
 │  ├─ knowledge_base
 │  │  └─ docs
@@ -67,14 +89,19 @@ LMS-PythonDevelopment-main
 │  │  │  ├─ routes.py
 │  │  │  ├─ service.py
 │  │  │  └─ __pycache__
+│  │  │     ├─ repository.cpython-312.pyc
 │  │  │     ├─ repository.cpython-313.pyc
+│  │  │     ├─ routes.cpython-312.pyc
 │  │  │     ├─ routes.cpython-313.pyc
+│  │  │     ├─ service.cpython-312.pyc
 │  │  │     └─ service.cpython-313.pyc
 │  │  ├─ auth
+│  │  │  ├─ refresh.py
 │  │  │  ├─ repository.py
 │  │  │  ├─ routes.py
 │  │  │  ├─ schema.py
 │  │  │  └─ __pycache__
+│  │  │     ├─ refresh.cpython-313.pyc
 │  │  │     ├─ repository.cpython-313.pyc
 │  │  │     ├─ routes.cpython-313.pyc
 │  │  │     └─ schema.cpython-313.pyc
@@ -133,6 +160,10 @@ LMS-PythonDevelopment-main
 │  │  │     ├─ registry.cpython-313.pyc
 │  │  │     ├─ routes.cpython-313.pyc
 │  │  │     └─ __init__.cpython-313.pyc
+│  │  ├─ files
+│  │  │  ├─ routes.py
+│  │  │  └─ __pycache__
+│  │  │     └─ routes.cpython-313.pyc
 │  │  ├─ notifications
 │  │  │  ├─ updates_routes.py
 │  │  │  ├─ websocket_routes.py
@@ -144,9 +175,13 @@ LMS-PythonDevelopment-main
 │  │  │  ├─ schemas.py
 │  │  │  ├─ service.py
 │  │  │  └─ __pycache__
+│  │  │     ├─ repository.cpython-312.pyc
 │  │  │     ├─ repository.cpython-313.pyc
+│  │  │     ├─ routes.cpython-312.pyc
 │  │  │     ├─ routes.cpython-313.pyc
+│  │  │     ├─ schemas.cpython-312.pyc
 │  │  │     ├─ schemas.cpython-313.pyc
+│  │  │     ├─ service.cpython-312.pyc
 │  │  │     └─ service.cpython-313.pyc
 │  │  └─ teachers
 │  │     ├─ repository.py
@@ -154,10 +189,15 @@ LMS-PythonDevelopment-main
 │  │     ├─ schemas.py
 │  │     ├─ service.py
 │  │     └─ __pycache__
+│  │        ├─ repository.cpython-312.pyc
 │  │        ├─ repository.cpython-313.pyc
+│  │        ├─ routes.cpython-312.pyc
 │  │        ├─ routes.cpython-313.pyc
+│  │        ├─ schemas.cpython-312.pyc
 │  │        ├─ schemas.cpython-313.pyc
+│  │        ├─ service.cpython-312.pyc
 │  │        └─ service.cpython-313.pyc
+│  ├─ pytest.ini
 │  ├─ requirements.txt
 │  ├─ scripts
 │  │  ├─ auto_export_db.py
@@ -166,6 +206,7 @@ LMS-PythonDevelopment-main
 │  │  ├─ mail.py
 │  │  ├─ websocket_manager.py
 │  │  └─ __pycache__
+│  │     ├─ mail.cpython-312.pyc
 │  │     ├─ mail.cpython-313.pyc
 │  │     └─ websocket_manager.cpython-313.pyc
 │  ├─ storage
@@ -218,11 +259,13 @@ LMS-PythonDevelopment-main
 │  │        ├─ student_2_back_IMG_0874.jpeg
 │  │        ├─ student_2_back_IMG_0895.jpeg
 │  │        ├─ student_2_back_IMG_1297.jpeg
+│  │        ├─ student_2_back_map_visualization.png
 │  │        ├─ student_2_back_project_tree.png
 │  │        ├─ student_2_back_Screenshot_2026-09-14_184408.png
 │  │        ├─ student_2_back_Screenshot_2026-09-16_175806.png
 │  │        ├─ student_2_back_Screenshot_2026-09-16_181159.png
 │  │        ├─ student_2_back_Screenshot_2026-09-16_181442.png
+│  │        ├─ student_2_back_Screenshot_2026-09-19_203515.png
 │  │        ├─ student_2_back_Screenshot_from_2026-08-26_14-01-26.png
 │  │        ├─ student_2_back_test5.jpg
 │  │        ├─ student_2_back_test6.jpg
@@ -241,11 +284,28 @@ LMS-PythonDevelopment-main
 │  │        ├─ student_2_front_Screenshot_2026-09-16_175618.png
 │  │        ├─ student_2_front_Screenshot_2026-09-17_203316.png
 │  │        ├─ student_2_front_Screenshot_2026-09-18_190813.png
+│  │        ├─ student_2_front_Screenshot_2026-09-20_130413.png
 │  │        ├─ student_2_front_Screenshot_from_2026-04-01_16-03-18.png
 │  │        ├─ student_2_front_Screenshot_from_2026-08-26_14-25-11.png
 │  │        ├─ student_2_front_Screenshot_from_2026-08-26_21-25-50.png
 │  │        ├─ student_2_front_test4.jpg
 │  │        └─ student_2_front_test8.jpg
+│  ├─ tests
+│  │  ├─ confest.py
+│  │  ├─ integration
+│  │  │  ├─ test_access_control.py
+│  │  │  └─ __pycache__
+│  │  │     └─ test_access_control.cpython-312-pytest-9.2.0.pyc
+│  │  ├─ smoke
+│  │  │  ├─ test_imports.py
+│  │  │  └─ __pycache__
+│  │  │     └─ test_imports.cpython-312-pytest-9.2.0.pyc
+│  │  └─ unit
+│  │     ├─ test_auth.py
+│  │     ├─ test_student_service.py
+│  │     └─ __pycache__
+│  │        ├─ test_auth.cpython-312-pytest-9.2.0.pyc
+│  │        └─ test_student_service.cpython-312-pytest-9.2.0.pyc
 │  ├─ updated_lms.sql
 │  └─ web
 │     ├─ static

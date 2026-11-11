@@ -1,0 +1,13 @@
+def test_non_chatbot_modules_import():
+    import core.auth
+    import core.csrf
+    import core.security
+    import modules.admin.repository
+    import modules.admin.service
+    import modules.admin.routes
+    import modules.students.repository
+    import modules.students.service
+    import modules.students.routes
+    import modules.teachers.repository
+    import modules.teachers.service
+    import modules.teachers.routes
