@@ -102,7 +102,7 @@ def create_refresh_token(data:dict) -> str:
 
 
 def decode_token(token:str,expected_type:str,expected_role:str | None = None) -> dict:
-    """Signature, expiry, issuer, type, role aur required claims sab check karta hai."""
+    """Signature, expiry, issuer, type, role or required claims are check here."""
     try:
         payload=jwt.decode(token, _signing_key(expected_type),algorithms=[ALGORITHM],issuer=ISSUER)
     except ExpiredSignatureError as e:

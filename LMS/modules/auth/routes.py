@@ -55,6 +55,7 @@ async def user_signup(request:Request):
     return templates.TemplateResponse(request=request,name="user_signup.html",context={"error":error})
 
 
+
 @router.post("/user_signup",response_class=HTMLResponse)
 async def user_signup(request:Request,first_name:str=Form(...),last_name=Form(...),contact:int=Form(...),email:str=Form(...),
                       password:str=Form(...),user_type=Form(...)):
@@ -97,6 +98,7 @@ async def user_signup(request:Request,first_name:str=Form(...),last_name=Form(..
     return templates.TemplateResponse(request=request,name="user_signup.html",context={"error":error})
 
 
+
 @router.get('/send_reset_email',response_class=HTMLResponse)
 @router.post('/send_reset_email',response_class=HTMLResponse)
 def send_reset_email(request:Request,background_tasks:BackgroundTasks,email:str=Form(None)):
@@ -124,6 +126,7 @@ def send_reset_email(request:Request,background_tasks:BackgroundTasks,email:str=
         logging.exception(f"during snd rst email(main): {str(e)}")
         return templates.TemplateResponse(request=request,name="send_reset_email.html",
                                           context={"error":"Try again"})
+
 
 
 @router.get('/otp_verify',response_class=HTMLResponse)
@@ -160,6 +163,7 @@ def otp_verify(request:Request,otp:str=Form(None)):
         return templates.TemplateResponse(request=request,name="otp_verify.html",context={"error":"Try again"})
 
 
+
 @router.get('/update_password',response_class=HTMLResponse)
 @router.post('/update_password',response_class=HTMLResponse)
 def update_password(request:Request,new_password:str=Form(None),confirm_password:str=Form(None)):
@@ -187,6 +191,7 @@ def update_password(request:Request,new_password:str=Form(None),confirm_password
     except Exception as e:
         logging.exception(f"during update password(main): {str(e)}")
         return templates.TemplateResponse(request=request,name="update_password.html",context={"error":"Try again"})
+
 
 
 @router.post("/logout")

@@ -9,8 +9,6 @@ TEMPLATES_AUTO_RELOAD=True
 
 
 
-
-
 MYSQL_HOST=os.getenv('MYSQL_HOST','localhost')
 MYSQL_USER=os.getenv('MYSQL_USER','root')
 MYSQL_PASSWORD=os.getenv('MYSQL_PASSWORD','')
@@ -25,6 +23,7 @@ REFRESH_TOKEN_DAYS=int(os.getenv("REFRESH_TOKEN_DAYS","7"))
 
 if not SECRET_KEY or len(SECRET_KEY)<32:
     raise RuntimeError("SECRET_KEY must be set and at least 32 characters long")
+
 MYSQL_CURSORCLASS='DictCursor'
 GROQ_API_KEY=os.getenv("GROQ_API_KEY")
 GROQ_MODEL=os.getenv("GROQ_MODEL","llama-3.3-70b-versatile")

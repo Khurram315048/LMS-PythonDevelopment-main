@@ -1,7 +1,7 @@
 
 import pymysql
 from pymysql.cursors import DictCursor
-from core.config import *
+from core.config import  MYSQL_HOST,MYSQL_USER,MYSQL_PASSWORD,MYSQL_DB,MYSQL_PORT
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 

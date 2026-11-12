@@ -3,7 +3,9 @@ from urllib.parse import urlparse
 from fastapi import WebSocket
 from db.session import mysql
 from modules.students.service import StudentService
-from core.security import ACCESS, TokenError, decode_token
+from core.security import ACCESS,TokenError,decode_token
+
+
 
 def _origin_ok(websocket: WebSocket)->bool:
     origin=websocket.headers.get("origin")
@@ -48,7 +50,7 @@ def authorize_ws_user(websocket:WebSocket,fyp_id:int,url_user_type:str,url_user_
         conn=mysql.get_dict_connection()
         try:
             with conn.cursor() as cursor:
-                cursor.execute(f"SELECT 1 FROM fyp_groups WHERE fyp_id=%s AND {owner_col}=%s AND teacher_id IS NOT NULL",(fyp_id, real_id),)
+                cursor.execute(f"SELECT 1 FROM fyp_groups WHERE fyp_id=%s AND {owner_col}=%s AND teacher_id IS NOT NULL",(fyp_id,real_id),)
                 if not cursor.fetchone():
                     return None
         finally:

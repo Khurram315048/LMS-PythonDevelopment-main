@@ -7,17 +7,16 @@ from fastapi import Request
 from core.config import REDIS_URL
 from core.exceptions import BusinessRuleError, NotFoundError
 
-LOGIN_MAX_FAILS = 5            
-LOGIN_WINDOW = 15 * 60         
-LOGIN_IP_MAX_FAILS = 20        
-OTP_PER_EMAIL = 3              
-OTP_EMAIL_WINDOW = 15 * 60
-OTP_PER_IP = 10                
-OTP_IP_WINDOW = 60 * 60
-OTP_COOLDOWN = 60              
+LOGIN_MAX_FAILS=5            
+LOGIN_WINDOW=15 * 60         
+LOGIN_IP_MAX_FAILS=20        
+OTP_PER_EMAIL=3              
+OTP_EMAIL_WINDOW=15 * 60
+OTP_PER_IP=10                
+OTP_IP_WINDOW=60 * 60
+OTP_COOLDOWN=60              
 
-_r = redis.Redis.from_url(REDIS_URL, decode_responses=True,
-                          socket_connect_timeout=1, socket_timeout=1)
+_r=redis.Redis.from_url(REDIS_URL,decode_responses=True,socket_connect_timeout=1,socket_timeout=1)
 
 
 _mem: dict={}
@@ -26,7 +25,7 @@ _lock = threading.Lock()
 
 class TooManyAttempts(Exception):
     def __init__(self, retry_after: int):
-        self.retry_after = max(int(retry_after), 1)
+        self.retry_after=max(int(retry_after), 1)
         super().__init__(f"Too many attempts. Retry in {self.retry_after}s")
 
     @property
@@ -40,29 +39,29 @@ def client_ip(request: Request) -> str:
 
 
 def _mem_peek(key):
-    now = time.time()
+    now=time.time()
     with _lock:
-        count, exp = _mem.get(key, (0, 0))
+        count, exp=_mem.get(key,(0,0))
         if exp <= now:
-            _mem.pop(key, None)
+            _mem.pop(key,None)
             return 0, 0
         return count, int(exp - now)
 
 
 def _mem_incr(key, window):
-    now = time.time()
+    now=time.time()
     with _lock:
-        count, exp = _mem.get(key, (0, 0))
+        count, exp=_mem.get(key, (0, 0))
         if exp <= now:
-            count, exp = 0, now + window
+            count, exp=0, now + window
         count += 1
-        _mem[key] = (count, exp)
-        return count, int(exp - now)
+        _mem[key]=(count, exp)
+        return count,int(exp - now)
 
 
 def _incr(key:str,window:int):
     try:
-        pipe = _r.pipeline()
+        pipe=_r.pipeline()
         pipe.incr(key)
         pipe.ttl(key)
         count, ttl=pipe.execute()

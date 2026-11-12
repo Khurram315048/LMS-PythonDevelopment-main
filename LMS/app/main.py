@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
-from core.config import SECRET_KEY, BASE_DIR
+from core.config import SECRET_KEY,BASE_DIR
 from core import logger  
 from modules.auth.routes import router as auth_router
 from modules.notifications.websocket_routes import router as websocket_router
@@ -11,7 +11,7 @@ from modules.teachers.routes import router as teacher_router
 from modules.admin.routes import router as admin_router
 from modules.chatbot.routes import router as chat_router
 from modules.files.routes import router as files_router
-from core.config import SECRET_KEY, BASE_DIR, COOKIE_SECURE, COOKIE_SAMESITE
+from core.config import SECRET_KEY,BASE_DIR,COOKIE_SECURE,COOKIE_SAMESITE
 from modules.auth.refresh import router as refresh_router
 
 
@@ -19,8 +19,7 @@ from modules.auth.refresh import router as refresh_router
 app=FastAPI()
 
 
-app.add_middleware(SessionMiddleware,secret_key=SECRET_KEY,max_age=3600,
-                   https_only=COOKIE_SECURE,same_site=COOKIE_SAMESITE)
+app.add_middleware(SessionMiddleware,secret_key=SECRET_KEY,max_age=3600,https_only=COOKIE_SECURE,same_site=COOKIE_SAMESITE)
 # app.add_middleware(SessionMiddleware,secret_key=SECRET_KEY,max_age=3600)
 app.mount("/static",StaticFiles(directory=str(BASE_DIR / "web" / "static")),name="static")
 

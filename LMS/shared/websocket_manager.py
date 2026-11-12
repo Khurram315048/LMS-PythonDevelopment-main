@@ -1,4 +1,6 @@
 from fastapi import WebSocket
+import logging
+
 
 class ConnectionManager:
     def __init__(self):
@@ -13,11 +15,14 @@ class ConnectionManager:
         # self.active_connections[room_id].append(websocket) 
 
     def disconnect(self,websocket:WebSocket,room_id:str):
-        room = self.active_connections.get(room_id)
-        if room:
-            room.discard(websocket)
-            if not room:
-                del self.active_connections[room_id]
+        room=self.active_connections.get(room_id)
+        try:
+            if room:
+                room.discard(websocket)
+                if not room:
+                    del self.active_connections[room_id]
+        except Exception as e:
+            logging.exception(f"during discnt socket: {str(e)}")            
 
         # if room_id in self.active_connections:
         #     self.active_connections[room_id].remove(websocket)
@@ -29,7 +34,8 @@ class ConnectionManager:
         for connection in list(self.active_connections.get(room_id, ())):
             try:
                 await connection.send_json(message)
-            except Exception:
+            except Exception as e:
+                logging.exception(f"during brdcst to room: {str(e)}")
                 self.disconnect(connection,room_id)
         # if room_id in self.active_connections:
         #     for connection in self.active_connections[room_id]:

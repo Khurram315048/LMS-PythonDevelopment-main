@@ -97,72 +97,78 @@
 
 
 from urllib.parse import quote
-
-from fastapi import HTTPException, Request, status
-
+from fastapi import HTTPException,Request,status
 from core.logger import logging
-from core.security import (ACCESS, ALGORITHM, TokenExpired, TokenInvalid,  # noqa: F401
-                           decode_token)
+from core.security import (ACCESS,ALGORITHM,TokenExpired,TokenInvalid,  decode_token)
 
-LOGIN_URL = {
-    "student": "/student_login",
-    "teacher": "/teacher_login",
-    "admin": "/admin_login",
+
+
+LOGIN_URL={
+    "student":"/student_login",
+    "teacher":"/teacher_login",
+    "admin":"/admin_login",
 }
 
 
-def get_current_user(request: Request) -> dict:
-    user_id = request.session.get('user_id')
-    if not user_id:
-        raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,
-                            headers={"location": "/main_view"})
-    return {"user_id": user_id}
+def get_current_user(request:Request)->dict:
+    try:
+        user_id=request.session.get('user_id')
+        if not user_id:
+            raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,headers={"location":"/main_view"})
+        return {
+            "user_id":user_id
+            }
+    except Exception as e:
+        logging.exception(f"during gt crrnt user: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_303_SEE_OTHER,headers={"location":"/main_view"})
 
 
-def _redirect(url: str) -> HTTPException:
-    return HTTPException(status_code=status.HTTP_303_SEE_OTHER, headers={"location": url})
+def _redirect(url:str)->HTTPException:
+    return HTTPException(status_code=status.HTTP_303_SEE_OTHER,headers={"location":url})
 
 
-def _refresh_url(request: Request) -> str:
-    # GET page par wapas usi page par aane ke liye; POST par seedha /refresh
-    if request.method == "GET":
-        target = request.url.path + (f"?{request.url.query}" if request.url.query else "")
-        return f"/refresh?next={quote(target, safe='')}"
+def _refresh_url(request:Request)->str:
+    if request.method=="GET":
+        target=request.url.path + (f"?{request.url.query}" if request.url.query else "")
+        return f"/refresh?next={quote(target,safe='')}"
     return "/refresh"
 
 
-def _current(request: Request, role: str) -> dict:
-    token = request.cookies.get("access_token")
+def _current(request:Request,role:str)->dict:
+    token=request.cookies.get("access_token")
     if not token:
         raise _redirect(LOGIN_URL[role])
     try:
-        return decode_token(token, ACCESS, expected_role=role)
-    except TokenExpired:
+        return decode_token(token,ACCESS,expected_role=role)
+    except TokenExpired as td:
+        logging.error(f"tokn expired: {str(td)}")
         raise _redirect(_refresh_url(request))
     except TokenInvalid as e:
         logging.warning(f"Rejected access token for {role} page: {e}")
         raise _redirect(LOGIN_URL[role])
 
 
-def get_current_student(request: Request) -> dict:
-    return _current(request, "student")
+def get_current_student(request:Request)->dict:
+    return _current(request,"student")
 
 
-def get_current_teacher(request: Request) -> dict:
-    return _current(request, "teacher")
+def get_current_teacher(request:Request)->dict:
+    return _current(request,"teacher")
 
 
-def get_current_admin(request: Request) -> dict:
-    return _current(request, "admin")
+def get_current_admin(request:Request)->dict:
+    return _current(request,"admin")
 
 
-def get_chat_user(request: Request) -> dict:
-    token = request.cookies.get("access_token")
+def get_chat_user(request:Request)->dict:
+    token=request.cookies.get("access_token")
     if not token:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="login_required")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="login_required")
     try:
-        return decode_token(token, ACCESS)          # student / teacher / admin, teeno theek
-    except TokenExpired:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="expired")
-    except TokenInvalid:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid")
+        return decode_token(token,ACCESS)         
+    except TokenExpired as te:
+        logging.error(f"token expired : {str(te)}")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="expired")
+    except TokenInvalid as ti:
+        logging.warning(f"token invalid: {str(ti)}")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="invalid")

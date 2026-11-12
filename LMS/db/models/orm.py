@@ -287,24 +287,23 @@ class SemesterFreezeStudent(Base):
 
 
 class Attendance(Base):
-    __tablename__ = "attendance"
-    __table_args__ = (
-        UniqueConstraint("student_course_id", "course_schedule_id", "attendance_date", name="uq_att"),
-        Index("idx_attendance_date", "attendance_date"),
-        OPTS,
-    )
+    __tablename__="attendance"
+    __table_args__=(
+        UniqueConstraint("student_course_id","course_schedule_id","attendance_date",name="uq_att"),
+        Index("idx_attendance_date","attendance_date"),OPTS,
+)
 
-    attendance_id = Column(Integer, primary_key=True, autoincrement=True)
-    student_course_id = Column(Integer, ForeignKey("student_course.student_course_id"), nullable=False, index=True)
-    course_schedule_id = Column(Integer, ForeignKey("course_schedule.course_schedule_id"), nullable=False, index=True)
-    attendance_date = Column(Date, nullable=False)
-    attendance_status = Column(Enum("Present", "Absent"), default="Absent", server_default="Absent")
-    student_id = Column(Integer, ForeignKey("students.student_id"), index=True)
-    is_deleted = Column(Boolean, nullable=False, default=False, server_default=text("0"))
+    attendance_id=Column(Integer,primary_key=True,autoincrement=True)
+    student_course_id=Column(Integer,ForeignKey("student_course.student_course_id"),nullable=False,index=True)
+    course_schedule_id=Column(Integer,ForeignKey("course_schedule.course_schedule_id"),nullable=False,index=True)
+    attendance_date=Column(Date,nullable=False)
+    attendance_status=Column(Enum("Present", "Absent"),default="Absent",server_default="Absent")
+    student_id=Column(Integer,ForeignKey("students.student_id"),index=True)
+    is_deleted=Column(Boolean,nullable=False,default=False,server_default=text("0"))
 
-    student_course = relationship("StudentCourse", back_populates="attendance_records")
-    course_schedule = relationship("CourseSchedule", back_populates="attendance_records")
-    student = relationship("Student", back_populates="attendance_records")
+    student_course=relationship("StudentCourse",back_populates="attendance_records")
+    course_schedule=relationship("CourseSchedule",back_populates="attendance_records")
+    student=relationship("Student",back_populates="attendance_records")
 
 
 class CourseAttendanceLog(Base):
@@ -375,7 +374,7 @@ class TeacherSalary(Base):
     bonus = Column(Numeric(10, 2), default=0, server_default=text("0.00"))
     deductions = Column(Numeric(10, 2), default=0, server_default=text("0.00"))
     status = Column(Enum("Pending", "Paid"), default="Pending", server_default="Pending")
-    is_deleted = Column(TINYINT, default=0, server_default=text("0"))  # tinyint (not tinyint(1)) in DB
+    is_deleted = Column(TINYINT, default=0, server_default=text("0"))  
 
     teacher = relationship("Teacher", back_populates="salaries")
 
@@ -437,7 +436,7 @@ class Exam(Base):
     mode = Column(Enum("Online", "On Campus"), nullable=False)
     status = Column(Enum("Concluded", "Ongoing"), nullable=False,
                     default="Ongoing", server_default="Ongoing")
-    is_deleted = Column(Integer, nullable=False, default=0, server_default=text("0"))  # int in DB
+    is_deleted = Column(Integer, nullable=False, default=0, server_default=text("0"))  
 
     program = relationship("Program", back_populates="exams")
 
