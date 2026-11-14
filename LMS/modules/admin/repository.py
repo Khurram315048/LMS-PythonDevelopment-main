@@ -255,10 +255,9 @@ class ComplaintModel:
     def get_all():
         session=SessionLocal()
         try:
-            # cs.*, u.email
             stmt=(select(*ComplaintSuggestion.__table__.columns,User.email)
                   .select_from(ComplaintSuggestion)
-                  .join(User,ComplaintSuggestion.user_id==User.user_id))
+                  .join(User,ComplaintSuggestion.user_id==User.user_id).where(ComplaintSuggestion.is_deleted==0))
             return _rows(session.execute(stmt).all())
         except Exception as e:
             logging.exception(f"Error during get_all complaints(admin_models): {str(e)}")
@@ -289,11 +288,25 @@ class ComplaintModel:
                             where(ComplaintSuggestion.complt_sugst_id==complt_sugst_id).values(is_status='Rejected'))
             session.commit()
         except Exception as e:
-            logging.exception(f"during dlt complnt: {str(e)}")
+            logging.exception(f"during rjct complnt: {str(e)}")
             session.rollback()
             raise
         finally:
-            session.close()            
+            session.close()     
+
+    @staticmethod
+    def delete_complaint(complt_sugst_id):
+        session=SessionLocal()
+        try:
+            session.execute(update(ComplaintSuggestion).where(ComplaintSuggestion.complt_sugst_id==complt_sugst_id)
+                            .values(is_deleted=1))
+            session.commit()
+        except Exception as e:
+            logging.exception(f"during dlt complnt: {str(e)}")  
+            session.rollback()   
+            raise
+        finally:
+            session.close()              
 
 
 class StudentModel:

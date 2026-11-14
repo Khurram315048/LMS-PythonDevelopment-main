@@ -151,7 +151,7 @@ def system_settings(request:Request,current_user:dict=Depends(get_current_admin)
 
 
 @router.post('/edit_settings')
-def edit_settings(request:Request,setting_key:str=Form(...),setting_value:str=Form(...),current_user:dict=Depends(get_current_admin)):
+def edit_settings(request:Request,setting_key:str=Form(...),setting_value:str=Form(...)):
     try:
         SystemModel.update_setting(setting_key,setting_value)
         request.session['flash_success']=f"Setting '{setting_key}' updated successfully!"
@@ -171,7 +171,7 @@ def complaints(request:Request):
 
 
 @router.post('/solve_complaint')
-def solve_complaint(request:Request,background_tasks:BackgroundTasks,complt_sugst_id:int=Form(...),current_user:dict=Depends(get_current_admin)):
+def solve_complaint(request:Request,background_tasks:BackgroundTasks,complt_sugst_id:int=Form(...)):
     user_email=EmailLookup.by_complaint_id(complt_sugst_id)
     try:
         ComplaintModel.mark_solved(complt_sugst_id)
@@ -180,7 +180,22 @@ def solve_complaint(request:Request,background_tasks:BackgroundTasks,complt_sugs
             background_tasks.add_task(send_email,[user_email],"Complaint Solved Successfully")
     except Exception as e:
         logging.exception(f"Error solving complaint: {str(e)}")
+        request.session['flash_error']="Try Again"
     return RedirectResponse(url='/complaints',status_code=status.HTTP_303_SEE_OTHER)
+
+
+@router.post('/delete_complaint')
+def delete_complaint(request:Request,complt_sugst_id:int=Form(...)):
+    try:
+        ComplaintModel.delete_complaint(complt_sugst_id)
+        request.session['flash_success']="Complaint has been deleted successfully"
+    except Exception as e:
+        request.session['flash_error']=str(e)
+        logging.exception(f"during dlt complnt route: {str(e)}")
+
+    return RedirectResponse(url='/complaints',status_code=status.HTTP_303_SEE_OTHER)    
+
+
 
 
 
@@ -193,6 +208,7 @@ def reject_complaint(request:Request,background_tasks:BackgroundTasks,complt_sug
         if user_email:
             background_tasks.add_task(send_email,[user_email],"Complaint has been rejected")
     except Exception as e:
+        request.session['flash_error']="Try Again"
         logging.exception(f"Error deleting complaint: {str(e)}")
     return RedirectResponse(url='/complaints',status_code=status.HTTP_303_SEE_OTHER)
 

@@ -4,6 +4,16 @@
 <div class="page-header">
     <h2><i class="fa-solid fa-comment-dots"></i> Complaints & Suggestions</h2>
 </div>
+ {% if flash_success %}
+    <div class="alert alert-success" style="padding: 10px; background-color: #d4edda; color: #155724; border-radius: 4px; margin-bottom: 15px;">
+        ✅ {{ flash_success }}
+    </div>
+    {% endif %}
+    {% if flash_error %}
+    <div class="alert alert-danger" style="padding: 10px; background-color: #f8d7da; color: #721c24; border-radius: 4px; margin-bottom: 15px;">
+        ❌ {{ flash_error }}
+    </div>
+    {% endif %}
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h4 class="mb-0">All Complaints</h4>
@@ -13,17 +23,20 @@
         <table class="table table-bordered table-hover" id="complaintsTable">
             <thead class="table-dark">
                 <tr>
-                    <th>ID</th>
+                    <th>Sr#</th>
+                    <th>Complaint ID</th>
                     <th>Submitted By</th>
                     <th>Title</th>
                     <th>Description</th>
                     <th>Attachment</th>
+                    <th>Current Status</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody id="complaintsBody">
                 {% for complaint in complaints %}
                 <tr>
+                    <td>{{loop.index}}</td>
                     <td>{{ complaint.complt_sugst_id }}</td>
                     <td>{{ complaint.email }}</td>
                     <td>{{ complaint.title }}</td>
@@ -32,6 +45,7 @@
                             <i class="fa-solid fa-eye"></i> View
                         </button>
                     </td>
+                    <td>{{complaint.is_status}}</td>
                     <td>
                         {% if complaint.image_name %}
                             <a href="{{ complaint.image_name }}" target="_blank" class="btn btn-sm btn-info">
@@ -42,6 +56,7 @@
                         {% endif %}
                     </td>
                     <td style="white-space: nowrap;">
+                        {% if complaint.is_status=='Pending' %}
                         <form method="POST" action="/solve_complaint" style="display:inline;">
                             <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                             <input type="hidden" name="complt_sugst_id" value="{{ complaint.complt_sugst_id }}">
@@ -56,6 +71,15 @@
                                 <i class="fa-solid fa-trash"></i> Reject
                             </button>
                         </form>
+                        {% else %}
+                        <form method="POST" action="/delete_complaint" style="display:inline;">
+                            <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
+                            <input type="hidden" name="complt_sugst_id" value="{{ complaint.complt_sugst_id }}">
+                            <button type="submit" class="btn btn-sm btn-warning" onclick="return confirm('Delete this complaint?')">
+                                <i class="fa-solid fa-trash"></i>Delete
+                            </button>
+                        </form>
+                        {% endif %}
                     </td>
                 </tr>
                 <div class="modal fade" id="descModal{{ complaint.complt_sugst_id }}" tabindex="-1">
