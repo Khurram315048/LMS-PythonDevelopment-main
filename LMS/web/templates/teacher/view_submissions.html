@@ -57,7 +57,7 @@
                                 <input type="hidden" name="sub_type" value="{{ sub_type }}">
                                 <button type="submit" style="font-size:10px; padding:2px 6px;" class="btn btn-warning">Avg</button>
                             </form>
-                            <form method="POST" action="/set_submission/{{sub.submission_id}}/Worst">
+                            <form method="POST" action="/set_submission_status/{{sub.submission_id}}/Worst">
                                 <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                                 <input type="hidden" name="section_id" value="{{ section_id }}">
                                 <input type="hidden" name="sub_type" value="{{ sub_type }}">

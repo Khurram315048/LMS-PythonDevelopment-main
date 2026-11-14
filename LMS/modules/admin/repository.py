@@ -281,6 +281,20 @@ class ComplaintModel:
         finally:
             session.close()
 
+    @staticmethod
+    def marked_rejected(complt_sugst_id):
+        session=SessionLocal()
+        try:
+            session.execute(update(ComplaintSuggestion).
+                            where(ComplaintSuggestion.complt_sugst_id==complt_sugst_id).values(is_status='Rejected'))
+            session.commit()
+        except Exception as e:
+            logging.exception(f"during dlt complnt: {str(e)}")
+            session.rollback()
+            raise
+        finally:
+            session.close()            
+
 
 class StudentModel:
 

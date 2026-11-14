@@ -162,11 +162,11 @@ def edit_settings(request:Request,setting_key:str=Form(...),setting_value:str=Fo
 
 
 @router.get('/complaints')
-def complaints(request:Request,current_user:dict=Depends(get_current_admin)):
-    complaints_list = ComplaintModel.get_all()
+def complaints(request:Request):
+    complaints_list=ComplaintModel.get_all()
     return templates.TemplateResponse(request=request,name="complaints.html",context={
         "complaints":complaints_list,
-        "flash_success":request.session.pop('flash_success', None)
+        "flash_success":request.session.pop('flash_success',None)
     })
 
 
@@ -183,8 +183,22 @@ def solve_complaint(request:Request,background_tasks:BackgroundTasks,complt_sugs
     return RedirectResponse(url='/complaints',status_code=status.HTTP_303_SEE_OTHER)
 
 
+
+@router.post('/reject_complaint')
+def reject_complaint(request:Request,background_tasks:BackgroundTasks,complt_sugst_id:int=Form(...)):
+    user_email=EmailLookup.by_complaint_id(complt_sugst_id)
+    try:
+        ComplaintModel.marked_rejected(complt_sugst_id)
+        request.session['flash_success']="Complaint has been  rejected."
+        if user_email:
+            background_tasks.add_task(send_email,[user_email],"Complaint has been rejected")
+    except Exception as e:
+        logging.exception(f"Error deleting complaint: {str(e)}")
+    return RedirectResponse(url='/complaints',status_code=status.HTTP_303_SEE_OTHER)
+
+
 @router.get('/system_controls')
-def system_controls(request:Request,current_user:dict=Depends(get_current_admin)):
+def system_controls(request:Request):
     semesters=SemesterModel.get_all()
     return templates.TemplateResponse(request=request,name="system_controls.html",context={
         "semesters":semesters,
@@ -193,7 +207,7 @@ def system_controls(request:Request,current_user:dict=Depends(get_current_admin)
 
 
 @router.post('/add_semester')
-def add_semester(request:Request,name:str=Form(...),year:str=Form(...),start_date:str=Form(...),end_date:str=Form(...),current_user: dict = Depends(get_current_admin)):
+def add_semester(request:Request,name:str=Form(...),year:str=Form(...),start_date:str=Form(...),end_date:str=Form(...)):
     try:
         SemesterModel.create(name,year,start_date,end_date)
         request.session['flash_success']="Semester added successfully."
@@ -203,7 +217,7 @@ def add_semester(request:Request,name:str=Form(...),year:str=Form(...),start_dat
 
 
 @router.post('/edit_semester')
-def edit_semester(request:Request,semester_id:int=Form(...),name:str=Form(...),year:str=Form(...),start_date:str=Form(...),end_date:str=Form(...),current_user:dict=Depends(get_current_admin)):
+def edit_semester(request:Request,semester_id:int=Form(...),name:str=Form(...),year:str=Form(...),start_date:str=Form(...),end_date:str=Form(...)):
     try:
         SemesterModel.update(semester_id,name,year,start_date,end_date)
         request.session['flash_success']="Semester Updated successfully."

@@ -49,10 +49,11 @@
                                 <i class="fa-solid fa-circle-check"></i> Solved
                             </button>
                         </form>
-                        <form method="POST" action="#" style="display:inline;">
+                        <form method="POST" action="/reject_complaint" style="display:inline;">
+                            <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
                             <input type="hidden" name="complt_sugst_id" value="{{ complaint.complt_sugst_id }}">
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this complaint?')">
-                                <i class="fa-solid fa-trash"></i> Delete
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Reject this complaint?')">
+                                <i class="fa-solid fa-trash"></i> Reject
                             </button>
                         </form>
                     </td>
