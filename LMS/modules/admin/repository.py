@@ -11,7 +11,7 @@ from db.models.orm import (
     CourseAttendanceLog,StudentResult,StudentResultMarks,StudentFee,
     Semester,SummerSemester,SummerRegistration,SemesterFreezeStudent,
     FypGroup,Exam,Notification,ComplaintSuggestion,SystemSetting,
-    TeacherSalary,
+    TeacherSalary,StudentRiskScore
 )
 
 
@@ -197,7 +197,7 @@ class AdminModel:
     def get_dashboard_counts():
         session=SessionLocal()
         try:
-            keys=['students','teachers','pending_fees','courses','fyp','complaints','freeze','exams','notifications']
+            keys=['students','teachers','pending_fees','courses','fyp','complaints','risk_counts','freeze','exams','notifications']
             queries=[
                 select(func.count().label('c')).select_from(Student).where(Student.is_deleted==0),
                 select(func.count().label('c')).select_from(Teacher).where(Teacher.is_deleted==0),
@@ -205,6 +205,7 @@ class AdminModel:
                 select(func.count().label('c')).select_from(Course).where(Course.is_deleted==0),
                 select(func.count().label('c')).select_from(FypGroup).where(FypGroup.is_deleted==0),
                 select(func.count().label('c')).select_from(ComplaintSuggestion),
+                select(func.count().label('c')).select_from(StudentRiskScore).where(StudentRiskScore.is_deleted==0),
                 select(func.count().label('c')).select_from(SemesterFreezeStudent).where(SemesterFreezeStudent.status=='Pending'),
                 select(func.count().label('c')).select_from(Exam).where(Exam.status=='Ongoing',Exam.is_deleted==0),
                 select(func.count().label('c')).select_from(Notification).where(Notification.status=='Pending',Notification.is_deleted==0),
@@ -1633,3 +1634,52 @@ class EmailLookup:
             .select_from(ComplaintSuggestion)
             .join(User,ComplaintSuggestion.user_id==User.user_id)
             .where(ComplaintSuggestion.complt_sugst_id==complaint_id))
+
+
+class RiskRepository:
+    @staticmethod
+    def get_all(level=None):
+        session = SessionLocal()
+        try:
+            stmt = (
+                select(
+                    StudentRiskScore.risk_id,
+                    StudentRiskScore.student_id,
+                    Student.first_name,
+                    Student.last_name,
+                    StudentRiskScore.semester,
+                    StudentRiskScore.risk_score,
+                    StudentRiskScore.risk_level,
+                    StudentRiskScore.factors,
+                    StudentRiskScore.computed_at,
+                )
+                .select_from(StudentRiskScore)
+                .join(Student, Student.student_id == StudentRiskScore.student_id)
+                .where(
+                    StudentRiskScore.is_deleted == False,
+                    Student.is_deleted == False,
+                    StudentRiskScore.semester == Student.current_semester,
+                )
+                .order_by(StudentRiskScore.risk_score.desc())
+            )
+            if level:
+                stmt = stmt.where(StudentRiskScore.risk_level == level)
+
+            return [
+                {
+                    "risk_id": r.risk_id,
+                    "student_id": r.student_id,
+                    "name": f"{r.first_name} {r.last_name}",
+                    "semester": r.semester,
+                    "score": round(float(r.risk_score) * 100),
+                    "level": r.risk_level,
+                    "reasons": r.factors or [],
+                    "computed_at": r.computed_at,
+                }
+                for r in session.execute(stmt).all()
+            ]
+        except Exception as e:
+            logging.exception(f"during gt risk: {str(e)}")
+            raise
+        finally:
+            session.close()

@@ -35,6 +35,7 @@ class AdminService:
             'students_count':counts['students'],
             'teachers_count':counts['teachers'],
             'complaints_count':counts['complaints'],
+            'risk_counts':counts['risk_counts'],
             'notifications_count':counts['notifications'],
             'exam_count':counts['exams'],
             'pending_count':counts['pending_fees'],

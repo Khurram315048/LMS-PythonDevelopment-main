@@ -39,3 +39,6 @@ SQLAlchemy>=2.0,<3.0
 fastapi_mail
 pytest
 pytest-cov
+scikit-learn
+joblib
+apscheduler

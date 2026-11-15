@@ -1,7 +1,7 @@
 from sqlalchemy import (
     Column,Integer,SmallInteger,String,Text,Boolean,Date,Time,DateTime,
     TIMESTAMP,Numeric,Enum,ForeignKey,UniqueConstraint,CheckConstraint,
-    Index,text,func,
+    Index,text,func,JSON
 )
 from sqlalchemy.dialects.mysql import YEAR, TINYINT
 from sqlalchemy.orm import declarative_base,relationship
@@ -653,3 +653,18 @@ class SystemSetting(Base):
     setting_value = Column(String(255))
     description = Column(Text)
     is_deleted = Column(Boolean, nullable=False, default=False, server_default=text("0"))
+
+
+class StudentRiskScore(Base):
+    __tablename__="student_risk_scores"
+    __tableargs__=(UniqueConstraint("student_is","semester",name="uq_risk_student_sem"),OPTS,)
+    risk_id=Column(Integer,primary_key=True,autoincrement=True)
+    student_id=Column(Integer,ForeignKey("students.student_id"),nullable=False,index=True)
+    semester=Column(Integer,nullable=False)
+    risk_score=Column(Numeric(3,4),nullable=False)
+    risk_level=Column(Enum("Low","Medium","High"),nullable=False)
+    factors=Column(JSON)
+    model_version=Column(String(30),default="rules-v1")
+    computed_at=Column(TIMESTAMP,nullable=False,server_default=text("current_timestamp"),onupdate=func.current_timestamp())
+    is_deleted=Column(Boolean,nullable=False,default=False,server_default=text("0"))
+    

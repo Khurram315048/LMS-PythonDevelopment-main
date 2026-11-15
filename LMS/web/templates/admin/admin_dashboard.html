@@ -121,8 +121,21 @@
                 </div>
             </div>
             <div class="pending-card-right">
-                <span class="pending-count">{{ notifications_count }}</span>
-                <a href="#" class="pending-link">View All <i class="fa-solid fa-arrow-right"></i></a>
+                <span class="pending-count">{{notifications_count}}</span>
+                <a href="/admin_notifications" class="pending-link">View All <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+        </div>
+        <div class="pending-card">
+            <div class="pending-card-left">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <div>
+                    <span class="pending-label">High Risk Students</span>
+                    <span class="pending-sub">Not yet resolved</span>
+                </div>
+            </div>
+            <div class="pending-card-right">
+                <span class="pending-count">{{risk_counts}}</span>
+                <a href="/at_risk" class="pending-link">View All <i class="fa-solid fa-arrow-right"></i></a>
             </div>
         </div>
     </div>

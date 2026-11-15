@@ -2,7 +2,6 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
-from core.config import SECRET_KEY,BASE_DIR
 from core import logger  
 from modules.auth.routes import router as auth_router
 from modules.notifications.websocket_routes import router as websocket_router
@@ -13,6 +12,7 @@ from modules.chatbot.routes import router as chat_router
 from modules.files.routes import router as files_router
 from core.config import SECRET_KEY,BASE_DIR,COOKIE_SECURE,COOKIE_SAMESITE
 from modules.auth.refresh import router as refresh_router
+from modules.risk.routes import router as risk_router
 
 
 
@@ -33,6 +33,7 @@ app.include_router(admin_router)
 app.include_router(websocket_router)
 app.include_router(chat_router)
 app.include_router(files_router)
+app.include_router(risk_router)
 
 
 if __name__ == '__main__':

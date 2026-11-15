@@ -1,0 +1,110 @@
+{% extends "admin_base.html" %}
+{% block title %}Help Desk{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2><i class="fa-solid fa-headset"></i> Help Desk</h2>
+</div>
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="GET" action="#" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Status</label>
+                <select class="form-select" name="status">
+                    <option value="">All</option>
+                    <option value="Pending" {% if selected_status == 'Pending' %}selected{% endif %}>Pending</option>
+                    <option value="Resolved" {% if selected_status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                    <option value="Rejected" {% if selected_status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Role</label>
+                <select class="form-select" name="sender_role">
+                    <option value="">All</option>
+                    <option value="student" {% if selected_role == 'student' %}selected{% endif %}>Student</option>
+                    <option value="teacher" {% if selected_role == 'teacher' %}selected{% endif %}>Teacher</option>
+                </select>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        <h4>Help Desk Tickets</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>From</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in tickets %}
+                <tr>
+                    <td>{{ ticket.id }}</td>
+                    <td>
+                        <button class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#ticketModal{{ ticket.id }}">
+                            {{ ticket.title }}
+                        </button>
+                    </td>
+                    <td>{{ ticket.sender_email }}</td>
+                    <td><span class="badge bg-secondary">{{ ticket.sender_role }}</span></td>
+                    <td>
+                        {% if ticket.status == 'Resolved' %}
+                            <span class="badge bg-success">Resolved</span>
+                        {% elif ticket.status == 'Rejected' %}
+                            <span class="badge bg-danger">Rejected</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ ticket.created_at }}</td>
+                    <td>
+                        <form method="POST" action="#" style="display:inline;">
+                            <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
+                            <select name="status" class="form-select form-select-sm d-inline w-auto">
+                                <option value="Pending" {% if ticket.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                <option value="Resolved" {% if ticket.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                                <option value="Rejected" {% if ticket.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                        </form>
+                    </td>
+                </tr>
+
+                <div class="modal fade" id="ticketModal{{ ticket.id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">{{ ticket.title }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p><strong>From:</strong> {{ ticket.sender_email }} ({{ ticket.sender_role }})</p>
+                                <p><strong>Date:</strong> {{ ticket.created_at }}</p>
+                                <hr>
+                                <p>{{ ticket.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% if not tickets %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted">No tickets found.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

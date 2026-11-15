@@ -39,5 +39,12 @@ engine=create_engine("mysql+pymysql://",creator=mysql.get_connection,pool_pre_pi
 SessionLocal=sessionmaker(bind=engine)
 
 
+def get_db():
+    db=SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 

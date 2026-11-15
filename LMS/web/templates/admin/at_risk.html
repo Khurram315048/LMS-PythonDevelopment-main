@@ -1,0 +1,54 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}At-Risk Students{% endblock %}
+
+{% block content %}
+<h2>At-Risk Students</h2>
+
+<div style="display:flex;gap:12px;align-items:center;margin-bottom:14px">
+  <form method="get" action="/at_risk">
+    <select name="level" onchange="this.form.submit()">
+      <option value="" {% if not level %}selected{% endif %}>All levels</option>
+      {% for l in ["High", "Medium", "Low"] %}
+      <option value="{{ l }}" {% if level == l %}selected{% endif %}>{{ l }}</option>
+      {% endfor %}
+    </select>
+  </form>
+
+  <form method="post" action="/recompute">
+    <input type="hidden" name="csrf_token" value="{{csrf_token(request)}}">
+    <button type="submit">Recompute now</button>
+  </form>
+</div>
+
+<table id="riskTable" style="width:100%;border-collapse:collapse">
+  <thead>
+    <tr>
+      <th>Sr#</th>
+      <th>Student</th>
+      <th>Sem</th>
+      <th>Risk</th>
+      <th>Level</th>
+      <th>Why flagged</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in all_data %}
+    <tr>
+      <td>{{loop.index}}</td>
+      <td>{{ r.name }}</td>
+      <td>{{ r.semester }}</td>
+      <td>{{ r.score }}%</td>
+      <td>
+        <span style="color:#fff;padding:2px 8px;border-radius:10px;background:{% if r.level == 'High' %}#d9534f{% elif r.level == 'Medium' %}#f0ad4e{% else %}#5cb85c{% endif %}">
+          {{ r.level }}
+        </span>
+      </td>
+      <td>{{ r.reasons | join(", ") if r.reasons else "—" }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5">No data yet. Click "Recompute now".</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
