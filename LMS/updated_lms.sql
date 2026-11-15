@@ -782,7 +782,7 @@ CREATE TABLE `student_risk_scores` (
 
 LOCK TABLES `student_risk_scores` WRITE;
 /*!40000 ALTER TABLE `student_risk_scores` DISABLE KEYS */;
-INSERT INTO `student_risk_scores` VALUES (1,2,7,0.525,'Medium','[\"Low attendance (40.0%)\", \"11 unpaid fee(s)\", \"Weak assignments/quizzes (40.0%)\"]','rules-v1','2026-11-15 10:13:11',0),(2,3,6,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(3,4,6,0.038,'Low','[]','rules-v1','2026-11-15 10:13:11',0),(4,7,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(5,9,7,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(6,10,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(7,11,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(8,12,7,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(9,13,4,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0);
+INSERT INTO `student_risk_scores` VALUES (1,2,7,0.525,'Medium','[\"Low attendance (40.0%)\", \"11 unpaid fee(s)\", \"Weak assignments/quizzes (40.0%)\"]','rules-v1','2026-11-15 10:33:21',0),(2,3,6,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(3,4,6,0.038,'Low','[]','rules-v1','2026-11-15 10:33:21',0),(4,7,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(5,9,7,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(6,10,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(7,11,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(8,12,7,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(9,13,4,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0);
 /*!40000 ALTER TABLE `student_risk_scores` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1995,4 +1995,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-11-15 15:18:13
+-- Dump completed on 2026-11-15 15:33:58

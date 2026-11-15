@@ -3,6 +3,20 @@
 {% block title %}Student Dashboard{% endblock %}
 
 {% block content %}
+{% if risk %}
+<div style="border-left:6px solid
+  {% if risk.level == 'High' %}#d9534f{% elif risk.level == 'Medium' %}#f0ad4e{% else %}#5cb85c{% endif %};
+  background:#fff;padding:14px 18px;margin:14px 0;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.1)">
+  <h3 style="margin:0 0 6px">Academic Status: {{ risk.level }}</h3>
+  <p style="margin:0 0 6px">{{ risk.tip }}</p>
+  {% if risk.reasons %}
+  <ul style="margin:6px 0 0 18px">
+    {% for r in risk.reasons %}<li>{{ r }}</li>{% endfor %}
+  </ul>
+  {% endif %}
+  <small style="color:#777">Updated: {{ risk.computed_at.strftime('%d %b %Y') if risk.computed_at else '—' }}</small>
+</div>
+{% endif %}
 
 <div class="container">
     <div class="dashboard-content">

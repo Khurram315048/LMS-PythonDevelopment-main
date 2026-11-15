@@ -26,7 +26,7 @@ from core.config import UPLOAD_DIR
 from db.models.orm import StudentFee
 from db.session import SessionLocal
 from core.cookies import set_auth_cookies
-
+from modules.students.repository import RiskReadRepository
 
 
 TEMPLATES_DIR=BASE_DIR / "web" / "templates"
@@ -132,18 +132,19 @@ def student_profile(request:Request,current_user:dict=Depends(get_current_studen
 def student_dashboard(request:Request,current_user:dict=Depends(get_current_student)):
     user_id=current_user['user_id']
     student_id=current_user['student_id']
-    try:
-        dashboard_data=StudentService.get_dashboard_data(student_id,user_id)
 
+    try:
+        risk=RiskReadRepository.for_student_user(student_id)
+        dashboard_data=StudentService.get_dashboard_data(student_id,user_id)
         dashboard_data['flash_success']=request.session.pop('flash_success',None)
         dashboard_data['flash_error']=request.session.pop('flash_error',None)
 
         if dashboard_data.get("access_denied"):
             return templates.TemplateResponse(request=request,name="student_dashboard.html",
-                                              context=dashboard_data)
+                                              context={**dashboard_data})
         
         return templates.TemplateResponse(request=request,name="student_dashboard.html",
-                                            context=dashboard_data)
+                                            context={**dashboard_data,"risk":risk})
     except Exception as e:
         logging.exception(f"Error during student dashboard route api: {str(e)}")
         return templates.TemplateResponse(request=request,name="student_dashboard.html",

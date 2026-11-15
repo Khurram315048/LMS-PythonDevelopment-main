@@ -2,6 +2,7 @@
 ```
 LMS-PythonDevelopment-main
 ├─ LMS
+│  ├─ .coverage
 │  ├─ .env
 │  ├─ .pytest_cache
 │  │  ├─ CACHEDIR.TAG
@@ -47,6 +48,7 @@ LMS-PythonDevelopment-main
 │  │     ├─ security.cpython-313.pyc
 │  │     ├─ templating.cpython-312.pyc
 │  │     ├─ templating.cpython-313.pyc
+│  │     ├─ ws_auth.cpython-312.pyc
 │  │     └─ ws_auth.cpython-313.pyc
 │  ├─ db
 │  │  ├─ models
@@ -62,6 +64,7 @@ LMS-PythonDevelopment-main
 │  │  └─ docs
 │  │     ├─ admin
 │  │     │  ├─ account_management.md
+│  │     │  ├─ admin_help_desk.html
 │  │     │  ├─ admissions_process.md
 │  │     │  ├─ fee_collection.md
 │  │     │  └─ fee_rules.md
@@ -101,9 +104,13 @@ LMS-PythonDevelopment-main
 │  │  │  ├─ routes.py
 │  │  │  ├─ schema.py
 │  │  │  └─ __pycache__
+│  │  │     ├─ refresh.cpython-312.pyc
 │  │  │     ├─ refresh.cpython-313.pyc
+│  │  │     ├─ repository.cpython-312.pyc
 │  │  │     ├─ repository.cpython-313.pyc
+│  │  │     ├─ routes.cpython-312.pyc
 │  │  │     ├─ routes.cpython-313.pyc
+│  │  │     ├─ schema.cpython-312.pyc
 │  │  │     └─ schema.cpython-313.pyc
 │  │  ├─ chatbot
 │  │  │  ├─ agent.py
@@ -163,12 +170,28 @@ LMS-PythonDevelopment-main
 │  │  ├─ files
 │  │  │  ├─ routes.py
 │  │  │  └─ __pycache__
+│  │  │     ├─ routes.cpython-312.pyc
 │  │  │     └─ routes.cpython-313.pyc
 │  │  ├─ notifications
 │  │  │  ├─ updates_routes.py
 │  │  │  ├─ websocket_routes.py
 │  │  │  └─ __pycache__
+│  │  │     ├─ websocket_routes.cpython-312.pyc
 │  │  │     └─ websocket_routes.cpython-313.pyc
+│  │  ├─ risk
+│  │  │  ├─ features.py
+│  │  │  ├─ routes.py
+│  │  │  ├─ scoring.py
+│  │  │  ├─ service.py
+│  │  │  ├─ train.py
+│  │  │  ├─ __init__.py
+│  │  │  └─ __pycache__
+│  │  │     ├─ features.cpython-313.pyc
+│  │  │     ├─ routes.cpython-313.pyc
+│  │  │     ├─ scoring.cpython-313.pyc
+│  │  │     ├─ service.cpython-313.pyc
+│  │  │     ├─ train.cpython-313.pyc
+│  │  │     └─ __init__.cpython-313.pyc
 │  │  ├─ students
 │  │  │  ├─ repository.py
 │  │  │  ├─ routes.py
@@ -208,6 +231,7 @@ LMS-PythonDevelopment-main
 │  │  └─ __pycache__
 │  │     ├─ mail.cpython-312.pyc
 │  │     ├─ mail.cpython-313.pyc
+│  │     ├─ websocket_manager.cpython-312.pyc
 │  │     └─ websocket_manager.cpython-313.pyc
 │  ├─ storage
 │  │  └─ students_uploads
@@ -291,21 +315,49 @@ LMS-PythonDevelopment-main
 │  │        ├─ student_2_front_test4.jpg
 │  │        └─ student_2_front_test8.jpg
 │  ├─ tests
-│  │  ├─ confest.py
+│  │  ├─ conftest.py
 │  │  ├─ integration
+│  │  │  ├─ helpers.py
 │  │  │  ├─ test_access_control.py
+│  │  │  ├─ test_admin_routes.py
+│  │  │  ├─ test_auth_routes.py
+│  │  │  ├─ test_file_access.py
+│  │  │  ├─ test_student_routes.py
+│  │  │  ├─ test_teacher_routes.py
+│  │  │  ├─ test_websocket_auth.py
 │  │  │  └─ __pycache__
-│  │  │     └─ test_access_control.cpython-312-pytest-9.2.0.pyc
+│  │  │     ├─ helpers.cpython-312.pyc
+│  │  │     ├─ test_access_control.cpython-312-pytest-9.2.0.pyc
+│  │  │     ├─ test_admin_routes.cpython-312-pytest-9.2.0.pyc
+│  │  │     ├─ test_auth_routes.cpython-312-pytest-9.2.0.pyc
+│  │  │     ├─ test_file_access.cpython-312-pytest-9.2.0.pyc
+│  │  │     ├─ test_student_routes.cpython-312-pytest-9.2.0.pyc
+│  │  │     ├─ test_teacher_routes.cpython-312-pytest-9.2.0.pyc
+│  │  │     └─ test_websocket_auth.cpython-312-pytest-9.2.0.pyc
+│  │  ├─ repositories
+│  │  │  ├─ test_admin_repository.py
+│  │  │  ├─ test_student_repository.py
+│  │  │  ├─ test_teacher_repository.py
+│  │  │  └─ __pycache__
+│  │  │     ├─ test_admin_repository.cpython-312-pytest-9.2.0.pyc
+│  │  │     ├─ test_student_repository.cpython-312-pytest-9.2.0.pyc
+│  │  │     └─ test_teacher_repository.cpython-312-pytest-9.2.0.pyc
 │  │  ├─ smoke
 │  │  │  ├─ test_imports.py
 │  │  │  └─ __pycache__
 │  │  │     └─ test_imports.cpython-312-pytest-9.2.0.pyc
-│  │  └─ unit
-│  │     ├─ test_auth.py
-│  │     ├─ test_student_service.py
-│  │     └─ __pycache__
-│  │        ├─ test_auth.cpython-312-pytest-9.2.0.pyc
-│  │        └─ test_student_service.cpython-312-pytest-9.2.0.pyc
+│  │  ├─ unit
+│  │  │  ├─ test_admin_service.py
+│  │  │  ├─ test_auth.py
+│  │  │  ├─ test_student_service.py
+│  │  │  ├─ test_teacher_service.py
+│  │  │  └─ __pycache__
+│  │  │     ├─ test_admin_service.cpython-312-pytest-9.2.0.pyc
+│  │  │     ├─ test_auth.cpython-312-pytest-9.2.0.pyc
+│  │  │     ├─ test_student_service.cpython-312-pytest-9.2.0.pyc
+│  │  │     └─ test_teacher_service.cpython-312-pytest-9.2.0.pyc
+│  │  └─ __pycache__
+│  │     └─ conftest.cpython-312-pytest-9.2.0.pyc
 │  ├─ updated_lms.sql
 │  └─ web
 │     ├─ static
@@ -340,6 +392,7 @@ LMS-PythonDevelopment-main
 │        │  ├─ admin_notifications.html
 │        │  ├─ admin_profile.html
 │        │  ├─ assign_classes.html
+│        │  ├─ at_risk.html
 │        │  ├─ class_timetable.html
 │        │  ├─ complaints.html
 │        │  ├─ course_attendance.html
@@ -348,7 +401,6 @@ LMS-PythonDevelopment-main
 │        │  ├─ fee_management.html
 │        │  ├─ fyp_proposals.html
 │        │  ├─ get_proposals.html
-│        │  ├─ help_desk.html
 │        │  ├─ manage_attendance.html
 │        │  ├─ manage_grades.html
 │        │  ├─ promote_students.html
