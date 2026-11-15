@@ -668,3 +668,13 @@ class StudentRiskScore(Base):
     computed_at=Column(TIMESTAMP,nullable=False,server_default=text("current_timestamp"),onupdate=func.current_timestamp())
     is_deleted=Column(Boolean,nullable=False,default=False,server_default=text("0"))
     
+
+class StudentRiskHistory(Base):
+    __tablename__="student_risk_history"
+    __table_args__=(UniqueConstraint("student_id","snapshot_date",name="uq_risk_hist_student_day"),OPTS,)
+    history_id=Column(Integer,primary_key=True,autoincrement=True)
+    student_id=Column(Integer,ForeignKey("students.student_id"),nullable=False,index=True)
+    snapshot_date=Column(Date,nullable=False)
+    semester=Column(Integer,nullable=False)
+    risk_score=Column(Numeric(4,3),nullable=False)
+    risk_level=Column(Enum("Low","Medium","High"),nullable=False)

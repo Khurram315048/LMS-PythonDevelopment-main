@@ -14,17 +14,17 @@ from db.models.orm import (
     StudentImprovement, StudentFailSubject, Notification, SemesterFreezeStudent,
     SummerSemester, SummerRegistration, SystemSetting, FypGroup, FypMessage,
 )
-
-
 from sqlalchemy import select
 from core.logger import logging
 from db.session import SessionLocal
 from db.models.orm import StudentRiskScore, Student
+from modules.risk.trend import get_trends
 
-TIPS = {
-    "High": "Please talk to your teacher or advisor soon. Focus on attendance and pending fees first.",
-    "Medium": "You are doing okay, but a few areas need attention. Keep an eye on them.",
-    "Low": "You are on track. Keep it up!",
+
+TIPS={
+    "High":"Please talk to your teacher or advisor soon. Focus on attendance and pending fees first.",
+    "Medium":"You are doing okay, but a few areas need attention. Keep an eye on them.",
+    "Low":"You are on track. Keep it up!",
 }
 
 
@@ -50,15 +50,18 @@ class RiskReadRepository:
             ).first()
             if not row:
                 return None
+
+            trend=get_trends(session,[student_id]).get(student_id)
             return {
                 "level":row.risk_level,
                 "reasons":row.factors or [],
                 "tip":TIPS.get(row.risk_level, ""),
                 "computed_at":row.computed_at,
+                "trend":trend,
             }
         except Exception as e:
             logging.exception(f"during student risk: {str(e)}")
-            return None      # risk card ki wajah se dashboard kabhi na tootay
+            return None      
         finally:
             session.close()
 

@@ -17,6 +17,13 @@
   <small style="color:#777">Updated: {{ risk.computed_at.strftime('%d %b %Y') if risk.computed_at else '—' }}</small>
 </div>
 {% endif %}
+{% if risk.trend %}
+<p style="margin:0 0 6px;font-weight:600">
+  {% if risk.trend.direction == 'better' %}Improving compared to last week
+  {% elif risk.trend.direction == 'worse' %}Needs attention compared to last week
+  {% else %}Steady compared to last week{% endif %}
+</p>
+{% endif %}
 
 <div class="container">
     <div class="dashboard-content">

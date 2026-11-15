@@ -1,9 +1,10 @@
-from db.models.orm import StudentRiskScore
+from db.models.orm import StudentRiskScore,StudentRiskHistory
 from .features import build_features
 from .scoring import rule_score, level_for
 import joblib
 from .train import MODEL_PATH
 from .train import load_model, ml_probability
+from datetime import date
 
 def compute_and_save(db,student_ids=None,model=None)->list[dict]:
     feats=build_features(db,student_ids)
@@ -25,7 +26,17 @@ def compute_and_save(db,student_ids=None,model=None)->list[dict]:
         if row is None:
             row=StudentRiskScore(student_id=sid,semester=f["semester"])
             db.add(row)
-        row.risk_score,row.risk_level=score, level
+        row.risk_score=score
+        row.risk_level=level
+        today=date.today()
+        hist=(db.query(StudentRiskHistory).filter_by(student_id=sid,snapshot_date=today).first())
+        if hist is None:
+            hist=StudentRiskHistory(student_id=sid,snapshot_date=today)
+            db.add(hist)
+
+        hist.semester=f["semester"]
+        hist.risk_score=score
+        hist.risk_level=level
         row.factors,row.model_version,row.is_deleted=reasons, version, False
 
         if level == "High" and not was_high:

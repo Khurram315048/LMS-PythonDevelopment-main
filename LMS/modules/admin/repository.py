@@ -3,7 +3,7 @@ from datetime import datetime,time,timedelta
 from core.exceptions import BusinessRuleError, NotFoundError, ValidationError
 from sqlalchemy import select,update,delete,func,and_,or_
 from sqlalchemy.orm import aliased
-
+from modules.risk.trend import get_trends
 from db.session import SessionLocal
 from db.models.orm import (  
     User,UserRole,Admin,Student,Teacher,Program,Course,TeacherCourse,
@@ -1639,9 +1639,9 @@ class EmailLookup:
 class RiskRepository:
     @staticmethod
     def get_all(level=None):
-        session = SessionLocal()
+        session=SessionLocal()
         try:
-            stmt = (
+            stmt=(
                 select(
                     StudentRiskScore.risk_id,
                     StudentRiskScore.student_id,
@@ -1663,8 +1663,10 @@ class RiskRepository:
                 .order_by(StudentRiskScore.risk_score.desc())
             )
             if level:
-                stmt = stmt.where(StudentRiskScore.risk_level == level)
+                stmt=stmt.where(StudentRiskScore.risk_level == level)
 
+            rows=session.execute(stmt).all()
+            trends=get_trends(session,[r.student_id for r in rows])
             return [
                 {
                     "risk_id": r.risk_id,
@@ -1675,6 +1677,7 @@ class RiskRepository:
                     "level": r.risk_level,
                     "reasons": r.factors or [],
                     "computed_at": r.computed_at,
+                    "trend":trends.get(r.student_id),
                 }
                 for r in session.execute(stmt).all()
             ]

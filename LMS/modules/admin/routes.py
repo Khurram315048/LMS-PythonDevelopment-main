@@ -18,12 +18,8 @@ from core.templating import *
 from core.config import BASE_DIR 
 from core.rate_limiter import guarded_authenticate, TooManyAttempts, client_ip
 from core.cookies import set_auth_cookies
-# from modules.risk.train import *
-# from modules.risk.features import *
-# from modules.risk.routes import *
-# from modules.risk.scoring import *
 from modules.risk.service import * 
-
+from modules.risk.trend import get_trends
 
 TEMPLATES_DIR=BASE_DIR / "web" / "templates"
 
@@ -846,7 +842,9 @@ def at_risk_page(request:Request,level:str | None=None,current_user=Depends(get_
             level=None
 
         all_data=RiskRepository.get_all(level or None)
-        return templates.TemplateResponse(request,name="at_risk.html",context={"all_data":all_data,"level":level},)
+
+        return templates.TemplateResponse(request,name="at_risk.html",
+                                          context={"all_data":all_data,"level":level})
     except Exception as e:
         logging.exception(f"during risk route: {str(e)}")
         return RedirectResponse(url="/admin_dashboard",status_code=status.HTTP_303_SEE_OTHER)

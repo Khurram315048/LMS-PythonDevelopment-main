@@ -27,7 +27,7 @@ from db.models.orm import StudentFee
 from db.session import SessionLocal
 from core.cookies import set_auth_cookies
 from modules.students.repository import RiskReadRepository
-
+from modules.risk.trend import get_trends
 
 TEMPLATES_DIR=BASE_DIR / "web" / "templates"
 UPLOAD_BASE=(BASE_DIR / "storage" / "students_uploads").resolve()

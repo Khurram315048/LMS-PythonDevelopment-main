@@ -753,6 +753,34 @@ INSERT INTO `student_results` VALUES (1,2,5,4.00,'Pass',0,'2026-10-06 10:05:39')
 UNLOCK TABLES;
 
 --
+-- Table structure for table `student_risk_history`
+--
+
+DROP TABLE IF EXISTS `student_risk_history`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `student_risk_history` (
+  `history_id` int NOT NULL AUTO_INCREMENT,
+  `student_id` int NOT NULL,
+  `snapshot_date` date NOT NULL,
+  `semester` int NOT NULL,
+  `risk_score` decimal(4,3) NOT NULL,
+  `risk_level` enum('Low','Medium','High') NOT NULL,
+  PRIMARY KEY (`history_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `student_risk_history`
+--
+
+LOCK TABLES `student_risk_history` WRITE;
+/*!40000 ALTER TABLE `student_risk_history` DISABLE KEYS */;
+INSERT INTO `student_risk_history` VALUES (1,2,'2026-11-15',7,0.525,'Medium'),(2,3,'2026-11-15',6,0.000,'Low'),(3,4,'2026-11-15',6,0.038,'Low'),(4,7,'2026-11-15',1,0.000,'Low'),(5,9,'2026-11-15',7,0.000,'Low'),(6,10,'2026-11-15',1,0.000,'Low'),(7,11,'2026-11-15',1,0.000,'Low'),(8,12,'2026-11-15',7,0.000,'Low'),(9,13,'2026-11-15',4,0.000,'Low');
+/*!40000 ALTER TABLE `student_risk_history` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `student_risk_scores`
 --
 
@@ -782,7 +810,7 @@ CREATE TABLE `student_risk_scores` (
 
 LOCK TABLES `student_risk_scores` WRITE;
 /*!40000 ALTER TABLE `student_risk_scores` DISABLE KEYS */;
-INSERT INTO `student_risk_scores` VALUES (1,2,7,0.525,'Medium','[\"Low attendance (40.0%)\", \"11 unpaid fee(s)\", \"Weak assignments/quizzes (40.0%)\"]','rules-v1','2026-11-15 10:33:21',0),(2,3,6,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(3,4,6,0.038,'Low','[]','rules-v1','2026-11-15 10:33:21',0),(4,7,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(5,9,7,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(6,10,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(7,11,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(8,12,7,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(9,13,4,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0);
+INSERT INTO `student_risk_scores` VALUES (1,2,7,0.525,'Medium','[\"Low attendance (40.0%)\", \"11 unpaid fee(s)\", \"Weak assignments/quizzes (40.0%)\"]','rules-v1','2026-11-15 11:07:30',0),(2,3,6,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(3,4,6,0.038,'Low','[]','rules-v1','2026-11-15 11:07:30',0),(4,7,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(5,9,7,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(6,10,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(7,11,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(8,12,7,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(9,13,4,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0);
 /*!40000 ALTER TABLE `student_risk_scores` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1995,4 +2023,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-11-15 15:33:58
+-- Dump completed on 2026-11-15 16:15:25

@@ -30,6 +30,7 @@
       <th>Risk</th>
       <th>Level</th>
       <th>Why flagged</th>
+      <th>Trend</th>
     </tr>
   </thead>
   <tbody>
@@ -45,6 +46,13 @@
         </span>
       </td>
       <td>{{ r.reasons | join(", ") if r.reasons else "—" }}</td>
+      <td>
+  {% if r.trend %}
+    {% if r.trend.direction == 'worse' %}<span style="color:#d9534f">▲ +{{ r.trend.delta }}</span>
+    {% elif r.trend.direction == 'better' %}<span style="color:#5cb85c">▼ {{ r.trend.delta }}</span>
+    {% else %}<span style="color:#888">● same</span>{% endif %}
+  {% else %}—{% endif %}
+</td>
     </tr>
     {% else %}
     <tr><td colspan="5">No data yet. Click "Recompute now".</td></tr>
