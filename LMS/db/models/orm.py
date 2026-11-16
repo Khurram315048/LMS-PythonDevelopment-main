@@ -657,7 +657,7 @@ class SystemSetting(Base):
 
 class StudentRiskScore(Base):
     __tablename__="student_risk_scores"
-    __tableargs__=(UniqueConstraint("student_is","semester",name="uq_risk_student_sem"),OPTS,)
+    __table_args__=(UniqueConstraint("student_id","semester",name="uq_risk_student_sem"),OPTS,)
     risk_id=Column(Integer,primary_key=True,autoincrement=True)
     student_id=Column(Integer,ForeignKey("students.student_id"),nullable=False,index=True)
     semester=Column(Integer,nullable=False)

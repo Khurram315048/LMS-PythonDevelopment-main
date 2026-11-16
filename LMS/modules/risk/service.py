@@ -1,10 +1,19 @@
+# from db.models.orm import StudentRiskScore,StudentRiskHistory
+# from .features import build_features
+# from .scoring import rule_score, level_for
+# import joblib
+# from .train import MODEL_PATH
+# from .train import load_model, ml_probability
+# from datetime import date
+
+from decimal import Decimal
+import joblib
 from db.models.orm import StudentRiskScore,StudentRiskHistory
 from .features import build_features
 from .scoring import rule_score, level_for
-import joblib
-from .train import MODEL_PATH
 from .train import load_model, ml_probability
 from datetime import date
+from .train import MODEL_PATH
 
 def compute_and_save(db,student_ids=None,model=None)->list[dict]:
     feats=build_features(db,student_ids)
@@ -29,14 +38,36 @@ def compute_and_save(db,student_ids=None,model=None)->list[dict]:
         row.risk_score=score
         row.risk_level=level
         today=date.today()
-        hist=(db.query(StudentRiskHistory).filter_by(student_id=sid,snapshot_date=today).first())
-        if hist is None:
-            hist=StudentRiskHistory(student_id=sid,snapshot_date=today)
-            db.add(hist)
+        semester=int(f["semester"])
+        score_db=Decimal(str(score)).quantize(Decimal("0.001"))
 
-        hist.semester=f["semester"]
-        hist.risk_score=score
-        hist.risk_level=level
+        hist=(db.query(StudentRiskHistory).filter_by(student_id=sid,snapshot_date=today).first())
+
+        if hist is None:
+            hist=StudentRiskHistory(
+                student_id=sid,
+                snapshot_date=today,
+                semester=semester,
+                risk_score=score_db,
+                risk_level=level,
+            )
+            db.add(hist)
+        else:
+            if hist.semester != semester:
+                hist.semester=semester
+            if hist.risk_score != score_db:
+                hist.risk_score=score_db
+            if hist.risk_level != level:
+                hist.risk_level=level
+        # today=date.today()
+        # hist=(db.query(StudentRiskHistory).filter_by(student_id=sid,snapshot_date=today).first())
+        # if hist is None:
+        #     hist=StudentRiskHistory(student_id=sid,snapshot_date=today)
+        #     db.add(hist)
+
+        # hist.semester=f["semester"]
+        # hist.risk_score=score
+        # hist.risk_level=level
         row.factors,row.model_version,row.is_deleted=reasons, version, False
 
         if level == "High" and not was_high:
@@ -53,3 +84,6 @@ def compute_and_save(db,student_ids=None,model=None)->list[dict]:
 
 def load_model():
     return joblib.load(MODEL_PATH) if MODEL_PATH.exists() else None
+
+# def load_model():
+#     return joblib.load(MODEL_PATH) if MODEL_PATH.exists() else None

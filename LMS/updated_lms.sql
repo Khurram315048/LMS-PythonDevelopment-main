@@ -71,7 +71,7 @@ CREATE TABLE `attendance` (
   CONSTRAINT `attendance_ibfk_1` FOREIGN KEY (`student_course_id`) REFERENCES `student_course` (`student_course_id`),
   CONSTRAINT `attendance_ibfk_2` FOREIGN KEY (`course_schedule_id`) REFERENCES `course_schedule` (`course_schedule_id`),
   CONSTRAINT `fk_attendance_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -80,7 +80,7 @@ CREATE TABLE `attendance` (
 
 LOCK TABLES `attendance` WRITE;
 /*!40000 ALTER TABLE `attendance` DISABLE KEYS */;
-INSERT INTO `attendance` VALUES (1,2,3,'2025-12-31','Absent',3,0),(2,3,4,'2025-12-31','Absent',4,0),(4,2,3,'2026-02-04','Present',3,0),(5,3,4,'2026-02-04','Present',4,0),(6,2,3,'2026-03-04','Present',3,0),(7,3,4,'2026-03-04','Present',4,0),(10,2,3,'2026-03-11','Present',3,0),(11,3,4,'2026-03-11','Present',4,0),(12,2,3,'2026-03-13','Present',3,0),(13,3,4,'2026-03-19','Present',4,0),(14,2,3,'2026-09-17','Present',3,0),(15,1,4,'2026-09-16','Absent',2,0),(16,3,4,'2026-09-16','Absent',4,0),(17,1,4,'2026-09-17','Present',2,0),(18,3,4,'2026-09-17','Present',4,0),(19,4,2,'2026-09-18','Present',5,0),(20,4,2,'2026-09-17','Present',5,0),(21,1,1,'2026-10-06','Absent',2,0),(22,1,1,'2026-10-05','Absent',2,0),(23,2,3,'2026-10-05','Absent',3,0),(24,2,3,'2026-10-08','Present',3,0),(25,4,2,'2026-10-08','Present',5,0),(26,2,3,'2026-10-16','Present',3,0),(27,2,3,'2026-10-19','Present',3,0),(28,2,3,'2026-10-23','Present',3,0),(29,2,3,'2026-11-06','Present',3,0),(30,1,1,'2026-11-09','Present',2,0),(31,2,3,'2026-11-09','Present',3,0);
+INSERT INTO `attendance` VALUES (1,2,3,'2025-12-31','Absent',3,0),(2,3,4,'2025-12-31','Absent',4,0),(4,2,3,'2026-02-04','Present',3,0),(5,3,4,'2026-02-04','Present',4,0),(6,2,3,'2026-03-04','Present',3,0),(7,3,4,'2026-03-04','Present',4,0),(10,2,3,'2026-03-11','Present',3,0),(11,3,4,'2026-03-11','Present',4,0),(12,2,3,'2026-03-13','Present',3,0),(13,3,4,'2026-03-19','Present',4,0),(14,2,3,'2026-09-17','Present',3,0),(15,1,4,'2026-09-16','Absent',2,0),(16,3,4,'2026-09-16','Absent',4,0),(17,1,4,'2026-09-17','Present',2,0),(18,3,4,'2026-09-17','Present',4,0),(19,4,2,'2026-09-18','Present',5,0),(20,4,2,'2026-09-17','Present',5,0),(21,1,1,'2026-10-06','Absent',2,0),(22,1,1,'2026-10-05','Absent',2,0),(23,2,3,'2026-10-05','Absent',3,0),(24,2,3,'2026-10-08','Present',3,0),(25,4,2,'2026-10-08','Present',5,0),(26,2,3,'2026-10-16','Present',3,0),(27,2,3,'2026-10-19','Present',3,0),(28,2,3,'2026-10-23','Present',3,0),(29,2,3,'2026-11-06','Present',3,0),(30,1,1,'2026-11-09','Present',2,0),(31,2,3,'2026-11-09','Present',3,0),(32,1,1,'2026-11-16','Present',2,0),(33,2,3,'2026-11-16','Present',3,0);
 /*!40000 ALTER TABLE `attendance` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -141,7 +141,7 @@ CREATE TABLE `course_attendance_log` (
   CONSTRAINT `cal_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `teachers` (`teacher_id`),
   CONSTRAINT `cal_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `courses` (`course_id`),
   CONSTRAINT `cal_ibfk_3` FOREIGN KEY (`course_schedule_id`) REFERENCES `course_schedule` (`course_schedule_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -150,7 +150,7 @@ CREATE TABLE `course_attendance_log` (
 
 LOCK TABLES `course_attendance_log` WRITE;
 /*!40000 ALTER TABLE `course_attendance_log` DISABLE KEYS */;
-INSERT INTO `course_attendance_log` VALUES (3,1,1,3,'2026-03-11',91,41,50,'2026-03-11 07:37:21',0,5),(4,1,1,4,'2026-03-11',1,1,0,'2026-03-11 07:37:26',0,5),(5,1,1,3,'2026-03-13',1,1,0,'2026-03-13 06:38:50',0,5),(6,1,1,4,'2026-03-19',1,1,0,'2026-03-19 05:57:07',0,5),(7,5,6,4,'2026-03-26',15,10,5,'2026-03-25 13:34:10',0,5),(8,1,1,4,'2026-09-16',2,0,2,'2026-09-17 17:59:38',0,5),(9,1,1,4,'2026-09-17',2,0,2,'2026-09-17 18:04:13',0,5),(10,1,1,2,'2026-09-18',1,1,0,'2026-09-17 18:08:00',0,5),(11,1,1,2,'2026-09-17',1,1,0,'2026-09-17 18:28:14',0,5),(12,1,1,1,'2026-10-06',1,0,1,'2026-10-05 15:07:04',0,5),(13,1,1,1,'2026-10-05',1,1,0,'2026-10-05 15:07:50',0,5),(14,1,1,3,'2026-10-05',1,0,1,'2026-10-05 15:08:01',0,5),(15,1,1,3,'2026-10-08',1,1,0,'2026-10-08 11:15:12',0,5),(16,1,1,2,'2026-10-08',1,1,0,'2026-10-08 11:15:27',0,5),(17,1,1,3,'2026-10-16',1,1,0,'2026-10-16 06:33:43',0,5),(18,1,1,3,'2026-10-19',1,1,0,'2026-10-19 12:11:22',0,5),(19,1,1,3,'2026-10-23',1,1,0,'2026-10-23 06:18:07',0,5),(20,1,1,3,'2026-11-06',1,1,0,'2026-11-06 13:10:04',0,5),(21,1,1,1,'2026-11-09',1,1,0,'2026-11-09 06:08:05',0,5),(22,1,1,3,'2026-11-09',1,1,0,'2026-11-09 06:08:10',0,5);
+INSERT INTO `course_attendance_log` VALUES (3,1,1,3,'2026-03-11',91,41,50,'2026-03-11 07:37:21',0,5),(4,1,1,4,'2026-03-11',1,1,0,'2026-03-11 07:37:26',0,5),(5,1,1,3,'2026-03-13',1,1,0,'2026-03-13 06:38:50',0,5),(6,1,1,4,'2026-03-19',1,1,0,'2026-03-19 05:57:07',0,5),(7,5,6,4,'2026-03-26',15,10,5,'2026-03-25 13:34:10',0,5),(8,1,1,4,'2026-09-16',2,0,2,'2026-09-17 17:59:38',0,5),(9,1,1,4,'2026-09-17',2,0,2,'2026-09-17 18:04:13',0,5),(10,1,1,2,'2026-09-18',1,1,0,'2026-09-17 18:08:00',0,5),(11,1,1,2,'2026-09-17',1,1,0,'2026-09-17 18:28:14',0,5),(12,1,1,1,'2026-10-06',1,0,1,'2026-10-05 15:07:04',0,5),(13,1,1,1,'2026-10-05',1,1,0,'2026-10-05 15:07:50',0,5),(14,1,1,3,'2026-10-05',1,0,1,'2026-10-05 15:08:01',0,5),(15,1,1,3,'2026-10-08',1,1,0,'2026-10-08 11:15:12',0,5),(16,1,1,2,'2026-10-08',1,1,0,'2026-10-08 11:15:27',0,5),(17,1,1,3,'2026-10-16',1,1,0,'2026-10-16 06:33:43',0,5),(18,1,1,3,'2026-10-19',1,1,0,'2026-10-19 12:11:22',0,5),(19,1,1,3,'2026-10-23',1,1,0,'2026-10-23 06:18:07',0,5),(20,1,1,3,'2026-11-06',1,1,0,'2026-11-06 13:10:04',0,5),(21,1,1,1,'2026-11-09',1,1,0,'2026-11-09 06:08:05',0,5),(22,1,1,3,'2026-11-09',1,1,0,'2026-11-09 06:08:10',0,5),(23,1,1,1,'2026-11-16',1,1,0,'2026-11-16 07:56:34',0,5),(24,1,1,3,'2026-11-16',1,1,0,'2026-11-16 07:56:39',0,5);
 /*!40000 ALTER TABLE `course_attendance_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -471,7 +471,7 @@ CREATE TABLE `risk_interventions` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`intervention_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -480,7 +480,7 @@ CREATE TABLE `risk_interventions` (
 
 LOCK TABLES `risk_interventions` WRITE;
 /*!40000 ALTER TABLE `risk_interventions` DISABLE KEYS */;
-INSERT INTO `risk_interventions` VALUES (1,2,4,'teacher','Counseling','Meet me in the office','2026-11-16','2026-11-16 07:01:44',0);
+INSERT INTO `risk_interventions` VALUES (1,2,4,'teacher','Counseling','Meet me in the office','2026-11-16','2026-11-16 07:01:44',0),(2,2,4,'teacher','Counseling','checking the error resolved','2026-11-17','2026-11-16 07:57:06',0),(3,9,4,'teacher','Spoke','good work doing',NULL,'2026-11-16 07:57:15',0);
 /*!40000 ALTER TABLE `risk_interventions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -807,7 +807,7 @@ CREATE TABLE `student_risk_history` (
 
 LOCK TABLES `student_risk_history` WRITE;
 /*!40000 ALTER TABLE `student_risk_history` DISABLE KEYS */;
-INSERT INTO `student_risk_history` VALUES (1,2,'2026-11-15',7,0.525,'Medium'),(2,3,'2026-11-15',6,0.000,'Low'),(3,4,'2026-11-15',6,0.038,'Low'),(4,7,'2026-11-15',1,0.000,'Low'),(5,9,'2026-11-15',7,0.000,'Low'),(6,10,'2026-11-15',1,0.000,'Low'),(7,11,'2026-11-15',1,0.000,'Low'),(8,12,'2026-11-15',7,0.000,'Low'),(9,13,'2026-11-15',4,0.000,'Low'),(10,2,'2026-11-16',7,0.525,'Medium'),(11,3,'2026-11-16',6,0.000,'Low'),(12,4,'2026-11-16',6,0.038,'Low'),(13,7,'2026-11-16',1,0.000,'Low'),(14,9,'2026-11-16',7,0.000,'Low'),(15,10,'2026-11-16',1,0.000,'Low'),(16,11,'2026-11-16',1,0.000,'Low'),(17,12,'2026-11-16',7,0.000,'Low'),(18,13,'2026-11-16',4,0.000,'Low');
+INSERT INTO `student_risk_history` VALUES (1,2,'2026-11-15',7,0.525,'Medium'),(2,3,'2026-11-15',6,0.000,'Low'),(3,4,'2026-11-15',6,0.038,'Low'),(4,7,'2026-11-15',1,0.000,'Low'),(5,9,'2026-11-15',7,0.000,'Low'),(6,10,'2026-11-15',1,0.000,'Low'),(7,11,'2026-11-15',1,0.000,'Low'),(8,12,'2026-11-15',7,0.000,'Low'),(9,13,'2026-11-15',4,0.000,'Low'),(10,2,'2026-11-16',7,0.425,'Medium'),(11,3,'2026-11-16',6,0.000,'Low'),(12,4,'2026-11-16',6,0.038,'Low'),(13,7,'2026-11-16',1,0.000,'Low'),(14,9,'2026-11-16',7,0.000,'Low'),(15,10,'2026-11-16',1,0.000,'Low'),(16,11,'2026-11-16',1,0.000,'Low'),(17,12,'2026-11-16',7,0.000,'Low'),(18,13,'2026-11-16',4,0.000,'Low');
 /*!40000 ALTER TABLE `student_risk_history` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -841,7 +841,7 @@ CREATE TABLE `student_risk_scores` (
 
 LOCK TABLES `student_risk_scores` WRITE;
 /*!40000 ALTER TABLE `student_risk_scores` DISABLE KEYS */;
-INSERT INTO `student_risk_scores` VALUES (1,2,7,0.525,'Medium','[\"Low attendance (40.0%)\", \"11 unpaid fee(s)\", \"Weak assignments/quizzes (40.0%)\"]','rules-v1','2026-11-16 04:33:27',0),(2,3,6,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(3,4,6,0.038,'Low','[]','rules-v1','2026-11-16 04:33:27',0),(4,7,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(5,9,7,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(6,10,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(7,11,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(8,12,7,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(9,13,4,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0);
+INSERT INTO `student_risk_scores` VALUES (1,2,7,0.425,'Medium','[\"Low attendance (50.0%)\", \"Weak assignments/quizzes (40.0%)\"]','rules-v1','2026-11-16 08:07:38',0),(2,3,6,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(3,4,6,0.038,'Low','[]','rules-v1','2026-11-16 08:07:38',0),(4,7,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(5,9,7,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(6,10,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(7,11,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(8,12,7,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(9,13,4,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0);
 /*!40000 ALTER TABLE `student_risk_scores` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2054,4 +2054,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-11-16 12:23:00
+-- Dump completed on 2026-11-16 13:08:43
