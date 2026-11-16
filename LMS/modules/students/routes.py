@@ -421,7 +421,7 @@ def select_improvement(request:Request,course_id:int,form_course_id:int=Form(Non
 
 @router.get('/help_desk')
 @router.post('/help_desk')
-def help_desk(request:Request):
+def help_desk(request:Request,current_user:dict=Depends(get_current_student)):
     try:
         return templates.TemplateResponse(request=request, name="help_desk.html")
     except Exception as e:

@@ -1,19 +1,28 @@
 import json
 import math
+import logging
 from pathlib import Path
 from .features import build_features, FEATURE_NAMES
 
 MODEL_PATH=Path(__file__).parent / "risk_model.json"
 
+ML_FEATURE_NAMES=["attendance_pct","fee_due_count","assignment_avg","freeze_count"]
 
 def _row(f):
-    return [f[n] if f[n] is not None else 0.0 for n in FEATURE_NAMES]
+    return [f[n] if f[n] is not None else 0.0 for n in ML_FEATURE_NAMES]
 
 
 def load_model():
     try:
-        return json.loads(MODEL_PATH.read_text()) if MODEL_PATH.exists() else None
+        if not MODEL_PATH.exists():
+            return None
+        model=json.loads(MODEL_PATH.read_text())
+        if model.get("features")!=ML_FEATURE_NAMES:
+            logging.warning("risk_model.json features mismatch, model dobara train karo")
+            return None
+        return model
     except Exception:
+        logging.exception("risk model load failed")
         return None
 
 
@@ -44,7 +53,7 @@ def train():
             labels[sid]=max(labels.get(sid, 0), 1 if status == "Fail" else 0)
 
         data = [(_row(feats[s]), y) for s, y in labels.items() if s in feats]
-        X = pd.DataFrame([d[0] for d in data], columns=FEATURE_NAMES)
+        X = pd.DataFrame([d[0] for d in data], columns=ML_FEATURE_NAMES)
         y = pd.Series([d[1] for d in data])
 
         if y.sum() < 5 or (len(y) - y.sum()) < 5:
@@ -64,7 +73,7 @@ def train():
             "scale":sc.scale_.tolist(),
             "coef":clf.coef_[0].tolist(),
             "intercept":float(clf.intercept_[0]),
-            "features":FEATURE_NAMES,
+            "features":ML_FEATURE_NAMES,
         }))
         print("Saved",MODEL_PATH)
     finally:

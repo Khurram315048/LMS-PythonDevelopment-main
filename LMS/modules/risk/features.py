@@ -104,8 +104,8 @@
 
 from sqlalchemy import func, case
 from db.models.orm import (
-    Student, StudentCourse, Attendance, StudentResult,
-    StudentFailSubject, StudentFee, StudentSubmission, SemesterFreezeStudent,
+    Student, StudentCourse, Attendance, StudentResult, StudentResultMarks,
+    StudentFee, StudentSubmission, SemesterFreezeStudent,
 )
 
 FEATURE_NAMES = [
@@ -186,16 +186,14 @@ def build_features(db, student_ids=None) -> dict[int, dict]:
                 else 0.0
             )
 
-    for sid, n in (
-        db.query(StudentFailSubject.student_id, func.count())
-        .filter(
-            StudentFailSubject.student_id.in_(ids),
-            StudentFailSubject.is_deleted == False,
-        )
-        .group_by(StudentFailSubject.student_id)
-        .all()
-    ):
-        feats[sid]["fail_count"] = n
+        for sid, n in (db.query(StudentCourse.student_id, func.count())
+        .join(StudentResultMarks,
+              StudentResultMarks.student_course_id == StudentCourse.student_course_id).filter(
+            StudentCourse.student_id.in_(ids),
+            StudentCourse.is_deleted == False,
+            StudentResultMarks.is_deleted == False,
+            StudentResultMarks.status == "Fail",).group_by(StudentCourse.student_id).all()):
+            feats[sid]["fail_count"] = n
 
     
     for sid, n in (

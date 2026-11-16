@@ -18,7 +18,7 @@ SECRET_KEY=os.getenv('SECRET_KEY')
 APP_ENV=os.getenv("APP_ENV","development").lower()
 COOKIE_SECURE=os.getenv("COOKIE_SECURE","true" if APP_ENV=="production" else "false").lower()=="true"
 COOKIE_SAMESITE=os.getenv("COOKIE_SAMESITE","lax").lower()
-ACCESS_TOKEN_MINUTES=int(os.getenv("ACCESS_TOKEN_MINUTES","1"))
+ACCESS_TOKEN_MINUTES=int(os.getenv("ACCESS_TOKEN_MINUTES","15"))
 REFRESH_TOKEN_DAYS=int(os.getenv("REFRESH_TOKEN_DAYS","7"))
 
 if not SECRET_KEY or len(SECRET_KEY)<32:

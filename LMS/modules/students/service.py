@@ -1,6 +1,9 @@
 import os
+import os
+import uuid
 import bleach
 from werkzeug.utils import secure_filename
+import bleach
 from datetime import datetime as _dt
 import logging
 from core.exceptions import *
@@ -13,6 +16,7 @@ max_file_size=5*1024*1024
 class FileService:
     @staticmethod
     def validate_upload_file(file,allowed:set)->bool:
+        
         if not file or not file.filename:
             return False
 
@@ -200,9 +204,13 @@ class StudentService:
             FileService.validate_upload_file(back_file,allowed={'jpg','jpeg','png'})
             upload_folder=FEE_UPLOAD_FOLDER
             os.makedirs(upload_folder,exist_ok=True)
+            front_ext=os.path.splitext(front_file.filename)[1].lower()
+            back_ext=os.path.splitext(back_file.filename)[1].lower()
+            front_filename=f"student_{student_id}_front_{uuid.uuid4().hex}{front_ext}"
+            back_filename=f"student_{student_id}_back_{uuid.uuid4().hex}{back_ext}"
 
-            front_filename=secure_filename(f"student_{student_id}_front_{front_file.filename}")
-            back_filename=secure_filename(f"student_{student_id}_back_{back_file.filename}")
+            # front_filename=secure_filename(f"student_{student_id}_front_{front_file.filename}")
+            # back_filename=secure_filename(f"student_{student_id}_back_{back_file.filename}")
 
             with open(os.path.join(upload_folder,front_filename),'wb') as f:
                 f.write(front_file.file.read())

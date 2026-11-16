@@ -152,7 +152,7 @@ def system_settings(request:Request,current_user:dict=Depends(get_current_admin)
 
 
 @router.post('/edit_settings')
-def edit_settings(request:Request,setting_key:str=Form(...),setting_value:str=Form(...)):
+def edit_settings(request:Request,setting_key:str=Form(...),setting_value:str=Form(...),current_user:dict=Depends(get_current_admin)):
     try:
         SystemModel.update_setting(setting_key,setting_value)
         request.session['flash_success']=f"Setting '{setting_key}' updated successfully!"
@@ -163,7 +163,7 @@ def edit_settings(request:Request,setting_key:str=Form(...),setting_value:str=Fo
 
 
 @router.get('/complaints')
-def complaints(request:Request):
+def complaints(request:Request,current_user:dict=Depends(get_current_admin)):
     complaints_list=ComplaintModel.get_all()
     return templates.TemplateResponse(request=request,name="complaints.html",context={
         "complaints":complaints_list,
@@ -172,7 +172,7 @@ def complaints(request:Request):
 
 
 @router.post('/solve_complaint')
-def solve_complaint(request:Request,background_tasks:BackgroundTasks,complt_sugst_id:int=Form(...)):
+def solve_complaint(request:Request,background_tasks:BackgroundTasks,complt_sugst_id:int=Form(...),current_user:dict=Depends(get_current_admin)):
     user_email=EmailLookup.by_complaint_id(complt_sugst_id)
     try:
         ComplaintModel.mark_solved(complt_sugst_id)
@@ -186,7 +186,7 @@ def solve_complaint(request:Request,background_tasks:BackgroundTasks,complt_sugs
 
 
 @router.post('/delete_complaint')
-def delete_complaint(request:Request,complt_sugst_id:int=Form(...)):
+def delete_complaint(request:Request,complt_sugst_id:int=Form(...),current_user:dict=Depends(get_current_admin)):
     try:
         ComplaintModel.delete_complaint(complt_sugst_id)
         request.session['flash_success']="Complaint has been deleted successfully"
@@ -201,7 +201,7 @@ def delete_complaint(request:Request,complt_sugst_id:int=Form(...)):
 
 
 @router.post('/reject_complaint')
-def reject_complaint(request:Request,background_tasks:BackgroundTasks,complt_sugst_id:int=Form(...)):
+def reject_complaint(request:Request,background_tasks:BackgroundTasks,complt_sugst_id:int=Form(...),current_user:dict=Depends(get_current_admin)):
     user_email=EmailLookup.by_complaint_id(complt_sugst_id)
     try:
         ComplaintModel.marked_rejected(complt_sugst_id)
@@ -215,7 +215,7 @@ def reject_complaint(request:Request,background_tasks:BackgroundTasks,complt_sug
 
 
 @router.get('/system_controls')
-def system_controls(request:Request):
+def system_controls(request:Request,current_user:dict=Depends(get_current_admin)):
     semesters=SemesterModel.get_all()
     return templates.TemplateResponse(request=request,name="system_controls.html",context={
         "semesters":semesters,
@@ -224,7 +224,7 @@ def system_controls(request:Request):
 
 
 @router.post('/add_semester')
-def add_semester(request:Request,name:str=Form(...),year:str=Form(...),start_date:str=Form(...),end_date:str=Form(...)):
+def add_semester(request:Request,name:str=Form(...),year:str=Form(...),start_date:str=Form(...),end_date:str=Form(...),current_user:dict=Depends(get_current_admin)):
     try:
         SemesterModel.create(name,year,start_date,end_date)
         request.session['flash_success']="Semester added successfully."
@@ -234,7 +234,8 @@ def add_semester(request:Request,name:str=Form(...),year:str=Form(...),start_dat
 
 
 @router.post('/edit_semester')
-def edit_semester(request:Request,semester_id:int=Form(...),name:str=Form(...),year:str=Form(...),start_date:str=Form(...),end_date:str=Form(...)):
+def edit_semester(request:Request,semester_id:int=Form(...),name:str=Form(...),
+                  year:str=Form(...),start_date:str=Form(...),end_date:str=Form(...),current_user:dict=Depends(get_current_admin)):
     try:
         SemesterModel.update(semester_id,name,year,start_date,end_date)
         request.session['flash_success']="Semester Updated successfully."
@@ -835,22 +836,6 @@ def promote_student(request: Request, student_id: int, current_user: dict = Depe
 
 
 
-@router.get("/at_risk")
-def at_risk_page(request:Request,level:str | None=None,current_user=Depends(get_current_admin)):
-    try:
-        if level not in (None,"","Low","Medium","High"):
-            level=None
-
-        all_data=RiskRepository.get_all(level or None)
-
-        return templates.TemplateResponse(request,name="at_risk.html",
-                                          context={"all_data":all_data,"level":level})
-    except Exception as e:
-        logging.exception(f"during risk route: {str(e)}")
-        return RedirectResponse(url="/admin_dashboard",status_code=status.HTTP_303_SEE_OTHER)
-
-
-
 
 @router.post('/recompute')
 def at_risk_recompute(current_user=Depends(get_current_admin)):
@@ -866,24 +851,27 @@ def at_risk_recompute(current_user=Depends(get_current_admin)):
 
 
 @router.get("/at_risk")
-def at_risk_page(request: Request, level: str | None = None, action: str | None = None,
-                 admin=Depends(get_current_admin)):
+def at_risk_page(request:Request,level:str | None=None,action:str | None=None,admin=Depends(get_current_admin)):
     try:
-        if level not in (None, "", "Low", "Medium", "High"):
-            level = None
-        all_data = RiskRepository.get_all(level or None)
+        if level not in (None,"","Low","Medium","High"):
+            level=None
 
-        if action == "none":      # High and nobody acted for 7+ days (or never)
-            all_data = [r for r in all_data if r["level"] == "High" and (
+        all_data=RiskRepository.get_all(level or None)
+
+        if action=="none":      
+            all_data=[r for r in all_data if r["level"] == "High" and (
                 r["status"]["code"] == "none"
                 or (r["status"]["days_since"] is not None and r["status"]["days_since"] >= 7))]
-        elif action == "overdue":
-            all_data = [r for r in all_data if r["status"]["code"] == "overdue"]
+            
+        elif action=="overdue":
+            all_data=[r for r in all_data if r["status"]["code"] == "overdue"]
 
-        return templates.TemplateResponse(
-            request, name="at_risk.html",
-            context={"all_data": all_data, "level": level or "", "action": action or ""},
-        )
+        return templates.TemplateResponse(request,name="at_risk.html",
+            context={
+                "all_data":all_data,
+                "level":level or "",
+                "action":action or ""},)
     except Exception as e:
         logging.exception(f"during risk route: {str(e)}")
-        return RedirectResponse(url="/admin_dashboard", status_code=status.HTTP_303_SEE_OTHER)
+        request.session['flash_error']="Could not load"
+        return RedirectResponse(url="/admin_dashboard",status_code=status.HTTP_303_SEE_OTHER)

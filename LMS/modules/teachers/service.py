@@ -302,14 +302,14 @@ class TeacherService:
 
     @staticmethod
     def set_submission_status(teacher_id:int,section_id:int,sub_id:int,status:str,sub_type:str):
-        session=SessionLocal()
-       
         if not TeacherModel.is_section_owned_by_teacher(section_id,teacher_id):
             raise BusinessRuleError("Unauthorized status attempt")
             
         valid=['Best','Average','Worst']
         if status not in valid:
             raise ValidationError("Invalid status")
+
+        session=SessionLocal()
         try:
             result=session.execute(update(StudentSubmission)
                             .where(StudentSubmission.submission_id==sub_id,
@@ -415,8 +415,9 @@ class TeacherService:
             if not prepared:
                 raise ValidationError("No result data found")
                 
-            for sid,data in prepared:
-                TeacherModel.process_student_result(sid,section_id,course_id,semester,data)
+            
+            TeacherModel.process_bulk_results(section_id,course_id,semester,prepared)
+                # TeacherModel.process_student_result(sid,section_id,course_id,semester,data)
         except (BusinessRuleError,ValidationError):
             raise
         except Exception as e:

@@ -27,12 +27,18 @@ def test_bulk_results_saves_all_students(monkeypatch):
             {"student_id": 12},
         ],
     )
-
+    
     saved = []
     monkeypatch.setattr(
-        service.TeacherModel, "process_student_result",
-        lambda *args: saved.append(args),
+        service.TeacherModel, "process_bulk_results",
+        lambda section_id, course_id, semester, prepared: saved.extend(prepared),
     )
+
+    # saved = []
+    # monkeypatch.setattr(
+    #     service.TeacherModel, "process_student_result",
+    #     lambda *args: saved.append(args),
+    # )
 
     service.TeacherService.submit_bulk_results(
         teacher_id=4,
@@ -43,7 +49,8 @@ def test_bulk_results_saves_all_students(monkeypatch):
         },
     )
 
-    assert [row[0] for row in saved] == [11, 12]
+    # assert [row[0] for row in saved] == [11, 12]
+    assert [sid for sid, _ in saved] == [11, 12]
 
 
 def test_bulk_results_rejects_unowned_section(monkeypatch):
