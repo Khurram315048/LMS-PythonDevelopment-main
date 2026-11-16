@@ -312,7 +312,7 @@ CREATE TABLE `fyp_messages` (
   PRIMARY KEY (`message_id`),
   KEY `fyp_id` (`fyp_id`),
   CONSTRAINT `fyp_messages_ibfk_1` FOREIGN KEY (`fyp_id`) REFERENCES `fyp_groups` (`fyp_id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -321,7 +321,7 @@ CREATE TABLE `fyp_messages` (
 
 LOCK TABLES `fyp_messages` WRITE;
 /*!40000 ALTER TABLE `fyp_messages` DISABLE KEYS */;
-INSERT INTO `fyp_messages` VALUES (1,1,1,2,'teacher','hy','2026-02-24 11:21:54',0),(2,2,1,3,'teacher','hy','2026-02-24 11:22:04',0),(3,1,1,2,'student','ji','2026-03-13 09:45:29',0),(4,5,4,4,'student','hi guys','2026-03-13 11:11:25',0),(5,1,1,2,'teacher','checking fastapi send message route','2026-09-17 16:33:28',0),(6,2,1,3,'teacher','also you checking','2026-09-17 16:34:03',0),(7,1,1,2,'student','hy i am testing fastapi response','2026-09-23 11:00:55',0),(8,1,1,2,'student','checking apirouter','2026-09-27 13:16:49',0),(9,7,3,7,'student','hi i am testing the fyp send message service based fastapi','2026-10-02 09:03:38',0),(10,1,1,2,'teacher','hecking the tchr fastapi service based api','2026-10-05 15:19:55',0),(11,2,1,3,'teacher','you didn\'t reply i am checking the fastapi servie based api','2026-10-05 15:20:27',0),(12,1,1,2,'teacher','so you didn\'t ans','2026-10-06 08:49:44',0),(13,1,1,2,'teacher','again checking','2026-10-07 10:44:06',0),(14,2,1,3,'teacher','checking again','2026-10-07 10:44:16',0),(15,1,1,2,'student','i am checking the orm based fastapi','2026-10-08 11:08:57',0),(16,1,1,2,'teacher','ok it is working','2026-10-08 11:39:54',0),(17,1,1,0,'student','hi checking the websocket message api','2026-10-23 06:12:17',0),(18,1,1,2,'student','again testing websocket msg api to verify student id is inserting or not','2026-10-23 06:17:06',0),(19,1,1,2,'teacher','ok good i also got the message from you','2026-10-23 06:18:24',0),(20,2,1,3,'teacher','can i check you to','2026-10-23 06:18:59',0),(21,2,1,3,'teacher','chk again tchr side error resolve','2026-10-23 06:34:33',0),(22,1,1,2,'teacher','chk the websocket route is working or not','2026-10-23 06:36:17',0),(23,1,1,2,'student','yes sir it is working','2026-10-23 06:36:47',0),(24,1,1,2,'teacher','good','2026-10-23 06:36:52',0),(25,1,1,2,'teacher','checking new method rpotected','2026-10-23 11:27:48',0),(26,1,1,2,'teacher','checking again','2026-10-23 11:27:55',0),(27,1,1,2,'teacher','now again','2026-10-23 11:28:33',0),(28,1,1,2,'student','yes it is working on my side too','2026-10-23 11:29:16',0),(29,1,1,2,'student','yes testing the db method','2026-10-23 11:29:48',0),(30,1,1,2,'teacher','ok let me check my side','2026-10-23 11:31:01',0),(31,1,1,2,'student','agan why db is not insertig the msg','2026-10-23 11:34:21',0),(32,1,1,2,'student','debug the db insertion','2026-10-23 11:37:43',0),(33,1,1,2,'teacher','i am getting msgs','2026-10-23 11:38:15',0),(34,1,1,2,'student','i was confuse','2026-10-23 11:41:53',0),(35,1,1,2,'student','29n40 d-ENDOENFDQNCL4U903[2\'N3','2026-10-23 11:42:14',0),(36,1,1,2,'teacher','yes good','2026-10-23 11:42:48',0),(37,1,1,2,'student','checking orm based fastapi','2026-11-06 12:59:33',0),(38,1,1,2,'teacher','yes it is working','2026-11-06 13:16:55',0),(39,1,1,2,'student','hy i am testing new project tree testing','2026-11-07 08:15:34',0);
+INSERT INTO `fyp_messages` VALUES (1,1,1,2,'teacher','hy','2026-02-24 11:21:54',0),(2,2,1,3,'teacher','hy','2026-02-24 11:22:04',0),(3,1,1,2,'student','ji','2026-03-13 09:45:29',0),(4,5,4,4,'student','hi guys','2026-03-13 11:11:25',0),(5,1,1,2,'teacher','checking fastapi send message route','2026-09-17 16:33:28',0),(6,2,1,3,'teacher','also you checking','2026-09-17 16:34:03',0),(7,1,1,2,'student','hy i am testing fastapi response','2026-09-23 11:00:55',0),(8,1,1,2,'student','checking apirouter','2026-09-27 13:16:49',0),(9,7,3,7,'student','hi i am testing the fyp send message service based fastapi','2026-10-02 09:03:38',0),(10,1,1,2,'teacher','hecking the tchr fastapi service based api','2026-10-05 15:19:55',0),(11,2,1,3,'teacher','you didn\'t reply i am checking the fastapi servie based api','2026-10-05 15:20:27',0),(12,1,1,2,'teacher','so you didn\'t ans','2026-10-06 08:49:44',0),(13,1,1,2,'teacher','again checking','2026-10-07 10:44:06',0),(14,2,1,3,'teacher','checking again','2026-10-07 10:44:16',0),(15,1,1,2,'student','i am checking the orm based fastapi','2026-10-08 11:08:57',0),(16,1,1,2,'teacher','ok it is working','2026-10-08 11:39:54',0),(17,1,1,0,'student','hi checking the websocket message api','2026-10-23 06:12:17',0),(18,1,1,2,'student','again testing websocket msg api to verify student id is inserting or not','2026-10-23 06:17:06',0),(19,1,1,2,'teacher','ok good i also got the message from you','2026-10-23 06:18:24',0),(20,2,1,3,'teacher','can i check you to','2026-10-23 06:18:59',0),(21,2,1,3,'teacher','chk again tchr side error resolve','2026-10-23 06:34:33',0),(22,1,1,2,'teacher','chk the websocket route is working or not','2026-10-23 06:36:17',0),(23,1,1,2,'student','yes sir it is working','2026-10-23 06:36:47',0),(24,1,1,2,'teacher','good','2026-10-23 06:36:52',0),(25,1,1,2,'teacher','checking new method rpotected','2026-10-23 11:27:48',0),(26,1,1,2,'teacher','checking again','2026-10-23 11:27:55',0),(27,1,1,2,'teacher','now again','2026-10-23 11:28:33',0),(28,1,1,2,'student','yes it is working on my side too','2026-10-23 11:29:16',0),(29,1,1,2,'student','yes testing the db method','2026-10-23 11:29:48',0),(30,1,1,2,'teacher','ok let me check my side','2026-10-23 11:31:01',0),(31,1,1,2,'student','agan why db is not insertig the msg','2026-10-23 11:34:21',0),(32,1,1,2,'student','debug the db insertion','2026-10-23 11:37:43',0),(33,1,1,2,'teacher','i am getting msgs','2026-10-23 11:38:15',0),(34,1,1,2,'student','i was confuse','2026-10-23 11:41:53',0),(35,1,1,2,'student','29n40 d-ENDOENFDQNCL4U903[2\'N3','2026-10-23 11:42:14',0),(36,1,1,2,'teacher','yes good','2026-10-23 11:42:48',0),(37,1,1,2,'student','checking orm based fastapi','2026-11-06 12:59:33',0),(38,1,1,2,'teacher','yes it is working','2026-11-06 13:16:55',0),(39,1,1,2,'student','hy i am testing new project tree testing','2026-11-07 08:15:34',0),(40,1,1,2,'teacher','hi','2026-11-16 05:59:02',0);
 /*!40000 ALTER TABLE `fyp_messages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -454,6 +454,37 @@ INSERT INTO `reset_otps` VALUES (6,379576,4,'2026-10-24 15:54:21',0,1,'2026-10-2
 UNLOCK TABLES;
 
 --
+-- Table structure for table `risk_interventions`
+--
+
+DROP TABLE IF EXISTS `risk_interventions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `risk_interventions` (
+  `intervention_id` int NOT NULL AUTO_INCREMENT,
+  `student_id` int NOT NULL,
+  `created_by_user_id` int NOT NULL,
+  `created_by_role` enum('teacher','admin') NOT NULL,
+  `action_type` enum('Spoke','Warning','Counseling','Referred','Other') NOT NULL DEFAULT 'Spoke',
+  `note` varchar(500) NOT NULL,
+  `follow_up_date` date DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`intervention_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `risk_interventions`
+--
+
+LOCK TABLES `risk_interventions` WRITE;
+/*!40000 ALTER TABLE `risk_interventions` DISABLE KEYS */;
+INSERT INTO `risk_interventions` VALUES (1,2,4,'teacher','Counseling','Meet me in the office','2026-11-16','2026-11-16 07:01:44',0);
+/*!40000 ALTER TABLE `risk_interventions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `sections`
 --
 
@@ -483,7 +514,7 @@ CREATE TABLE `sections` (
 
 LOCK TABLES `sections` WRITE;
 /*!40000 ALTER TABLE `sections` DISABLE KEYS */;
-INSERT INTO `sections` VALUES (1,1,'Blue',1,5,1,1,0),(2,1,'Green',1,5,0,0,0),(3,1,'Red',1,5,1,1,0),(4,1,'Orange',1,5,0,1,0),(5,2,'Blue',1,5,1,1,0),(6,3,'Blue',2,5,1,1,0),(7,4,'Blue',2,5,1,1,0),(8,5,'Blue',3,5,1,1,0),(9,6,'Blue',4,5,1,1,0);
+INSERT INTO `sections` VALUES (1,1,'Blue',1,5,0,0,0),(2,1,'Green',1,5,0,0,0),(3,1,'Red',1,5,1,1,0),(4,1,'Orange',1,5,0,1,0),(5,2,'Blue',1,5,1,1,0),(6,3,'Blue',2,5,1,1,0),(7,4,'Blue',2,5,1,1,0),(8,5,'Blue',3,5,1,1,0),(9,6,'Blue',4,5,1,1,0);
 /*!40000 ALTER TABLE `sections` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -642,7 +673,7 @@ CREATE TABLE `student_fees` (
 
 LOCK TABLES `student_fees` WRITE;
 /*!40000 ALTER TABLE `student_fees` DISABLE KEYS */;
-INSERT INTO `student_fees` VALUES (1,18708.00,'paid','2026-11-07 08:03:35','voucher_pics/student_4_front_contact.PNG','voucher_pics/student_4_back_prj.PNG',1,'December',4,0),(2,68102.00,'paid','2026-11-07 08:03:35','voucher_pics/student_2_front_dep_view.PNG','voucher_pics/student_2_back_students_view.PNG',1,'January',2,0),(3,18708.00,'due','2026-03-25 13:21:57',NULL,NULL,4,'December',5,0),(4,19644.00,'paid','2026-03-19 10:25:10',NULL,NULL,4,'December',9,0),(5,12000.00,'paid','2026-11-11 04:57:08',NULL,NULL,3,'December',8,0),(6,12345.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_Screenshot_2026-09-14_184408.png','voucher_pics/student_2_back_Screenshot_2026-09-14_184408.png',1,'February',2,0),(7,19000.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_Screenshot_2026-09-16_175618.png','voucher_pics/student_2_back_Screenshot_2026-09-16_175806.png',1,'September',2,0),(8,12345.00,'paid','2026-11-07 08:03:35','voucher_pics/student_2_front_map_visualization.png','voucher_pics/student_2_back_project_tree.png',1,'July',2,0),(9,30000.00,'paid','2026-11-07 08:03:35','voucher_pics/student_2_front_test4.jpg','voucher_pics/student_2_back_test5.jpg',1,'October',2,0),(10,123455.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_test8.jpg','voucher_pics/student_2_back_test6.jpg',1,'July',2,0),(11,30000.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_map_visualization.png','voucher_pics/student_2_back_analyze_api_response.png',1,'August',2,0),(12,87655.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_Screenshot_2026-09-14_190312.png','voucher_pics/student_2_back_Screenshot_2026-09-14_184408.png',1,'February',2,0),(13,1267.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_Screenshot_2026-09-16_175618.png','voucher_pics/student_2_back_Screenshot_2026-09-16_175806.png',1,'February',2,0),(14,12453.00,'paid','2026-10-24 06:48:40',NULL,NULL,1,'November',8,0),(15,1248953.00,'paid','2026-11-07 08:03:35','voucher_pics/student_13_front_project_tree.png','voucher_pics/student_13_back_analyze_api_response.png',3,'October',13,0),(16,1090933.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_Screenshot_2026-09-16_175618.png','voucher_pics/student_2_back_Screenshot_2026-09-16_181442.png',1,'November',2,0),(17,456.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_analyze_api_response.png','voucher_pics/student_2_back_geojson_api_response.png',1,'May',2,0),(18,465902.00,'paid','2026-11-07 05:05:37',NULL,NULL,3,'November',12,0),(19,1255.00,'due','2026-11-07 08:03:35','voucher_pics/student_2_front_Screenshot_2026-09-17_203316.png','voucher_pics/student_2_back_Screenshot_2026-09-16_181159.png',1,'March',2,0),(20,19999.00,'due','2026-11-07 08:05:24','voucher_pics/student_2_front_Screenshot_2026-09-18_190813.png','voucher_pics/student_2_back_Screenshot_2026-09-16_181442.png',1,'June',2,0),(21,1111.00,'paid','2026-11-07 08:14:23','voucher_pics/student_2_front_Capture001.png','voucher_pics/student_2_back_Capture001.png',1,'December',2,0),(22,12345.00,'due','2026-11-07 15:03:39','voucher_pics/student_2_front_Screenshot_2026-09-18_190813.png','voucher_pics/student_2_back_map_visualization.png',1,'July',2,0),(23,766.00,'paid','2026-11-11 04:57:16','voucher_pics/student_2_front_Screenshot_2026-09-20_130413.png','voucher_pics/student_2_back_Screenshot_2026-09-19_203515.png',1,'July',2,0);
+INSERT INTO `student_fees` VALUES (1,18708.00,'paid','2026-11-07 08:03:35','voucher_pics/student_4_front_contact.PNG','voucher_pics/student_4_back_prj.PNG',1,'December',4,0),(2,68102.00,'paid','2026-11-07 08:03:35','voucher_pics/student_2_front_dep_view.PNG','voucher_pics/student_2_back_students_view.PNG',1,'January',2,0),(3,18708.00,'due','2026-03-25 13:21:57',NULL,NULL,4,'December',5,0),(4,19644.00,'paid','2026-03-19 10:25:10',NULL,NULL,4,'December',9,0),(5,12000.00,'paid','2026-11-11 04:57:08',NULL,NULL,3,'December',8,0),(6,12345.00,'paid','2026-11-16 04:41:35','voucher_pics/student_2_front_Screenshot_2026-09-14_184408.png','voucher_pics/student_2_back_Screenshot_2026-09-14_184408.png',1,'February',2,0),(7,19000.00,'paid','2026-11-16 04:41:44','voucher_pics/student_2_front_Screenshot_2026-09-16_175618.png','voucher_pics/student_2_back_Screenshot_2026-09-16_175806.png',1,'September',2,0),(8,12345.00,'paid','2026-11-07 08:03:35','voucher_pics/student_2_front_map_visualization.png','voucher_pics/student_2_back_project_tree.png',1,'July',2,0),(9,30000.00,'paid','2026-11-07 08:03:35','voucher_pics/student_2_front_test4.jpg','voucher_pics/student_2_back_test5.jpg',1,'October',2,0),(10,123455.00,'paid','2026-11-16 04:41:49','voucher_pics/student_2_front_test8.jpg','voucher_pics/student_2_back_test6.jpg',1,'July',2,0),(11,30000.00,'paid','2026-11-16 04:41:53','voucher_pics/student_2_front_map_visualization.png','voucher_pics/student_2_back_analyze_api_response.png',1,'August',2,0),(12,87655.00,'paid','2026-11-16 04:41:57','voucher_pics/student_2_front_Screenshot_2026-09-14_190312.png','voucher_pics/student_2_back_Screenshot_2026-09-14_184408.png',1,'February',2,0),(13,1267.00,'paid','2026-11-16 04:42:01','voucher_pics/student_2_front_Screenshot_2026-09-16_175618.png','voucher_pics/student_2_back_Screenshot_2026-09-16_175806.png',1,'February',2,0),(14,12453.00,'paid','2026-10-24 06:48:40',NULL,NULL,1,'November',8,0),(15,1248953.00,'paid','2026-11-07 08:03:35','voucher_pics/student_13_front_project_tree.png','voucher_pics/student_13_back_analyze_api_response.png',3,'October',13,0),(16,1090933.00,'paid','2026-11-16 04:42:05','voucher_pics/student_2_front_Screenshot_2026-09-16_175618.png','voucher_pics/student_2_back_Screenshot_2026-09-16_181442.png',1,'November',2,0),(17,456.00,'paid','2026-11-16 04:42:10','voucher_pics/student_2_front_analyze_api_response.png','voucher_pics/student_2_back_geojson_api_response.png',1,'May',2,0),(18,465902.00,'paid','2026-11-07 05:05:37',NULL,NULL,3,'November',12,0),(19,1255.00,'paid','2026-11-16 04:53:01','voucher_pics/student_2_front_Screenshot_2026-09-17_203316.png','voucher_pics/student_2_back_Screenshot_2026-09-16_181159.png',1,'March',2,0),(20,19999.00,'paid','2026-11-16 04:53:05','voucher_pics/student_2_front_Screenshot_2026-09-18_190813.png','voucher_pics/student_2_back_Screenshot_2026-09-16_181442.png',1,'June',2,0),(21,1111.00,'paid','2026-11-07 08:14:23','voucher_pics/student_2_front_Capture001.png','voucher_pics/student_2_back_Capture001.png',1,'December',2,0),(22,12345.00,'paid','2026-11-16 04:53:09','voucher_pics/student_2_front_Screenshot_2026-09-18_190813.png','voucher_pics/student_2_back_map_visualization.png',1,'July',2,0),(23,766.00,'paid','2026-11-11 04:57:16','voucher_pics/student_2_front_Screenshot_2026-09-20_130413.png','voucher_pics/student_2_back_Screenshot_2026-09-19_203515.png',1,'July',2,0);
 /*!40000 ALTER TABLE `student_fees` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -767,7 +798,7 @@ CREATE TABLE `student_risk_history` (
   `risk_score` decimal(4,3) NOT NULL,
   `risk_level` enum('Low','Medium','High') NOT NULL,
   PRIMARY KEY (`history_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -776,7 +807,7 @@ CREATE TABLE `student_risk_history` (
 
 LOCK TABLES `student_risk_history` WRITE;
 /*!40000 ALTER TABLE `student_risk_history` DISABLE KEYS */;
-INSERT INTO `student_risk_history` VALUES (1,2,'2026-11-15',7,0.525,'Medium'),(2,3,'2026-11-15',6,0.000,'Low'),(3,4,'2026-11-15',6,0.038,'Low'),(4,7,'2026-11-15',1,0.000,'Low'),(5,9,'2026-11-15',7,0.000,'Low'),(6,10,'2026-11-15',1,0.000,'Low'),(7,11,'2026-11-15',1,0.000,'Low'),(8,12,'2026-11-15',7,0.000,'Low'),(9,13,'2026-11-15',4,0.000,'Low');
+INSERT INTO `student_risk_history` VALUES (1,2,'2026-11-15',7,0.525,'Medium'),(2,3,'2026-11-15',6,0.000,'Low'),(3,4,'2026-11-15',6,0.038,'Low'),(4,7,'2026-11-15',1,0.000,'Low'),(5,9,'2026-11-15',7,0.000,'Low'),(6,10,'2026-11-15',1,0.000,'Low'),(7,11,'2026-11-15',1,0.000,'Low'),(8,12,'2026-11-15',7,0.000,'Low'),(9,13,'2026-11-15',4,0.000,'Low'),(10,2,'2026-11-16',7,0.525,'Medium'),(11,3,'2026-11-16',6,0.000,'Low'),(12,4,'2026-11-16',6,0.038,'Low'),(13,7,'2026-11-16',1,0.000,'Low'),(14,9,'2026-11-16',7,0.000,'Low'),(15,10,'2026-11-16',1,0.000,'Low'),(16,11,'2026-11-16',1,0.000,'Low'),(17,12,'2026-11-16',7,0.000,'Low'),(18,13,'2026-11-16',4,0.000,'Low');
 /*!40000 ALTER TABLE `student_risk_history` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -810,7 +841,7 @@ CREATE TABLE `student_risk_scores` (
 
 LOCK TABLES `student_risk_scores` WRITE;
 /*!40000 ALTER TABLE `student_risk_scores` DISABLE KEYS */;
-INSERT INTO `student_risk_scores` VALUES (1,2,7,0.525,'Medium','[\"Low attendance (40.0%)\", \"11 unpaid fee(s)\", \"Weak assignments/quizzes (40.0%)\"]','rules-v1','2026-11-15 11:07:30',0),(2,3,6,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(3,4,6,0.038,'Low','[]','rules-v1','2026-11-15 11:07:30',0),(4,7,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(5,9,7,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(6,10,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(7,11,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(8,12,7,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(9,13,4,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0);
+INSERT INTO `student_risk_scores` VALUES (1,2,7,0.525,'Medium','[\"Low attendance (40.0%)\", \"11 unpaid fee(s)\", \"Weak assignments/quizzes (40.0%)\"]','rules-v1','2026-11-16 04:33:27',0),(2,3,6,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(3,4,6,0.038,'Low','[]','rules-v1','2026-11-16 04:33:27',0),(4,7,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(5,9,7,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(6,10,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(7,11,1,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(8,12,7,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0),(9,13,4,0.000,'Low','[]','rules-v1','2026-11-15 06:41:21',0);
 /*!40000 ALTER TABLE `student_risk_scores` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2023,4 +2054,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-11-15 16:15:25
+-- Dump completed on 2026-11-16 12:23:00

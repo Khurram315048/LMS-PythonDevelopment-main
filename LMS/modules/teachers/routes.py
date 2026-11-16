@@ -20,7 +20,8 @@ from core.config import BASE_DIR
 from core.templating import *
 from core.rate_limiter import guarded_authenticate, TooManyAttempts, client_ip
 from core.cookies import set_auth_cookies
-
+from modules.risk.repository import RiskReadRepository,InterventionRepository
+from modules.risk.trend import get_trends
 
 TEMPLATES_DIR=BASE_DIR / "web" / "templates"
 
@@ -500,3 +501,40 @@ def teacher_complaint(request:Request,background_tasks:BackgroundTasks,title:str
         logging.exception(f"System error on complnt submsin: {str(e)}")
         return templates.TemplateResponse(request=request,name="teacher_complaint.html",
                                           context={"flash_error":"System error"})
+
+
+
+
+
+@router.get('/teacher_at_risk')
+def teacher_at_risk(request:Request,level:str | None=None,current_user:dict=Depends(get_current_teacher)):
+    try:
+        if level not in (None,"","Low","Medium","High"):
+            level=None
+
+        rows=RiskReadRepository.for_teacher_user(current_user["user_id"],level or None)
+        return templates.TemplateResponse(
+            request=request,name="teacher_at_risk.html",
+            context={
+                "all_data":rows,
+                "level": level or "",
+                "flash_success":request.session.pop("flash_success", None),
+                "flash_error":request.session.pop("flash_error", None),
+            },
+        )
+    except Exception as e:
+        logging.exception(f"during teacher risk route: {str(e)}")
+        return RedirectResponse(url="/teacher_dashboard",status_code=status.HTTP_303_SEE_OTHER)    
+
+
+@router.post('/note')
+def teacher_add_note(request:Request,student_id:int=Form(...),action_type:str=Form(...),
+    note:str=Form(...),follow_up_date:str=Form(""),current_user:dict=Depends(get_current_teacher),):
+    ok, msg=InterventionRepository.add_note(
+        user_id=current_user["user_id"], role="teacher",
+        teacher_id=current_user["teacher_id"],
+        student_id=student_id, action_type=action_type,
+        note=note, follow_up_raw=follow_up_date,
+    )
+    request.session["flash_success" if ok else "flash_error"]=msg
+    return RedirectResponse(url="/teacher_at_risk",status_code=status.HTTP_303_SEE_OTHER)    

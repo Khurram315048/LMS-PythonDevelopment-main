@@ -152,6 +152,7 @@
                                     <td><span class="badge bg-success">{{ fyp.status }}</span></td>
                                     <td>
                                         {% if fyp.last_submission %}
+                                        
                                         <a href="{{url_for('uploads',path=fyp.last_submission)}}" target="_blank"
                                             class="btn btn-sm btn-outline-danger">
                                             <i class="fa-solid fa-file-pdf"></i> View PDF

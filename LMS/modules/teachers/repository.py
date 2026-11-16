@@ -3,7 +3,6 @@ from datetime import datetime, time, timedelta
 
 from sqlalchemy import select, update, func, and_, or_, text, distinct, literal_column,case
 from sqlalchemy.dialects.mysql import insert as mysql_insert
-
 from db.session import SessionLocal
 from core.exceptions import NotFoundError
 from db.models.orm import (  

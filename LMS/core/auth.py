@@ -100,7 +100,7 @@ from urllib.parse import quote
 from fastapi import HTTPException,Request,status
 from core.logger import logging
 from core.security import (ACCESS,ALGORITHM,TokenExpired,TokenInvalid,  decode_token)
-
+from core.cookies import access_name
 
 
 LOGIN_URL={
@@ -127,22 +127,24 @@ def _redirect(url:str)->HTTPException:
     return HTTPException(status_code=status.HTTP_303_SEE_OTHER,headers={"location":url})
 
 
-def _refresh_url(request:Request)->str:
+def _refresh_url(request:Request,role:str)->str:
     if request.method=="GET":
         target=request.url.path + (f"?{request.url.query}" if request.url.query else "")
-        return f"/refresh?next={quote(target,safe='')}"
-    return "/refresh"
+        return f"/refresh?role={role}&next={quote(target,safe='')}"
+        # return f"/refresh?next={quote(target,safe='')}"
+    return f"/refresh?role={role}"    
+    # return "/refresh"
 
 
 def _current(request:Request,role:str)->dict:
-    token=request.cookies.get("access_token")
+    token=request.cookies.get(access_name(role))
     if not token:
         raise _redirect(LOGIN_URL[role])
     try:
         return decode_token(token,ACCESS,expected_role=role)
     except TokenExpired as td:
         logging.error(f"tokn expired: {str(td)}")
-        raise _redirect(_refresh_url(request))
+        raise _redirect(_refresh_url(request,role))
     except TokenInvalid as e:
         logging.warning(f"Rejected access token for {role} page: {e}")
         raise _redirect(LOGIN_URL[role])
@@ -160,15 +162,35 @@ def get_current_admin(request:Request)->dict:
     return _current(request,"admin")
 
 
+
+CHAT_ROLES=("student","teacher","admin")
 def get_chat_user(request:Request)->dict:
-    token=request.cookies.get("access_token")
-    if not token:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="login_required")
-    try:
-        return decode_token(token,ACCESS)         
-    except TokenExpired as te:
-        logging.error(f"token expired : {str(te)}")
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="expired")
-    except TokenInvalid as ti:
-        logging.warning(f"token invalid: {str(ti)}")
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="invalid")
+    hint=request.query_params.get("role") or request.headers.get("x-role")
+    roles=[hint] if hint in CHAT_ROLES else list(CHAT_ROLES)
+    error="login_required"
+    for role in roles:
+        token=request.cookies.get(access_name(role))
+        if not token:
+            continue
+        try:
+            return decode_token(token,ACCESS,expected_role=role)
+        except TokenExpired as te:
+            logging.error(f"token expired : {str(te)}")
+            error="expired"
+        except TokenInvalid as ti:
+            logging.warning(f"token invalid: {str(ti)}")
+            error="invalid"
+    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail=error)
+
+# def get_chat_user(request:Request)->dict:
+#     token=request.cookies.get("access_token")
+#     if not token:
+#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="login_required")
+#     try:
+#         return decode_token(token,ACCESS)         
+#     except TokenExpired as te:
+#         logging.error(f"token expired : {str(te)}")
+#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="expired")
+#     except TokenInvalid as ti:
+#         logging.warning(f"token invalid: {str(ti)}")
+#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="invalid")

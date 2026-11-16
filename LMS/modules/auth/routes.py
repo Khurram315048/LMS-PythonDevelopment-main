@@ -13,7 +13,7 @@ from modules.auth.repository import MainModel
 from modules.auth.schema import SignupUser
 from core.rate_limiter import check_otp_send, TooManyAttempts, client_ip
 from core.cookies import clear_auth_cookies
-
+from core.cookies import ROLES,access_name,clear_auth_cookies
 
 router=APIRouter(dependencies=[Depends(verify_csrf)])
 templates=get_templates("auth")
@@ -194,9 +194,25 @@ def update_password(request:Request,new_password:str=Form(None),confirm_password
 
 
 
+# @router.post("/logout")
+# def logout(request:Request):
+#     request.session.clear()
+#     response=RedirectResponse(url="/main_view",status_code=status.HTTP_303_SEE_OTHER,)
+#     clear_auth_cookies(response)
+#     return response
+
+
 @router.post("/logout")
-def logout(request:Request):
-    request.session.clear()
-    response=RedirectResponse(url="/main_view",status_code=status.HTTP_303_SEE_OTHER,)
-    clear_auth_cookies(response)
+def logout(request:Request,role:str):
+    if role not in ROLES:
+        role=None                      # role na ho to purana behaviour: sab saaf
+
+    # session tabhi saaf karo jab koi aur role login na ho (flash/CSRF shared hain)
+    other_active=role is not None and any(
+        request.cookies.get(access_name(r)) for r in ROLES if r != role)
+    if not other_active:
+        request.session.clear()
+
+    response=RedirectResponse(url="/main_view",status_code=status.HTTP_303_SEE_OTHER)
+    clear_auth_cookies(response,role)
     return response

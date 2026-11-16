@@ -863,3 +863,27 @@ def at_risk_recompute(current_user=Depends(get_current_admin)):
     finally:
         session.close()
     return RedirectResponse(url='/at_risk',status_code=status.HTTP_303_SEE_OTHER)
+
+
+@router.get("/at_risk")
+def at_risk_page(request: Request, level: str | None = None, action: str | None = None,
+                 admin=Depends(get_current_admin)):
+    try:
+        if level not in (None, "", "Low", "Medium", "High"):
+            level = None
+        all_data = RiskRepository.get_all(level or None)
+
+        if action == "none":      # High and nobody acted for 7+ days (or never)
+            all_data = [r for r in all_data if r["level"] == "High" and (
+                r["status"]["code"] == "none"
+                or (r["status"]["days_since"] is not None and r["status"]["days_since"] >= 7))]
+        elif action == "overdue":
+            all_data = [r for r in all_data if r["status"]["code"] == "overdue"]
+
+        return templates.TemplateResponse(
+            request, name="at_risk.html",
+            context={"all_data": all_data, "level": level or "", "action": action or ""},
+        )
+    except Exception as e:
+        logging.exception(f"during risk route: {str(e)}")
+        return RedirectResponse(url="/admin_dashboard", status_code=status.HTTP_303_SEE_OTHER)

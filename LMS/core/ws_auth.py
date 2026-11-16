@@ -4,7 +4,7 @@ from fastapi import WebSocket
 from db.session import mysql
 from modules.students.service import StudentService
 from core.security import ACCESS,TokenError,decode_token
-
+from core.cookies import access_name
 
 
 def _origin_ok(websocket: WebSocket)->bool:
@@ -19,23 +19,46 @@ def authorize_ws_user(websocket:WebSocket,fyp_id:int,url_user_type:str,url_user_
     if not _origin_ok(websocket):
         return None
 
-    token=websocket.cookies.get("access_token")
+    if url_user_type not in ("student","teacher"):
+        return None
+
+    token=websocket.cookies.get(access_name(url_user_type))
     if not token:
         return None
 
     try:
-        payload=decode_token(token,ACCESS)
+        payload=decode_token(token,ACCESS,expected_role=url_user_type)
     except TokenError:
         return None
 
     role=payload.get("role")
-    if role not in ("student","teacher") or role != url_user_type:
+    if role != url_user_type:
         return None
 
     real_id=payload.get(f"{role}_id")
     if real_id is None or int(real_id) != url_user_id:
         return None
     real_id=int(real_id)
+    # if not _origin_ok(websocket):
+    #     return None
+
+    # token=websocket.cookies.get("access_token")
+    # if not token:
+    #     return None
+
+    # try:
+    #     payload=decode_token(token,ACCESS)
+    # except TokenError:
+    #     return None
+
+    # role=payload.get("role")
+    # if role not in ("student","teacher") or role != url_user_type:
+    #     return None
+
+    # real_id=payload.get(f"{role}_id")
+    # if real_id is None or int(real_id) != url_user_id:
+    #     return None
+    # real_id=int(real_id)
 
     try:
         if role=="student":

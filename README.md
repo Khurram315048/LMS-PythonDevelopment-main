@@ -179,18 +179,24 @@ LMS-PythonDevelopment-main
 │  │  │     ├─ websocket_routes.cpython-312.pyc
 │  │  │     └─ websocket_routes.cpython-313.pyc
 │  │  ├─ risk
+│  │  │  ├─ actions.py
 │  │  │  ├─ features.py
+│  │  │  ├─ repository.py
 │  │  │  ├─ routes.py
 │  │  │  ├─ scoring.py
 │  │  │  ├─ service.py
 │  │  │  ├─ train.py
+│  │  │  ├─ trend.py
 │  │  │  ├─ __init__.py
 │  │  │  └─ __pycache__
+│  │  │     ├─ actions.cpython-313.pyc
 │  │  │     ├─ features.cpython-313.pyc
+│  │  │     ├─ repository.cpython-313.pyc
 │  │  │     ├─ routes.cpython-313.pyc
 │  │  │     ├─ scoring.cpython-313.pyc
 │  │  │     ├─ service.cpython-313.pyc
 │  │  │     ├─ train.cpython-313.pyc
+│  │  │     ├─ trend.cpython-313.pyc
 │  │  │     └─ __init__.cpython-313.pyc
 │  │  ├─ students
 │  │  │  ├─ repository.py
@@ -449,6 +455,7 @@ LMS-PythonDevelopment-main
 │           ├─ fyp_management.html
 │           ├─ generate_result.html
 │           ├─ marked_attendance.html
+│           ├─ teacher_at_risk.html
 │           ├─ teacher_complaint.html
 │           ├─ teacher_dashboard.html
 │           ├─ teacher_login.html

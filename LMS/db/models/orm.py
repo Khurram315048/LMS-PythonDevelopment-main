@@ -678,3 +678,19 @@ class StudentRiskHistory(Base):
     semester=Column(Integer,nullable=False)
     risk_score=Column(Numeric(4,3),nullable=False)
     risk_level=Column(Enum("Low","Medium","High"),nullable=False)
+
+
+class RiskIntervention(Base):
+    __tablename__="risk_interventions"
+    __table_args__=(OPTS,)
+
+    intervention_id=Column(Integer,primary_key=True,autoincrement=True)
+    student_id=Column(Integer, ForeignKey("students.student_id"),nullable=False,index=True)
+    created_by_user_id=Column(Integer,ForeignKey("users.user_id"),nullable=False)
+    created_by_role=Column(Enum("teacher","admin"),nullable=False)
+    action_type=Column(Enum("Spoke","Warning","Counseling","Referred","Other"),
+                        nullable=False,default="Spoke",server_default="Spoke")
+    note=Column(String(500),nullable=False)
+    follow_up_date=Column(Date)
+    created_at=Column(TIMESTAMP,nullable=False,server_default=func.current_timestamp())
+    is_deleted=Column(Boolean,nullable=False,default=False,server_default=text("0"))    

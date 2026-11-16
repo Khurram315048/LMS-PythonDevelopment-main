@@ -21,49 +21,10 @@ from db.models.orm import StudentRiskScore, Student
 from modules.risk.trend import get_trends
 
 
-TIPS={
-    "High":"Please talk to your teacher or advisor soon. Focus on attendance and pending fees first.",
-    "Medium":"You are doing okay, but a few areas need attention. Keep an eye on them.",
-    "Low":"You are on track. Keep it up!",
-}
 
 
-class RiskReadRepository:
-    @staticmethod
-    def for_student_user(student_id):
-        session=SessionLocal()
-        try:
-            row=session.execute(
-                select(
-                    StudentRiskScore.risk_score,
-                    StudentRiskScore.risk_level,
-                    StudentRiskScore.factors,
-                    StudentRiskScore.computed_at,
-                )
-                .join(Student,Student.student_id==StudentRiskScore.student_id)
-                .where(
-                    Student.student_id==student_id,
-                    Student.is_deleted==False,
-                    StudentRiskScore.is_deleted==False,
-                    StudentRiskScore.semester==Student.current_semester,
-                )
-            ).first()
-            if not row:
-                return None
 
-            trend=get_trends(session,[student_id]).get(student_id)
-            return {
-                "level":row.risk_level,
-                "reasons":row.factors or [],
-                "tip":TIPS.get(row.risk_level, ""),
-                "computed_at":row.computed_at,
-                "trend":trend,
-            }
-        except Exception as e:
-            logging.exception(f"during student risk: {str(e)}")
-            return None      
-        finally:
-            session.close()
+      
 
 
 

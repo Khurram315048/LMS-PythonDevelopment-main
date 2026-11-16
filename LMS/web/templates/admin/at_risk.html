@@ -6,6 +6,11 @@
 <h2>At-Risk Students</h2>
 
 <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px">
+  <div style="margin-bottom:12px">
+  <a href="/at_risk" class="btn btn-sm btn-outline-secondary">All</a>
+  <a href="/at_risk?action=none" class="btn btn-sm btn-outline-danger">High: no action (7+ days)</a>
+  <a href="/at_risk?action=overdue" class="btn btn-sm btn-outline-warning">Follow-up overdue</a>
+</div>
   <form method="get" action="/at_risk">
     <select name="level" onchange="this.form.submit()">
       <option value="" {% if not level %}selected{% endif %}>All levels</option>
@@ -31,6 +36,7 @@
       <th>Level</th>
       <th>Why flagged</th>
       <th>Trend</th>
+      <th>Follow-up</th>
     </tr>
   </thead>
   <tbody>
@@ -53,9 +59,23 @@
     {% else %}<span style="color:#888">● same</span>{% endif %}
   {% else %}—{% endif %}
 </td>
+<td>
+  {% if r.level == 'Low' and r.status.code == 'none' %}—{% else %}
+    <span style="color:#fff;padding:2px 8px;border-radius:10px;font-size:12px;background:
+      {% if r.status.code == 'overdue' %}#d9534f{% elif r.status.code == 'improving' %}#5cb85c{% elif r.status.code == 'contacted' %}#0275d8{% else %}#888{% endif %}">
+      {{ r.status.label }}
+    </span>
+    {% if r.status.last_note %}
+    <div style="font-size:12px;color:#555;margin-top:4px">
+      {{ r.status.last_note[:60] }}{% if r.status.last_note|length > 60 %}…{% endif %}
+      {% if r.status.follow_up %}<br>Follow-up: {{ r.status.follow_up.strftime('%d %b') }}{% endif %}
+    </div>
+    {% endif %}
+  {% endif %}
+</td>
     </tr>
     {% else %}
-    <tr><td colspan="5">No data yet. Click "Recompute now".</td></tr>
+    <tr><td colspan="8">No data yet. Click "Recompute now".</td></tr>
     {% endfor %}
   </tbody>
 </table>

@@ -13,6 +13,7 @@ from db.models.orm import (
     FypGroup,Exam,Notification,ComplaintSuggestion,SystemSetting,
     TeacherSalary,StudentRiskScore
 )
+from modules.risk.repository import InterventionRepository
 
 
 def _clean(value):
@@ -1667,6 +1668,8 @@ class RiskRepository:
 
             rows=session.execute(stmt).all()
             trends=get_trends(session,[r.student_id for r in rows])
+            statuses=InterventionRepository.status_map(
+                session,[r.student_id for r in rows],trends)
             return [
                 {
                     "risk_id": r.risk_id,
@@ -1677,6 +1680,7 @@ class RiskRepository:
                     "level": r.risk_level,
                     "reasons": r.factors or [],
                     "computed_at": r.computed_at,
+                    "status": statuses[r.student_id],
                     "trend":trends.get(r.student_id),
                 }
                 for r in session.execute(stmt).all()

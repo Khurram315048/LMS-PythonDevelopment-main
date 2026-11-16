@@ -1,0 +1,128 @@
+{% extends "layouts/teacher_base.html" %}
+
+{% block title %}Students Needing Support{% endblock %}
+
+{% block content %}
+
+{% if flash_success %}
+<div class="alert alert-success">{{ flash_success }}</div>
+{% endif %}
+{% if flash_error %}
+<div class="alert alert-danger">{{ flash_error }}</div>
+{% endif %}
+
+<h2>Students Needing Support (My Courses)</h2>
+
+<form method="get" action="/teacher_at_risk" style="margin-bottom:14px">
+  <select name="level" onchange="this.form.submit()">
+    <option value="" {% if not level %}selected{% endif %}>All</option>
+    <option value="High" {% if level == 'High' %}selected{% endif %}>Needs attention</option>
+    <option value="Medium" {% if level == 'Medium' %}selected{% endif %}>Watch</option>
+    <option value="Low" {% if level == 'Low' %}selected{% endif %}>On track</option>
+  </select>
+</form>
+
+<table style="width:100%;border-collapse:collapse">
+  <thead>
+    <tr><th>Student</th>
+      <th>Semester</th>
+      <th>Status</th>
+      <th>Trend</th>
+      <th>Areas to check</th>
+      <th>Follow-up</th>
+      <th>Action</th>
+    </tr>
+
+  </thead>
+  <tbody>
+    {% for r in all_data %}
+    <tr>
+      <td>{{ r.name }}</td>
+      <td>{{ r.semester }}</td>
+      <td>
+        <span style="color:#fff;padding:2px 8px;border-radius:10px;background:{% if r.level == 'High' %}#d9534f{% elif r.level == 'Medium' %}#f0ad4e{% else %}#5cb85c{% endif %}">{{ r.label }}</span>
+      </td>
+      <td>
+        {% if r.trend %}
+          {% if r.trend.direction == 'worse' %}<span style="color:#d9534f">▲ Getting worse</span>
+          {% elif r.trend.direction == 'better' %}<span style="color:#5cb85c">▼ Improving</span>
+          {% else %}<span style="color:#888">● Steady</span>{% endif %}
+        {% else %}—{% endif %}
+      </td>
+      <td>{{ r.reasons | join(", ") if r.reasons else "—" }}</td>
+      <td>
+  {% if r.level == 'Low' and r.status.code == 'none' %}—{% else %}
+    <span style="color:#fff;padding:2px 8px;border-radius:10px;font-size:12px;background:
+      {% if r.status.code == 'overdue' %}#d9534f{% elif r.status.code == 'improving' %}#5cb85c{% elif r.status.code == 'contacted' %}#0275d8{% else %}#888{% endif %}">
+      {{ r.status.label }}
+    </span>
+    {% if r.status.last_note %}
+    <div style="font-size:12px;color:#555;margin-top:4px">
+      {{ r.status.last_note[:60] }}{% if r.status.last_note|length > 60 %}…{% endif %}
+      {% if r.status.follow_up %}<br>Follow-up: {{ r.status.follow_up.strftime('%d %b') }}{% endif %}
+    </div>
+    {% endif %}
+  {% endif %}
+</td>
+<td>
+  <button type="button" class="btn btn-sm btn-primary add-note-btn"
+          data-bs-toggle="modal" data-bs-target="#noteModal"
+          data-student-id="{{ r.student_id }}" data-student-name="{{ r.name }}">
+    Add note
+  </button>
+</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7">No students found for your courses.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+<div class="modal fade" id="noteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add note: <span id="noteStudentName"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="post" action="/note">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
+        <input type="hidden" name="student_id" id="noteStudentId">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">What did you do?</label>
+            <select name="action_type" class="form-select" required>
+              <option value="Spoke">Spoke with student</option>
+              <option value="Warning">Gave a warning</option>
+              <option value="Counseling">Counseling</option>
+              <option value="Referred">Referred to admin / advisor</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Note (max 500 characters)</label>
+            <textarea name="note" class="form-control" rows="3" maxlength="500" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Follow-up date (optional)</label>
+            <input type="date" name="follow_up_date" class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary w-100">Save note</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll(".add-note-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.getElementById("noteStudentId").value = btn.dataset.studentId;
+    document.getElementById("noteStudentName").textContent = btn.dataset.studentName;
+  });
+});
+</script>
+{% endblock %}

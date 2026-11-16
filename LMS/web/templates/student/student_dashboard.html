@@ -4,25 +4,42 @@
 
 {% block content %}
 {% if risk %}
-<div style="border-left:6px solid
+<div style="width:100%;clear:both;border-left:6px solid
   {% if risk.level == 'High' %}#d9534f{% elif risk.level == 'Medium' %}#f0ad4e{% else %}#5cb85c{% endif %};
   background:#fff;padding:14px 18px;margin:14px 0;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.1)">
   <h3 style="margin:0 0 6px">Academic Status: {{ risk.level }}</h3>
   <p style="margin:0 0 6px">{{ risk.tip }}</p>
+
+  {% if risk.trend %}
+  <p style="margin:0 0 6px;font-weight:600">
+    {% if risk.trend.direction == 'better' %}<span style="color:#5cb85c">▼ Improving compared to last week</span>
+    {% elif risk.trend.direction == 'worse' %}<span style="color:#d9534f">▲ Needs attention compared to last week</span>
+    {% else %}<span style="color:#888">● Steady compared to last week</span>{% endif %}
+  </p>
+  {% endif %}
+
+  {% if risk.reached_out %}
+  <p style="margin:0 0 8px;padding:8px 10px;background:#eef6ff;border-radius:6px">
+    Your teacher or advisor has reached out to you. Feel free to talk to them about how to improve.
+  </p>
+  {% endif %}
+
   {% if risk.reasons %}
-  <ul style="margin:6px 0 0 18px">
+  <strong>Why this status</strong>
+  <ul style="margin:4px 0 8px 18px">
     {% for r in risk.reasons %}<li>{{ r }}</li>{% endfor %}
   </ul>
   {% endif %}
+
+  {% if risk.actions %}
+  <strong>What you can do</strong>
+  <ul style="margin:4px 0 8px 18px">
+    {% for a in risk.actions %}<li>{{ a }}</li>{% endfor %}
+  </ul>
+  {% endif %}
+
   <small style="color:#777">Updated: {{ risk.computed_at.strftime('%d %b %Y') if risk.computed_at else '—' }}</small>
 </div>
-{% endif %}
-{% if risk.trend %}
-<p style="margin:0 0 6px;font-weight:600">
-  {% if risk.trend.direction == 'better' %}Improving compared to last week
-  {% elif risk.trend.direction == 'worse' %}Needs attention compared to last week
-  {% else %}Steady compared to last week{% endif %}
-</p>
 {% endif %}
 
 <div class="container">

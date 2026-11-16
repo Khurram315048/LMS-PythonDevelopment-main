@@ -1,9 +1,65 @@
+# import logging
+
+# from fastapi import APIRouter, Query, Request, status
+# from fastapi.responses import RedirectResponse
+
+# from core.cookies import REFRESH_COOKIE, clear_auth_cookies, set_auth_cookies
+# from core.security import (REFRESH, ROLE_ID_CLAIM, TokenError, create_access_token,
+#                            create_refresh_token, decode_token)
+
+
+# router=APIRouter()
+
+# DASHBOARD_URL={
+#     "student":"/student_dashboard",
+#     "teacher":"/teacher_dashboard",
+#     "admin":"/admin_dashboard",
+# }
+
+
+# def _safe_next(value:str | None,role: str) -> str:
+#     if (value and value.startswith("/") and not value.startswith("//")
+#             and "\\" not in value and not value.startswith("/refresh")):
+#         return value
+#     return DASHBOARD_URL[role]
+
+
+# @router.get("/refresh")
+# def refresh_session(request:Request,next_url:str | None=Query(None, alias="next")):
+#     token=request.cookies.get(REFRESH_COOKIE)
+#     if not token:
+#         request.session["flash_error"]="Session expired. Please login again."
+#         return RedirectResponse(url="/main_view",status_code=status.HTTP_303_SEE_OTHER)
+
+#     try:
+#         claims=decode_token(token, REFRESH)     
+#     except TokenError as e:
+#         logging.warning(f"Refresh rejected: {e}")
+#         response=RedirectResponse(url="/main_view",status_code=status.HTTP_303_SEE_OTHER)
+#         clear_auth_cookies(response)
+#         return response
+
+#     role=claims["role"]
+#     id_claim=ROLE_ID_CLAIM[role]
+#     payload={
+#         "user_id":claims["user_id"],
+#         "role":role,
+#         id_claim:claims[id_claim]
+#         }
+
+#     response=RedirectResponse(url=_safe_next(next_url, role),status_code=status.HTTP_303_SEE_OTHER)
+#     set_auth_cookies(response,create_access_token(payload),create_refresh_token(payload))
+#     return response
+
+
+
+
 import logging
 
 from fastapi import APIRouter, Query, Request, status
 from fastapi.responses import RedirectResponse
 
-from core.cookies import REFRESH_COOKIE, clear_auth_cookies, set_auth_cookies
+from core.cookies import clear_auth_cookies, refresh_name, set_auth_cookies
 from core.security import (REFRESH, ROLE_ID_CLAIM, TokenError, create_access_token,
                            create_refresh_token, decode_token)
 
@@ -24,22 +80,32 @@ def _safe_next(value:str | None,role: str) -> str:
     return DASHBOARD_URL[role]
 
 
+def _expired(request:Request)->RedirectResponse:
+    request.session["flash_error"]="Session expired. Please login again."
+    return RedirectResponse(url="/main_view",status_code=status.HTTP_303_SEE_OTHER)
+
+
 @router.get("/refresh")
-def refresh_session(request:Request,next_url:str | None=Query(None, alias="next")):
-    token=request.cookies.get(REFRESH_COOKIE)
+def refresh_session(request:Request,
+                    role:str | None=Query(None),
+                    next_url:str | None=Query(None, alias="next")):
+    if role not in DASHBOARD_URL:
+        return _expired(request)
+
+    token=request.cookies.get(refresh_name(role))
     if not token:
-        request.session["flash_error"]="Session expired. Please login again."
-        return RedirectResponse(url="/main_view",status_code=status.HTTP_303_SEE_OTHER)
+        return _expired(request)
 
     try:
-        claims=decode_token(token, REFRESH)     
+        claims=decode_token(token, REFRESH)
+        if claims.get("role")!=role:
+            raise TokenError("role mismatch")
     except TokenError as e:
         logging.warning(f"Refresh rejected: {e}")
         response=RedirectResponse(url="/main_view",status_code=status.HTTP_303_SEE_OTHER)
-        clear_auth_cookies(response)
+        clear_auth_cookies(response,role)
         return response
 
-    role=claims["role"]
     id_claim=ROLE_ID_CLAIM[role]
     payload={
         "user_id":claims["user_id"],
@@ -48,5 +114,5 @@ def refresh_session(request:Request,next_url:str | None=Query(None, alias="next"
         }
 
     response=RedirectResponse(url=_safe_next(next_url, role),status_code=status.HTTP_303_SEE_OTHER)
-    set_auth_cookies(response,create_access_token(payload),create_refresh_token(payload))
+    set_auth_cookies(response,create_access_token(payload),create_refresh_token(payload),role)
     return response
