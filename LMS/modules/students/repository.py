@@ -453,6 +453,59 @@ class StudentModel:
 
 
     @staticmethod
+    def can_student_submit(student_id: int, course_id: int, section_id: int,
+                           submission_type: str) -> bool:
+        if submission_type not in {"assignment", "quiz"}:
+            return False
+
+        enabled_column = (
+            Section.assignments_enabled
+            if submission_type == "assignment"
+            else Section.quizzes_enabled
+        )
+
+        session = SessionLocal()
+        try:
+            stmt = (
+                select(enabled_column)
+                .select_from(StudentCourse)
+                .join(
+                    StudentSection,
+                    and_(
+                        StudentSection.student_id == StudentCourse.student_id,
+                        StudentSection.section_id == section_id,
+                        StudentSection.is_deleted.is_(False),
+                    ),
+                )
+                .join(
+                    Section,
+                    and_(
+                        Section.section_id == StudentSection.section_id,
+                        Section.course_id == StudentCourse.course_id,
+                    ),
+                )
+                .join(Student, Student.student_id == StudentCourse.student_id)
+                .join(Course, Course.course_id == StudentCourse.course_id)
+                .where(
+                    StudentCourse.student_id == student_id,
+                    StudentCourse.course_id == course_id,
+                    StudentCourse.is_deleted.is_(False),
+                    Student.is_deleted.is_(False),
+                    Course.is_deleted.is_(False),
+                    Section.is_deleted.is_(False),
+                )
+            )
+            enabled = session.execute(stmt).scalar_one_or_none()
+            return bool(enabled)
+        except Exception as e:
+            logging.exception(f"Error checking student submission eligibility: {e}")
+            raise
+        finally:
+            session.close()
+
+
+
+    @staticmethod
     def get_all_submissions(student_id:int):
         session=SessionLocal()
         try:

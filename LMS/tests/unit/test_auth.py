@@ -6,10 +6,10 @@ from core.auth import get_current_admin, get_current_student, get_current_teache
 from core.security import create_access_token
 
 
-def make_request(cookie_value=None):
+def make_request(cookie_value=None, cookie_name="access_token_student"):
     headers = []
     if cookie_value:
-        headers.append((b"cookie", f"access_token={cookie_value}".encode()))
+        headers.append((b"cookie", f"{cookie_name}={cookie_value}".encode()))
 
     scope = {
         "type": "http",
@@ -25,6 +25,10 @@ def make_request(cookie_value=None):
         "client": ("testclient", 50000),
     }
     return Request(scope)
+
+
+
+
 
 
 def test_student_dependency_rejects_missing_token():
@@ -75,3 +79,8 @@ def test_teacher_dependency_rejects_student_token():
 
     assert exc.value.status_code == 303
     assert exc.value.headers["location"] == "/teacher_login"
+
+
+
+
+    

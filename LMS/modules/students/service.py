@@ -411,6 +411,12 @@ class StudentService:
     @staticmethod
     def upload_assignment_quiz(student_id:int,course_id:int,section_id:int,sub_type:str,file):
         try:
+            if sub_type not in {"assignment","quiz"}:
+                raise ValidationError("Invalid submission type")
+
+            if not StudentModel.can_student_submit(student_id,course_id,section_id,sub_type):
+                raise BusinessRuleError("You are not enrolled in this course/section")
+            
             FileService.validate_upload_file(file,allowed={'doc','docx','pdf'})
             if sub_type == 'assignment':
                 folder=ASSIGNMENT_UPLOAD_FOLDER
