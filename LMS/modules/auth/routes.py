@@ -49,13 +49,10 @@ async def main_view(request:Request):
     return templates.TemplateResponse(request=request,name="main_view.html",context={"error":error})
 
 
-@router.get("/user_signup",response_class=HTMLResponse)
-async def user_signup(request:Request):
-    error=None
-    return templates.TemplateResponse(request=request,name="user_signup.html",context={"error":error})
 
 
 
+@router.get('/user_signup',response_class=HTMLResponse)
 @router.post("/user_signup",response_class=HTMLResponse)
 async def user_signup(request:Request,first_name:str=Form(...),last_name=Form(...),contact:int=Form(...),email:str=Form(...),
                       password:str=Form(...),user_type=Form(...)):
@@ -194,20 +191,15 @@ def update_password(request:Request,new_password:str=Form(None),confirm_password
 
 
 
-# @router.post("/logout")
-# def logout(request:Request):
-#     request.session.clear()
-#     response=RedirectResponse(url="/main_view",status_code=status.HTTP_303_SEE_OTHER,)
-#     clear_auth_cookies(response)
-#     return response
+
 
 
 @router.post("/logout")
 def logout(request:Request,role:str):
     if role not in ROLES:
-        role=None                      # role na ho to purana behaviour: sab saaf
+        role=None                     
 
-    # session tabhi saaf karo jab koi aur role login na ho (flash/CSRF shared hain)
+    
     other_active=role is not None and any(
         request.cookies.get(access_name(r)) for r in ROLES if r != role)
     if not other_active:

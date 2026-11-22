@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date,datetime,timedelta
 from sqlalchemy import select
 from core.logger import logging
 from db.session import SessionLocal
@@ -6,7 +6,6 @@ from db.models.orm import (
     StudentRiskScore,Student,Teacher,TeacherCourse,StudentCourse, RiskIntervention,
 )
 from modules.risk.trend import get_trends
-from datetime import date, datetime, timedelta
 from modules.risk.actions import build_actions
 
 TIPS={

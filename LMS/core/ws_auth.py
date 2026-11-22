@@ -7,6 +7,14 @@ from core.security import ACCESS,TokenError,decode_token
 from core.cookies import access_name
 
 
+
+FYP_OWNER_QUERIES = {
+    "student":"SELECT 1 FROM fyp_groups WHERE fyp_id=%s AND student_id=%s AND teacher_id IS NOT NULL",
+    "teacher":"SELECT 1 FROM fyp_groups WHERE fyp_id=%s AND teacher_id=%s AND teacher_id IS NOT NULL",
+}
+
+
+
 def _origin_ok(websocket: WebSocket)->bool:
     origin=websocket.headers.get("origin")
     if not origin:
@@ -38,42 +46,19 @@ def authorize_ws_user(websocket:WebSocket,fyp_id:int,url_user_type:str,url_user_
     real_id=payload.get(f"{role}_id")
     if real_id is None or int(real_id) != url_user_id:
         return None
+    
     real_id=int(real_id)
-    # if not _origin_ok(websocket):
-    #     return None
-
-    # token=websocket.cookies.get("access_token")
-    # if not token:
-    #     return None
-
-    # try:
-    #     payload=decode_token(token,ACCESS)
-    # except TokenError:
-    #     return None
-
-    # role=payload.get("role")
-    # if role not in ("student","teacher") or role != url_user_type:
-    #     return None
-
-    # real_id=payload.get(f"{role}_id")
-    # if real_id is None or int(real_id) != url_user_id:
-    #     return None
-    # real_id=int(real_id)
 
     try:
         if role=="student":
-            StudentService.check_fyp_semester(real_id)      
-            if StudentService.check_freeze_student(real_id):  
+            StudentService.check_fyp_semester(real_id)
+            if StudentService.check_freeze_student(real_id):
                 return None
-            
-            owner_col="student_id"
-        else:
-            owner_col="teacher_id"
 
         conn=mysql.get_dict_connection()
         try:
             with conn.cursor() as cursor:
-                cursor.execute(f"SELECT 1 FROM fyp_groups WHERE fyp_id=%s AND {owner_col}=%s AND teacher_id IS NOT NULL",(fyp_id,real_id),)
+                cursor.execute(FYP_OWNER_QUERIES[role],(fyp_id,real_id))
                 if not cursor.fetchone():
                     return None
         finally:
@@ -81,6 +66,7 @@ def authorize_ws_user(websocket:WebSocket,fyp_id:int,url_user_type:str,url_user_
     except Exception as e:
         logging.warning(f"wbsck auth rjctd: {str(e)}")
         return None
+
 
     return {
         "role":role,

@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-from .retriever import retrieve
 from .settings import MIN_SCORE
 from .retriever import retrieve,passes
 

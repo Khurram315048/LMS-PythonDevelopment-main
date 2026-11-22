@@ -1,6 +1,5 @@
 import os
 import bleach
-from werkzeug.utils import secure_filename
 from datetime import datetime,timedelta
 from core.exceptions import *
 from werkzeug.security import check_password_hash

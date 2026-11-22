@@ -21,8 +21,10 @@ async def _ver()->str:
     return await _r.get("docs_version") or "0"
 
 
-def _key(ver,role,norm):
-    return f"ans:{ver}:{role}:{hashlib.sha1(norm.encode()).hexdigest()}"
+def _key(ver, role, norm):
+    return f"ans:{ver}:{role}:{hashlib.sha1(norm.encode(),usedforsecurity=False).hexdigest()}"
+
+
 
 
 async def exact_get(role,norm):

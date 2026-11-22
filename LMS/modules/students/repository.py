@@ -1,11 +1,8 @@
 from datetime import time, timedelta
-import logging
-
 from sqlalchemy import (
     select, update, delete, func, and_, or_, literal, literal_column, text, String,
 )
 from sqlalchemy.orm import aliased
-
 from db.session import SessionLocal  
 from db.models.orm import (
     User, Student, Program, Exam, Course, StudentCourse, TeacherCourse, Teacher,
@@ -14,17 +11,10 @@ from db.models.orm import (
     StudentImprovement, StudentFailSubject, Notification, SemesterFreezeStudent,
     SummerSemester, SummerRegistration, SystemSetting, FypGroup, FypMessage,
 )
-from sqlalchemy import select
 from core.logger import logging
 from db.session import SessionLocal
-from db.models.orm import StudentRiskScore, Student
-from modules.risk.trend import get_trends
+from db.models.orm import  Student
 
-
-
-
-
-      
 
 
 
@@ -32,8 +22,8 @@ def _clean(value):
     if isinstance(value, bool):
         return int(value)
     if isinstance(value, time):
-        return timedelta(hours=value.hour, minutes=value.minute,
-                         seconds=value.second, microseconds=value.microsecond)
+        return timedelta(hours=value.hour,minutes=value.minute,
+                         seconds=value.second,microseconds=value.microsecond)
     return value
 
 

@@ -40,9 +40,21 @@ def _like(v):
     return f"%{v}%" if v else None
 
 
+ALLOWED_FILTER_COLS={
+    "course_name",
+    "status",
+    "`month`",
+    "CONCAT(first_name,' ',last_name)",
+}
+
+
 def _f(value,column):
+    if column not in ALLOWED_FILTER_COLS:
+        raise ValueError(f"invalid filter column: {column}")
     like=_like(value)
     return (f" AND {column} LIKE %s",[like]) if like else ("",[])
+
+
 
 
 def t_schedule(user:dict,day=None,course=None):
@@ -52,8 +64,12 @@ def t_schedule(user:dict,day=None,course=None):
         e=" AND day_of_week=%s"
         p.append(d)
     f,fp=_f(course,"course_name")
-    rows=teacher_query(user,f"""SELECT * FROM v_t_schedule WHERE 1=1{e}{f}
-        ORDER BY FIELD(day_of_week,'Monday','Tuesday','Wednesday','Thursday','Friday'),start_time""",tuple(p+fp))
+    rows=teacher_query(
+        user,
+        f"SELECT * FROM v_t_schedule WHERE 1=1{e}{f} "  # nosec B608
+        "ORDER BY FIELD(day_of_week,'Monday','Tuesday','Wednesday','Thursday','Friday'),start_time",
+        tuple(p+fp),
+    )
     return {"classes":rows}
 
 
@@ -67,8 +83,13 @@ def t_student_attendance(user:dict,course=None,name=None,below=None):
             p3.append(float(below))
     except (TypeError,ValueError):
         e,p3="",[]
-    rows=teacher_query(user,f"""SELECT * FROM v_t_student_attendance WHERE 1=1{f1}{f2}{e}
-        ORDER BY percentage ASC LIMIT %s""",tuple(p1+p2+p3+[MAX_ROWS]))
+
+    rows=teacher_query(
+        user,
+        f"SELECT * FROM v_t_student_attendance WHERE 1=1{f1}{f2}{e} "  # nosec B608
+        "ORDER BY percentage ASC LIMIT %s",
+        tuple(p1+p2+p3+[MAX_ROWS]),
+    )
     return {"students":rows}
 
 
@@ -81,13 +102,14 @@ def t_salary(user:dict,month=None,year=None):
             p.append(int(year))
     except (TypeError,ValueError):
         e=""
-    rows=teacher_query(user,f"SELECT * FROM v_t_salary WHERE 1=1{f}{e} ORDER BY `year` DESC LIMIT 6",tuple(p))
+
+    rows=teacher_query(user,f"SELECT * FROM v_t_salary WHERE 1=1{f}{e} ORDER BY `year` DESC LIMIT 6",tuple(p))  # nosec B608
     return {"salary_records":rows}
 
 
 def t_fyp(user:dict,status=None):
     f,p=_f(status,"status")
-    rows=teacher_query(user,f"SELECT * FROM v_t_fyp WHERE 1=1{f} ORDER BY created_at DESC LIMIT %s",tuple(p+[MAX_ROWS]))
+    rows=teacher_query(user,f"SELECT * FROM v_t_fyp WHERE 1=1{f} ORDER BY created_at DESC LIMIT %s",tuple(p+[MAX_ROWS]))  # nosec B608 
     return {"fyp_students":rows}
 
 
